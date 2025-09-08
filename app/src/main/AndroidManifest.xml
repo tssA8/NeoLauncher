@@ -28,7 +28,7 @@
 		android:icon="@mipmap/ic_launcher">
 
 		<activity
-			android:name=".activity.HomeActivity"
+			android:name=".activity.Launcher"
 			android:launchMode="singleTask"
 			android:clearTaskOnLaunch="true"
 			android:stateNotNeeded="true"

@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 import com.benq.ifp.neolauncher.R;
-import com.benq.ifp.neolauncher.activity.HomeActivity;
+import com.benq.ifp.neolauncher.activity.Launcher;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
 import com.benq.ifp.neolauncher.graphics.CanvasPieMenu;
 import com.benq.ifp.neolauncher.graphics.Converter;
@@ -298,7 +298,7 @@ public class AppMenu extends CanvasPieMenu {
 		PieLauncherApp.iconPack.selectPack(pm,
 				PieLauncherApp.getPrefs(context).getIconPack());
 		PieLauncherApp.iconPack.restoreMappings(context);
-		hideApps.add(new ComponentName(context, HomeActivity.class));
+		hideApps.add(new ComponentName(context, Launcher.class));
 		if (HAS_LAUNCHER_APP) {
 			indexProfilesApps(
 					(LauncherApps) context.getSystemService(

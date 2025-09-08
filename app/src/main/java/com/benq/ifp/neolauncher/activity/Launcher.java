@@ -26,7 +26,7 @@ import com.benq.ifp.neolauncher.view.SoftKeyboard;
 import com.benq.ifp.neolauncher.view.SystemBars;
 import com.benq.ifp.neolauncher.widget.AppPieView;
 
-public class HomeActivity extends Activity {
+public class Launcher extends Activity {
 	private Preferences prefs;
 	private SoftKeyboard kb;
 	private GestureDetector gestureDetector;
@@ -76,7 +76,7 @@ public class HomeActivity extends Activity {
 		gestureDetector = new GestureDetector(this, new FlingListener(
 				ViewConfiguration.get(this).getScaledMinimumFlingVelocity()));
 
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.launcher);
 		if (!PreferencesActivity.isReady(this)) {
 			PreferencesActivity.startWelcome(this);
 		}
