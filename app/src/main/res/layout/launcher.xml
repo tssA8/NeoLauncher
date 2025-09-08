@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-	<de.markusfisch.android.neolauncher.widget.AppPieView
+	<com.benq.ifp.neolauncher.widget.AppPieView
 		android:id="@+id/pie"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
@@ -30,7 +30,7 @@
 		android:maxLength="128"
 		android:importantForAutofill="no"
 		android:visibility="gone"/>
-	<de.markusfisch.android.neolauncher.widget.ActionButton
+	<com.benq.ifp.neolauncher.widget.ActionButton
 		android:id="@+id/preferences"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

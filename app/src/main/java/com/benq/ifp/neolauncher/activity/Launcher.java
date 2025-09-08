@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import com.benq.ifp.neolauncher.R;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
 import com.benq.ifp.neolauncher.graphics.ToolbarBackground;
+import com.benq.ifp.neolauncher.menubar.MenuBar;
 import com.benq.ifp.neolauncher.preference.Preferences;
 import com.benq.ifp.neolauncher.view.SoftKeyboard;
 import com.benq.ifp.neolauncher.view.SystemBars;
@@ -32,6 +33,8 @@ public class Launcher extends Activity {
 	private GestureDetector gestureDetector;
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
+
+	private MenuBar menubar;
 	private EditText searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
@@ -184,6 +187,7 @@ public class Launcher extends Activity {
 	}
 
 	private void initPieView() {
+		menubar = (MenuBar) findViewById(R.id.menubar);
 		pieView.setWindow(getWindow());
 		pieView.setListListener(new AppPieView.ListListener() {
 			@Override
@@ -344,7 +348,7 @@ public class Launcher extends Activity {
 		}
 	}
 
-	private void showAllApps() {
+	public void showAllApps() {
 		if (isSearchVisible()) {
 			return;
 		}
@@ -438,4 +442,5 @@ public class Launcher extends Activity {
 			return false;
 		}
 	}
+
 }

@@ -28,6 +28,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.benq.ifp.neolauncher.R
+import com.benq.ifp.neolauncher.activity.Launcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -37,6 +38,9 @@ class MenuBar @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
+
+    private var mLauncher: Launcher = context as Launcher
+
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
 
@@ -136,7 +140,7 @@ class MenuBar @JvmOverloads constructor(
 
         mAllApp.setOnClickListener {
             if (DEBUG) Log.i(TAG, "Click mAllApp button")
-
+            mLauncher.showAllApps()
         }
 
     }
@@ -181,6 +185,10 @@ class MenuBar @JvmOverloads constructor(
         }
 
         return super.focusSearch(focused, direction)
+    }
+
+    interface MenuBarListener {
+        fun onAllAppsClick()
     }
 
 

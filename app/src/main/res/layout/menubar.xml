@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<de.markusfisch.android.neolauncher.menubar.MenuBar xmlns:android="http://schemas.android.com/apk/res/android"
+<com.benq.ifp.neolauncher.menubar.MenuBar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/menubar_root"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0">
 
-            <de.markusfisch.android.neolauncher.menubar.CircleImageView
+            <com.benq.ifp.neolauncher.menubar.CircleImageView
                 android:id="@+id/picture"
                 android:layout_width="@dimen/pending_menu_bar_account_icon_size"
                 android:layout_height="@dimen/pending_menu_bar_account_icon_size"
@@ -93,7 +93,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <de.markusfisch.android.neolauncher.menubar.CircleImageView
+            <com.benq.ifp.neolauncher.menubar.CircleImageView
                 android:id="@+id/picture_local_public"
                 android:layout_width="@dimen/pending_menu_bar_account_icon_size"
                 android:layout_height="@dimen/pending_menu_bar_account_icon_size"
@@ -239,4 +239,4 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</de.markusfisch.android.neolauncher.menubar.MenuBar>
+</com.benq.ifp.neolauncher.menubar.MenuBar>
