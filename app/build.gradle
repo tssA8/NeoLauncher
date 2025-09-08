@@ -1,12 +1,19 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-	namespace 'de.markusfisch.android.pielauncher'
-	compileSdk sdk_version
+	namespace 'com.benq.ifp.neolauncher'
+	compileSdk 34
 
 	defaultConfig {
-		minSdk 9
-		targetSdk sdk_version
+		configurations.all {
+			resolutionStrategy { force 'androidx.core:core-ktx:1.9.0' }
+		}
+		minSdkVersion 26
+		targetSdkVersion 35
 
 		versionCode 59
 		versionName '1.23.6'
@@ -33,4 +40,11 @@ android {
 			signingConfig signingConfigs.release
 		}
 	}
+	kotlinOptions {
+		jvmTarget = '1.8'
+	}
+}
+dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
+	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 }

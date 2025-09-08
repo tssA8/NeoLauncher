@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="@dimen/login_view_login_dialog_email_icon_size"
+    android:height="@dimen/login_view_login_dialog_email_icon_size"
+    android:viewportWidth="37.0"
+    android:viewportHeight="37.0">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M29.81,8.09H7.19c-0.38,0 -0.74,0.14 -1.01,0.37C6.18,8.47 6.17,8.47 6.17,8.48C5.84,8.76 5.63,9.18 5.63,9.65v17.7c0,0.86 0.7,1.56 1.56,1.56h22.62c0.86,0 1.56,-0.7 1.56,-1.56V9.65C31.37,8.79 30.67,8.09 29.81,8.09zM28.94,9.48l-10.43,8.14L8.33,9.48H28.94zM29.81,27.52H7.19c-0.1,0 -0.17,-0.08 -0.17,-0.17V10.2l11.05,8.84c0.13,0.1 0.28,0.15 0.43,0.15c0.15,0 0.3,-0.05 0.43,-0.15l11.06,-8.63v16.93C29.98,27.45 29.9,27.52 29.81,27.52z" />
+</vector>

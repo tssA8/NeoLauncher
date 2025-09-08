@@ -1,16 +1,22 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
+	package="com.benq.ifp.neolauncher"
 	android:installLocation="auto">
+
 	<supports-screens
 		android:largeScreens="true"
 		android:xlargeScreens="true"/>
+
 	<!-- A launcher app needs to be able to query all packages. -->
 	<!-- For details see: https://developer.android.com/training/basics/intents/package-visibility#all-apps -->
-	<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+	<uses-permission
+		android:name="android.permission.QUERY_ALL_PACKAGES"
 		tools:ignore="QueryAllPackagesPermission" />
+
 	<!-- A launcher app should be available all the time. -->
 	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
 	<application
 		tools:ignore="UnusedAttribute"
 		android:name=".app.PieLauncherApp"
@@ -20,6 +26,7 @@
 		android:theme="@style/HomeTheme"
 		android:label="@string/app_name"
 		android:icon="@mipmap/ic_launcher">
+
 		<activity
 			android:name=".activity.HomeActivity"
 			android:launchMode="singleTask"
@@ -46,12 +53,15 @@
 				android:name="com.android.systemui.action_assist_icon"
 				android:resource="@drawable/ic_launcher"/>
 		</activity>
+
 		<activity
 			android:name=".activity.PreferencesActivity"
 			android:exported="true"/>
+
 		<activity
 			android:name=".activity.PickIconActivity"
 			android:exported="true"/>
+
 		<activity
 			android:name=".activity.HiddenAppsActivity"
 			android:exported="true"/>

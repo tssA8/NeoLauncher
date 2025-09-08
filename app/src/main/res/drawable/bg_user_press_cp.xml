@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners
+        android:bottomLeftRadius="@dimen/menu_bar_focus_press_radius"
+        android:bottomRightRadius="@dimen/menu_bar_focus_press_radius"
+        android:topLeftRadius="@dimen/menu_bar_focus_press_radius"
+        android:topRightRadius="@dimen/menu_bar_focus_press_radius" />
+    <solid android:color="@color/menu_bar_recent_user_press_fill_color" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/menu_bar_recent_user_press_border_color" />
+</shape>

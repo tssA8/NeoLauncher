@@ -37,7 +37,7 @@
 			android:maxLines="1"
 			android:maxLength="128"
 			android:importantForAutofill="no"/>
-		<de.markusfisch.android.pielauncher.widget.ActionButton
+		<de.markusfisch.android.neolauncher.widget.ActionButton
 			android:id="@+id/reset"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
 			android:padding="16dp"
 			android:contentDescription="@string/reset"
 			android:src="@drawable/ic_restore"/>
-		<de.markusfisch.android.pielauncher.widget.ActionButton
+		<de.markusfisch.android.neolauncher.widget.ActionButton
 			android:id="@+id/hide_app"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
 			android:padding="16dp"
 			android:contentDescription="@string/hide_app"
 			android:src="@drawable/ic_hide"/>
-		<de.markusfisch.android.pielauncher.widget.ActionButton
+		<de.markusfisch.android.neolauncher.widget.ActionButton
 			android:id="@+id/switch_pack"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

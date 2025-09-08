@@ -104,4 +104,6 @@
 	<string name="app_icon">App icon</string>
 	<string name="user_profile_locked">User profile locked</string>
 	<string name="activity_not_enabled">Activity not enabled\n</string>
+
+	<string name="menu_bar_account_name">Account control</string>
 </resources>
