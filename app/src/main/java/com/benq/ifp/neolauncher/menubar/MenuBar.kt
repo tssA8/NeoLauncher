@@ -28,7 +28,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.benq.ifp.neolauncher.R
-import com.benq.ifp.neolauncher.activity.Launcher
+import com.benq.ifp.neolauncher.activity.HomeActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -39,7 +39,7 @@ class MenuBar @JvmOverloads constructor(
     defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    private var mLauncher: Launcher = context as Launcher
+    private var mLauncher: HomeActivity = context as HomeActivity
 
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
