@@ -22,6 +22,7 @@ import com.benq.ifp.neolauncher.CellLayout;
 import com.benq.ifp.neolauncher.DeviceProfile;
 import com.benq.ifp.neolauncher.R;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
+import com.benq.ifp.neolauncher.content.AppMenu;
 import com.benq.ifp.neolauncher.graphics.ToolbarBackground;
 import com.benq.ifp.neolauncher.hotseat.Hotseat;
 import com.benq.ifp.neolauncher.menubar.MenuBar;
@@ -31,6 +32,7 @@ import com.benq.ifp.neolauncher.view.SystemBars;
 import com.benq.ifp.neolauncher.widget.AppPieView;
 
 public class HomeActivity extends Activity {
+	private static final String TAG = "HomeActivity";
 	private Preferences prefs;
 	private SoftKeyboard kb;
 	private GestureDetector gestureDetector;
@@ -100,7 +102,8 @@ public class HomeActivity extends Activity {
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
 		menubar = findViewById(R.id.menubar);
-		hotseatView = pieView.findViewById(R.id.hotseat);
+		hotseatView = menubar.findViewById(R.id.hotseat);
+		Log.d(TAG," TAG hotseatView : "+hotseatView);
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
 
@@ -246,42 +249,50 @@ public class HomeActivity extends Activity {
 			updateAppList();
 		});
 
-		pieView.setHotseatDropTarget(hotseatView, new AppPieView.HotseatDropTarget() {
-			@Override
-			public boolean acceptDrop(com.benq.ifp.neolauncher.content.AppMenu.AppIcon app) {
-				// 簡易加入 Hotseat：塞進下一個空位（示意）
-				Hotseat hs = hotseatView;
-				CellLayout layout = hs.getLayout();
-				if (layout == null) return false;
+		if (hotseatView != null) {
+			Log.d(TAG,"TAG hotseatView 2 : "+hotseatView);
+			pieView.setHotseatDropTarget(hotseatView, new AppPieView.HotseatDropTarget() {
+				@Override public boolean acceptDrop(AppMenu.AppIcon app) {
+					Log.d(TAG,"TAG hotseatView acceptDrop 3 : "+hotseatView);
+					Hotseat hs = hotseatView;
+					if (hs == null || !hs.isAttachedToWindow()) return false;
+					CellLayout layout = hs.getLayout();
+					if (layout == null) return false;
 
-				// 已滿就拒收
-				if (layout.getShortcutsAndWidgets().getChildCount() >= getDeviceProfile().inv.numHotseatIcons) {
-					return false;
+					if (layout.getShortcutsAndWidgets().getChildCount()
+							>= getDeviceProfile().inv.numHotseatIcons) return false;
+
+					ImageView iv = new ImageView(hotseatView.getContext());
+					iv.setImageBitmap(app.bitmap);
+					iv.setContentDescription(app.label);
+
+					int nextRank = layout.getShortcutsAndWidgets().getChildCount();
+					int x = hs.getCellXFromOrder(nextRank);
+					int y = hs.getCellYFromOrder(nextRank);
+					CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x, y, 1, 1);
+					lp.canReorder = true;
+
+					layout.addViewToCellLayout(iv, -1, View.generateViewId(), lp, true);
+					return true;
 				}
 
-				android.widget.ImageView iv = new android.widget.ImageView(hotseatView.getContext());
-				iv.setImageBitmap(app.bitmap);
-				iv.setContentDescription(app.label);
-				// TODO: 設 onClick 啟動 app、長按搬移等
+				@Override public void onHoverHotseat(boolean hovered) {
+					Log.d(TAG,"TAG hotseatView onHoverHotseat 4 : "+hotseatView);
+					if (hotseatView != null && hotseatView.isAttachedToWindow()) {
+						hotseatView.setActivated(hovered);
+					}
+				}
+			});
+		} else {
+			Log.w("HomeActivity","No hotseat in this layout; disable drop/hover");
+			pieView.setHotseatDropTarget(null, null); // 告知沒有 Hotseat
+		}
 
-				int nextRank = layout.getShortcutsAndWidgets().getChildCount();
-				int x = hs.getCellXFromOrder(nextRank);
-				int y = hs.getCellYFromOrder(nextRank);
-				CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x, y, 1, 1);
-				lp.canReorder = true;
+	}
 
-				layout.addViewToCellLayout(iv, -1, View.generateViewId(), lp, true);
-
-				// TODO: 持久化 componentName + rank，避免重進程就不見
-				return true;
-			}
-
-			@Override
-			public void onHoverHotseat(boolean hovered) {
-				// 簡單的 hover 效果（你也可以改成顏色、邊框等）
-				hotseatView.setActivated(hovered);
-			}
-		});
+	@Override protected void onStop() {
+		pieView.setHotseatDropTarget(null, null);
+		super.onStop();
 	}
 
 
