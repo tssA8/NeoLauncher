@@ -135,10 +135,47 @@
             android:id="@+id/menubar_constraint_set_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!--            <com.benq.ifp.neolauncher.hotseat.Hotseat-->
+            <!--                android:id="@+id/hotseat"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:background="@android:color/transparent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintEnd_toStartOf="@+id/fl_casting_container"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+            <FrameLayout
+                android:id="@+id/menu_hotseat"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:descendantFocusability="afterDescendants">
+
+                <com.benq.ifp.neolauncher.hotseat.Hotseat
+                    android:id="@+id/hotseat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                </com.benq.ifp.neolauncher.hotseat.Hotseat>
+
+                <FrameLayout
+                    android:id="@+id/fl_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="@dimen/menu_bar_icon_margin_start"
+                    android:background="@color/searchbar_border_white"
+                    android:visibility="visible"></FrameLayout>
+
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/fl_casting_container"
@@ -148,8 +185,8 @@
                 android:descendantFocusability="afterDescendants"
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="MissingConstraints">
+                app:layout_constraintStart_toEndOf="@+id/menu_hotseat"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/casting"
@@ -161,29 +198,6 @@
                     android:src="@drawable/source_52" />
 
             </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_allapps_container"
-                android:layout_width="@dimen/menu_bar_icon_container_width"
-                android:layout_height="@dimen/menu_bar_icon_container_height"
-                android:background="@drawable/menubar_item_focus"
-                android:descendantFocusability="afterDescendants"
-                android:focusable="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/fl_setting_container"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/allApps"
-                    android:layout_width="@dimen/pending_menu_bar_icon_size"
-                    android:layout_height="@dimen/pending_menu_bar_icon_size"
-                    android:layout_gravity="center"
-                    android:background="@drawable/menubar_item_focus"
-                    android:focusable="true"
-                    android:src="@drawable/all_apps_52" />
-            </FrameLayout>
-
-
 
 
             <FrameLayout
@@ -210,6 +224,26 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </FrameLayout>
 
+            <FrameLayout
+                android:id="@+id/fl_allapps_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_setting_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/allApps"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/all_apps_52" />
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/fl_ezwrite_container"
@@ -233,6 +267,29 @@
                     android:background="@drawable/menubar_item_focus"
                     android:focusable="true"
                     android:src="@drawable/ezwrite_52" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_help_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:layout_marginStart="@dimen/menu_bar_icon_margin_start"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_allapps_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_help"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/help_52" />
             </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

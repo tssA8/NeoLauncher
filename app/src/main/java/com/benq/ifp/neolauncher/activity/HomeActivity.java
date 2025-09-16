@@ -18,9 +18,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.benq.ifp.neolauncher.CellLayout;
+import com.benq.ifp.neolauncher.DeviceProfile;
 import com.benq.ifp.neolauncher.R;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
 import com.benq.ifp.neolauncher.graphics.ToolbarBackground;
+import com.benq.ifp.neolauncher.hotseat.Hotseat;
 import com.benq.ifp.neolauncher.menubar.MenuBar;
 import com.benq.ifp.neolauncher.preference.Preferences;
 import com.benq.ifp.neolauncher.view.SoftKeyboard;
@@ -33,7 +36,7 @@ public class HomeActivity extends Activity {
 	private GestureDetector gestureDetector;
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
-
+	private Hotseat hotseatView;
 	private MenuBar menubar;
 	private EditText searchInput;
 	private ImageView prefsButton;
@@ -41,6 +44,8 @@ public class HomeActivity extends Activity {
 	private boolean showAllAppsOnResume = false;
 	private int immersiveMode = Preferences.IMMERSIVE_MODE_DISABLED;
 	private long pausedAt = 0L;
+
+	private DeviceProfile mDeviceProfile;
 
 	@Override
 	public void onBackPressed() {
@@ -70,6 +75,13 @@ public class HomeActivity extends Activity {
 		}
 	}
 
+	public DeviceProfile getDeviceProfile() {
+		if (mDeviceProfile == null) {
+			mDeviceProfile = new DeviceProfile(this);
+		}
+		return mDeviceProfile;
+	}
+
 	@Override
 	protected void onCreate(Bundle state) {
 		super.onCreate(state);
@@ -80,12 +92,15 @@ public class HomeActivity extends Activity {
 				ViewConfiguration.get(this).getScaledMinimumFlingVelocity()));
 
 		setContentView(R.layout.home_activity);
+
 		if (!PreferencesActivity.isReady(this)) {
 			PreferencesActivity.startWelcome(this);
 		}
 
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
+		menubar = findViewById(R.id.menubar);
+		hotseatView = pieView.findViewById(R.id.hotseat);
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
 
@@ -187,13 +202,20 @@ public class HomeActivity extends Activity {
 	}
 
 	private void initPieView() {
-		menubar = (MenuBar) findViewById(R.id.menubar);
+		// 2) 綁定 Host + Hotseat（可為 null，MenuBar 內會自己再 rootView.findViewById 當備援）
+		if (menubar != null) {
+			menubar.bindHost(this, (hotseatView instanceof Hotseat)
+					? hotseatView
+					: null);
+		}
+
+		// 3) 原本初始化 AppPieView 的流程
 		pieView.setWindow(getWindow());
 		pieView.setListListener(new AppPieView.ListListener() {
 			@Override
 			public void onOpenList(boolean resume) {
 				showAllAppsOnResume = resume;
-				Log.d("onOpenList "," AAA_onOpenList");
+				Log.d("onOpenList ", "AAA_onOpenList");
 				showAllApps();
 			}
 
@@ -218,11 +240,50 @@ public class HomeActivity extends Activity {
 				setAlpha(searchInput, alpha);
 			}
 		});
+
 		PieLauncherApp.appMenu.setUpdateListener(() -> {
 			searchInput.getText().clear();
 			updateAppList();
 		});
+
+		pieView.setHotseatDropTarget(hotseatView, new AppPieView.HotseatDropTarget() {
+			@Override
+			public boolean acceptDrop(com.benq.ifp.neolauncher.content.AppMenu.AppIcon app) {
+				// 簡易加入 Hotseat：塞進下一個空位（示意）
+				Hotseat hs = hotseatView;
+				CellLayout layout = hs.getLayout();
+				if (layout == null) return false;
+
+				// 已滿就拒收
+				if (layout.getShortcutsAndWidgets().getChildCount() >= getDeviceProfile().inv.numHotseatIcons) {
+					return false;
+				}
+
+				android.widget.ImageView iv = new android.widget.ImageView(hotseatView.getContext());
+				iv.setImageBitmap(app.bitmap);
+				iv.setContentDescription(app.label);
+				// TODO: 設 onClick 啟動 app、長按搬移等
+
+				int nextRank = layout.getShortcutsAndWidgets().getChildCount();
+				int x = hs.getCellXFromOrder(nextRank);
+				int y = hs.getCellYFromOrder(nextRank);
+				CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x, y, 1, 1);
+				lp.canReorder = true;
+
+				layout.addViewToCellLayout(iv, -1, View.generateViewId(), lp, true);
+
+				// TODO: 持久化 componentName + rank，避免重進程就不見
+				return true;
+			}
+
+			@Override
+			public void onHoverHotseat(boolean hovered) {
+				// 簡單的 hover 效果（你也可以改成顏色、邊框等）
+				hotseatView.setActivated(hovered);
+			}
+		});
 	}
+
 
 	private void initSearchInput() {
 		searchInput.addTextChangedListener(new TextWatcher() {

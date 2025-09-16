@@ -1,23 +1,7 @@
-/*
- * Copyright (C) 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.benq.ifp.neolauncher.menubar
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.IntentFilter
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -29,9 +13,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.benq.ifp.neolauncher.R
 import com.benq.ifp.neolauncher.activity.HomeActivity
+import com.benq.ifp.neolauncher.hotseat.Hotseat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-
 
 class MenuBar @JvmOverloads constructor(
     context: Context,
@@ -39,8 +23,8 @@ class MenuBar @JvmOverloads constructor(
     defStyle: Int = 0
 ) : FrameLayout(context, attrs, defStyle) {
 
-    private var mLauncher: HomeActivity = context as HomeActivity
-
+    // 不要在這裡硬轉型，避免預覽/主題 Context 崩潰
+    private var mLauncher: HomeActivity? = null
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main.immediate)
 
@@ -48,8 +32,8 @@ class MenuBar @JvmOverloads constructor(
     lateinit var mShowLoginView: ConstraintLayout
     private lateinit var mUserPicture: CircleImageView
     private lateinit var mName: TextView
+
     //Login Mode
-    //These two are using by Launcher
     lateinit var mBtnLogin: Button
     private lateinit var mMenubarRoot: View
     private lateinit var mShowAccountSettingLoginView: ConstraintLayout
@@ -69,24 +53,34 @@ class MenuBar @JvmOverloads constructor(
     private var mVlastFocusView: View? = null
     lateinit var mMenubarConstraintSet: ConstraintLayout
 
+    // 熱座改成可為 null，並在附著/由外部注入時取得
+    var hotseat: Hotseat? = null
+        private set
+
     private val TAG = "MenuBar"
 
-    // Jacky {
+    // 讓 Activity 來注入 Host 與 Hotseat（推薦）
+    fun bindHost(host: HomeActivity, hotseatView: Hotseat? = null) {
+        mLauncher = host
+        hotseat = hotseatView ?: rootView.findViewById(R.id.hotseat)
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        val filter = IntentFilter()
-        filter.apply {
-            addAction(ACTION_LAUNCHER_SHOW_FORGET_PASSWORD_VIEW)
-            addAction(ACTION_LAUNCHER_SHOW_LOGIN_VIEW)
+        // 嘗試安全取得 Host 與 Hotseat（若尚未用 bindHost）
+        if (mLauncher == null) {
+            mLauncher = context as? HomeActivity
+        }
+        if (hotseat == null) {
+            hotseat = rootView.findViewById(R.id.hotseat)
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        // 如有註冊 Receiver，記得在這裡反註冊
     }
 
-
-    // Jacky }
     private fun initView() {
         mMenubarConstraintSet = findViewById(R.id.menubar_constraint_set_container)
         mUserMenubar = findViewById(R.id.menubar_user)
@@ -103,6 +97,9 @@ class MenuBar @JvmOverloads constructor(
         mFlAllAppContainer = findViewById<View>(R.id.fl_allapps_container) as FrameLayout
         mFlSettingContainer = findViewById<View>(R.id.fl_setting_container) as FrameLayout
 
+        // Hotseat 可能不在 MenuBar 的子樹，改用 rootView 尋找（或靠 bindHost 注入）
+        hotseat = hotseat ?: rootView.findViewById(R.id.hotseat)
+
         //login
         mShowAccountSettingLoginView = findViewById<View>(R.id.cl_logIn_container) as ConstraintLayout
         mUserPictureLogIn = findViewById<View>(R.id.picture_local_public) as CircleImageView
@@ -111,19 +108,12 @@ class MenuBar @JvmOverloads constructor(
         val params = mMenubarRoot.layoutParams
         val height = resources.getDimensionPixelSize(R.dimen.menubar_height)
         params.height = height
-
-        mMenubarRoot.setLayoutParams(params)
-
+        mMenubarRoot.layoutParams = params
     }
 
-
-
-
     private fun setListener() {
-
         mCasting.setOnClickListener {
             if (DEBUG) Log.i(TAG, "Click casting button")
-
         }
 
         mEzWrite.setOnClickListener {
@@ -135,14 +125,16 @@ class MenuBar @JvmOverloads constructor(
         }
 
         mMenubarRoot.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) mBtnLogin.requestFocus()
+            if (hasFocus && ::mBtnLogin.isInitialized) {
+                mBtnLogin.requestFocus()
+            }
         }
 
         mAllApp.setOnClickListener {
             if (DEBUG) Log.i(TAG, "Click mAllApp button")
-            mLauncher.showAllApps()
+            // 避免空指標
+            mLauncher?.showAllApps() ?: (context as? HomeActivity)?.showAllApps()
         }
-
     }
 
     override fun onFinishInflate() {
@@ -153,8 +145,6 @@ class MenuBar @JvmOverloads constructor(
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        // We don't want any clicks to go through to the hotseat unless the workspace is in
-        // the normal state.
         Log.i(TAG, "onInterceptTouchEvent:$ev")
         return false
     }
@@ -166,7 +156,6 @@ class MenuBar @JvmOverloads constructor(
         }
     }
 
-
     override fun addFocusables(views: ArrayList<View>?, direction: Int, focusableMode: Int) {
         val lastView = mVlastFocusView ?: mShowAccountSettingLoginView
         if (lastView.isFocusable && direction == FOCUS_DOWN) {
@@ -177,45 +166,15 @@ class MenuBar @JvmOverloads constructor(
     }
 
     override fun focusSearch(focused: View?, direction: Int): View? {
-
         val focusedView = focused ?: return null
-
         if (direction == FOCUS_UP) {
             mVlastFocusView = focusedView
         }
-
         return super.focusSearch(focused, direction)
     }
 
-    interface MenuBarListener {
-        fun onAllAppsClick()
-    }
-
-
     companion object {
         private const val DEBUG = true
-        private const val ACTION_LAUNCH_UPDATE = "com.benq.qota.action.LAUNCH_UPDATE" //BroadCast
-        private const val EZ_WRITE_PKG_NAME6 = "com.benq.app.ezwrite" //EZ6
-        private const val AMS_FILES = "com.benq.ifp.ams"
-        private const val ACTION_AMS_SAFE_MODE = "com.benq.action.safetymode"
-        private const val ACTION_SHOW_HIDE_QUICK_USE = "com.benq.action.refresh_guest_login"
-        private const val CONNECTION_KTC_PKG_NAME = "com.benqsetting.connection"
-        private const val CONNECTION_SB_PKG_NAME = "com.ifpdos.windowsettings"
-        private const val DEVICE_VERSION_NAME_RM03 = "RM03"
-        private const val DEMO_VIDEO_ACTION = "com.benq.activity.DemoVideoActivity"
-        private const val OPEN_ACCOUNT_SETTING_VIEW = "com.benq.accountsetting.ui"
-        private const val INSTANT_SHARE_TWO = "com.benq.qshare.host"
-        private const val INSTANT_SHARE_TWO_EDLA = "com.benq.qshare.edla"
-        private const val ACTION_LAUNCHER_SHOW_LOGIN_VIEW =
-            "com.benq.action.ACTION_LAUNCHER_SHOW_LOGIN_VIEW"
-        private const val ACTION_LAUNCHER_SHOW_FORGET_PASSWORD_VIEW =
-            "com.benq.launchercs.action.PWDFORGET"
-        private const val ACTION_BENQ_SHOW_FLOATING_ALL_APPS = "com.benq.show.floating.all.apps"
-        private const val ACTION_BENQ_SHOW_FLOATING_ALL_APPS_LEFT =
-            "com.benq.show.floating.all.apps.is.left"
-        private const val TIME_INTERVAL = 100
-        var IS_DEBUG_SHOW_EDLA_STYLE_GUEST_MENUBAR = true
-        private const val SYS_PROP_DMS_ENABLE_GUEST = "persist.sys.benq.enable_guest"
+        private const val TAG = "MenuBar"
     }
-
 }

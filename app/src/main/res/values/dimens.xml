@@ -354,6 +354,11 @@
 	<dimen name="focus_frame_animation_time">200px</dimen>
 	<dimen name="focus_frame_border_width">2dp</dimen>
 
+	<dimen name="hotseat_height">88dp</dimen>
+	<dimen name="hotseat_icon_size">48dp</dimen>
+	<dimen name="hotseat_horizontal_padding">16dp</dimen>
+	<dimen name="hotseat_icon_text_size">12sp</dimen>
+
 	<dimen name="dp_5">3dp</dimen>
 	<dimen name="dp_10">6dp</dimen>
 	<dimen name="dp_12">8dp</dimen>

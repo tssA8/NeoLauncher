@@ -171,6 +171,22 @@ public class AppPieView extends View {
     private int forceWpx;
     private int forceHpx;
 
+    private View hotseatView;
+    private HotseatDropTarget hotseatTarget;
+    private final Rect hotseatRect = new Rect();
+
+    private boolean draggingFromList = false;
+    private AppMenu.AppIcon draggedIcon = null;
+
+
+    public interface HotseatDropTarget {
+        /** 回傳 true 表示接收成功（有空位或已處理）；false 表示拒收 */
+        boolean acceptDrop(AppMenu.AppIcon app);
+        /** 手指是否正 hover 在 Hotseat 上，用來做高亮效果 */
+        void onHoverHotseat(boolean hovered);
+    }
+
+
     public AppPieView(Context context, AttributeSet attr) {
         super(context, attr);
 
@@ -254,6 +270,29 @@ public class AppPieView extends View {
             PieLauncherApp.appMenu.indexAppsAsync(context);
         }
         initTouchListener();
+    }
+
+    public void setHotseatDropTarget(View view, HotseatDropTarget target) {
+        this.hotseatView = view;
+        this.hotseatTarget = target;
+        if (hotseatView != null) {
+            hotseatView.addOnLayoutChangeListener((v, l, t, r, b, ol, ot, or, ob) -> updateHotseatRect());
+        }
+        updateHotseatRect();
+    }
+
+    private void updateHotseatRect() {
+        if (hotseatView == null) {
+            hotseatRect.setEmpty();
+            return;
+        }
+        int[] hotseatLoc = new int[2];
+        int[] pieLoc = new int[2];
+        hotseatView.getLocationOnScreen(hotseatLoc);
+        getLocationOnScreen(pieLoc);
+        int left = hotseatLoc[0] - pieLoc[0];
+        int top  = hotseatLoc[1] - pieLoc[1];
+        hotseatRect.set(left, top, left + hotseatView.getWidth(), top + hotseatView.getHeight());
     }
 
     public void setWindow(Window window) {
@@ -380,7 +419,7 @@ public class AppPieView extends View {
             } else {
                 layoutView(realW, realH);
             }
-            // <<< FORCE SCREEN OVERRIDE
+            updateHotseatRect();  // ★ 新增：版面改變就更新投遞區矩形
         }
     }
 
@@ -506,6 +545,13 @@ public class AppPieView extends View {
                         invalidate();
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        if (draggingFromList) {
+                            // 跟著手指移動，並回報 hover 狀態給 Hotseat 做高亮
+                            boolean over = hotseatRect.contains(touch.x, touch.y);
+                            if (hotseatTarget != null) hotseatTarget.onHoverHotseat(over);
+                            invalidate();
+                            return true;  // 拖曳時不要捲動清單
+                        }
                         if (mode == MODE_PIE) {
                             spin(event);
                         } else if (mode == MODE_LIST) {
@@ -522,11 +568,29 @@ public class AppPieView extends View {
                         } else if (mode == MODE_LIST) {
                             cancelLongPress();
                             cancelDragDownList();
+                            if (draggingFromList) {
+                                boolean over = hotseatRect.contains(touch.x, touch.y);
+                                if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
+                                if (over && hotseatTarget != null && draggedIcon != null) {
+                                    hotseatTarget.acceptDrop(draggedIcon);
+                                }
+                                draggingFromList = false;
+                                draggedIcon = null;
+                                invalidate();
+                                // 不再繼續 list 的點擊行為
+                                return true;
+                            }
                             keepScrolling(event);
                         }
                         postPerformAction(v, event);
                         break;
                     case MotionEvent.ACTION_CANCEL:
+                        if (draggingFromList) {
+                            if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
+                            draggingFromList = false;
+                            draggedIcon = null;
+                            invalidate();
+                        }
                         if (mode == MODE_PIE) {
                             cancelSpin();
                             fadeOutMode();
@@ -665,24 +729,25 @@ public class AppPieView extends View {
                     return;
                 }
                 cancelLongPress();
+
                 final AppMenu.Icon appIcon = getListIconAt(touch.x, touch.y);
                 if (appIcon == null) {
                     return;
                 }
+
+                // 先做半延遲的視覺/波紋提示
                 initLongPressFeedback(appIcon);
+
                 longPressRunnable = () -> {
-                    performHapticFeedbackIfAllowed(
-                            HapticFeedbackConstants.LONG_PRESS);
-                    if (prefs.getIconPress() == Preferences.ICON_PRESS_MENU) {
-                        showIconOptions(context, appIcon);
-                    } else {
-                        addIconInteractively(appIcon);
-                    }
+                    performHapticFeedbackIfAllowed(HapticFeedbackConstants.LONG_PRESS);
+                    // 長按觸發後，改成開始拖曳到 Hotseat 的流程
+                    startDragFromList((AppMenu.AppIcon) appIcon);
                     longPressRunnable = null;
                     cancelHighlight();
                 };
                 postDelayed(longPressRunnable, longPressTimeout);
             }
+
 
             private void cancelLongPress() {
                 cancelHighlight();
@@ -842,6 +907,14 @@ public class AppPieView extends View {
                 spinInitialTwist = PieLauncherApp.appMenu.getTwist();
             }
         });
+    }
+
+    private void startDragFromList(AppMenu.AppIcon appIcon) {
+        if (appIcon == null) return;
+        draggingFromList = true;
+        draggedIcon = appIcon;
+        cancelRipple();
+        invalidate();
     }
 
     private void cancelDragDownList() {
@@ -1496,6 +1569,16 @@ public class AppPieView extends View {
 		int maxHeight = y + listPadding + (x > xStart ? cellHeight : 0);
 		int viewHeightMinusPadding = viewHeight - getPaddingBottom();
 		maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
+
+        // ★ 畫出被拖曳的 App Icon（跟著指標）
+        if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
+            int s = iconSize; // 也可放大些：Math.round(iconSize * 1.1f)
+            int ix = touch.x - (s >> 1);
+            int iy = touch.y - (s >> 1);
+            drawRect.set(ix, iy, ix + s, iy + s);
+            canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
+        }
+
 		return invalidate;
 	}
 
