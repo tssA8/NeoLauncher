@@ -520,6 +520,16 @@ public class AppPieView extends View {
 
         // ④ 最後畫底部 Bar（固定，不跟著捲動）
         drawBottomBar(canvas);
+
+
+        // ★ 拖曳中的浮動圖示：用螢幕座標畫（不受 scroll 影響）
+        if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
+            int s = iconSize;
+            int ix = touch.x - (s >> 1);
+            int iy = touch.y - (s >> 1);
+            drawRect.set(ix, iy, ix + s, iy + s);
+            canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
+        }
     }
 
 
@@ -1795,14 +1805,6 @@ public class AppPieView extends View {
         maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
 
 
-        // ★ 拖曳中的浮動圖示：用螢幕座標畫（不受 scroll 影響）
-        if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
-            int s = iconSize;
-            int ix = touch.x - (s >> 1);
-            int iy = touch.y - (s >> 1);
-            drawRect.set(ix, iy, ix + s, iy + s);
-            canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
-        }
 
         return invalidate;
     }
