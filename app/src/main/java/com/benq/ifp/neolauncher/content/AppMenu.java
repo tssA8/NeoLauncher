@@ -47,7 +47,7 @@ import com.benq.ifp.neolauncher.preference.Preferences;
 
 public class AppMenu extends CanvasPieMenu {
 	public static class AppIcon extends CanvasPieMenu.CanvasIcon {
-		public final Rect hitRect = new Rect();
+		public Rect hitRect = new Rect();
 		public final String label;
 		public final UserHandle userHandle;
 
@@ -55,8 +55,8 @@ public class AppMenu extends CanvasPieMenu {
 		// after indexing (e.g. when switching icons).
 		public ComponentName componentName;
 
-		AppIcon(ComponentName componentName, String label, Drawable icon,
-				UserHandle userHandle) {
+		public AppIcon(ComponentName componentName, String label, Drawable icon,
+                       UserHandle userHandle) {
 			super(Converter.getBitmapFromDrawable(icon));
 			this.componentName = componentName;
 			this.label = label;

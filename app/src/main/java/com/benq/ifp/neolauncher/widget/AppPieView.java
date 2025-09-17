@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.SystemClock;
 import android.text.TextPaint;
@@ -72,6 +73,8 @@ public class AppPieView extends View {
     private static final int MODE_PIE = 0;
     private static final int MODE_LIST = 1;
     private static final int MODE_EDIT = 2;
+
+    private static final int MODE_HOME = 99;
 
     private final Fade fadePie = new Fade();
     private final Fade fadeList = new Fade();
@@ -152,7 +155,7 @@ public class AppPieView extends View {
     private int lastSelectedIcon;
     private int lastBlur;
     private int selectedApp = -1;
-    private int mode = MODE_PIE;
+    private int mode = MODE_LIST;
     private ListListener listListener;
     private List<AppMenu.AppIcon> appList;
     private Rect highlightedAction;
@@ -179,10 +182,41 @@ public class AppPieView extends View {
     private AppMenu.AppIcon draggedIcon = null;
 
 
+    //把圓盤改成hotseat的參數
+    // === Bottom Bar（5x1）===
+    private static final int BAR_COLS = 5;
+    private final Rect barRect = new Rect();            // 整條長條的矩形
+    private final Rect[] barSlotRects = new Rect[BAR_COLS]; // 每一格的矩形
+    private final AppMenu.AppIcon[] barSlots = new AppMenu.AppIcon[BAR_COLS]; // 每格放的 App
+
+    // --- Bar 點擊/長按狀態 ---
+    private int barPressedIndex = -1;
+    private boolean barLongPressFired = false;
+    private Runnable barLongPressRunnable = null;
+
+
+    // UI 尺寸
+    private int barHeight;          // 長條高度
+    private int barPaddingH;        // 左右內距
+    private int barRadius;          // 圓角半徑（畫背景用）
+
+    // 拖曳時的高亮
+    private int barHoverIndex = -1;
+
+    // 偏好存取
+    private static final String PREFS_BAR = "hotseat_bar";
+    private static final String KEY_SLOTS = "slots";
+
+
     public interface HotseatDropTarget {
-        /** 回傳 true 表示接收成功（有空位或已處理）；false 表示拒收 */
+        /**
+         * 回傳 true 表示接收成功（有空位或已處理）；false 表示拒收
+         */
         boolean acceptDrop(AppMenu.AppIcon app);
-        /** 手指是否正 hover 在 Hotseat 上，用來做高亮效果 */
+
+        /**
+         * 手指是否正 hover 在 Hotseat 上，用來做高亮效果
+         */
         void onHoverHotseat(boolean hovered);
     }
 
@@ -270,7 +304,32 @@ public class AppPieView extends View {
             PieLauncherApp.appMenu.indexAppsAsync(context);
         }
         initTouchListener();
+
+        // 初始化每格矩形
+        for (int i = 0; i < BAR_COLS; i++) {
+            barSlotRects[i] = new Rect();
+        }
+
     }
+
+    private void computeBarLayout() {
+        barHeight = Math.round(84f * dp);
+        barPaddingH = Math.round(24f * dp);
+        barRadius = Math.round(18f * dp);
+
+        int left = barPaddingH;
+        int right = viewWidth - barPaddingH;
+        int bottom = viewHeight - Math.round(24f * dp);
+        int top = bottom - barHeight;
+        barRect.set(left, top, right, bottom);
+
+        int cellW = barRect.width() / BAR_COLS;
+        for (int i = 0; i < BAR_COLS; i++) {
+            int cx = barRect.left + i * cellW;
+            barSlotRects[i].set(cx, barRect.top, cx + cellW, barRect.bottom);
+        }
+    }
+
 
     public void setHotseatDropTarget(View view, HotseatDropTarget target) {
         this.hotseatView = view;
@@ -291,7 +350,7 @@ public class AppPieView extends View {
         hotseatView.getLocationOnScreen(hotseatLoc);
         getLocationOnScreen(pieLoc);
         int left = hotseatLoc[0] - pieLoc[0];
-        int top  = hotseatLoc[1] - pieLoc[1];
+        int top = hotseatLoc[1] - pieLoc[1];
         hotseatRect.set(left, top, left + hotseatView.getWidth(), top + hotseatView.getHeight());
     }
 
@@ -326,7 +385,7 @@ public class AppPieView extends View {
         }
         fadeList.maxIn = dragProgress;
         fadeOutMode();
-        mode = MODE_PIE;
+        mode = MODE_HOME;
         resetScrollWithoutAnimation();
         setVerticalScrollBarEnabled(false);
         invalidate();
@@ -421,6 +480,7 @@ public class AppPieView extends View {
             }
             updateHotseatRect();  // ★ 新增：版面改變就更新投遞區矩形
         }
+        restoreBar();
     }
 
 
@@ -428,11 +488,12 @@ public class AppPieView extends View {
     protected void onDraw(Canvas canvas) {
         long now = SystemClock.uptimeMillis();
         float ad = prefs.getAnimationDuration();
-        float fPie = fadePie.get(now, ad);
         float fList = Math.min(fadeList.get(now, ad), dragProgress);
         float fEdit = fadeEdit.get(now, ad);
-        float fMax = Math.max(fPie, Math.max(fList, fEdit));
+        float fMax = Math.max(fList, fEdit);
         int bbr = prefs.getBackgroundBlurRadius();
+
+        // 背景模糊
         if (bbr > 0) {
             int blur = Math.round(fMax * bbr);
             if (blur != lastBlur) {
@@ -440,6 +501,8 @@ public class AppPieView extends View {
                 lastBlur = blur;
             }
         }
+
+        // 背景塗色（只在 List/Edit 時或有 darkenBackground 偏好時）
         if (mode != MODE_PIE || prefs.darkenBackground()) {
             int max = (translucentBackgroundColor >> 24) & 0xff;
             int alpha = Math.round(fMax * max);
@@ -451,15 +514,70 @@ public class AppPieView extends View {
                         PorterDuff.Mode.SRC);
             }
         }
-        boolean invalidate = drawPieMenu(canvas, fPie);
-        invalidate |= drawList(canvas, fList);
-        invalidate |= drawEditor(canvas, fEdit);
+
+        boolean invalidate = false;
+
+        // 只在需要時畫 List
+        if (mode == MODE_LIST) {
+            invalidate |= drawList(canvas, fList);
+        }
+
+        // 只在需要時畫 Edit
+        if (mode == MODE_EDIT) {
+            invalidate |= drawEditor(canvas, fEdit);
+        }
+
+        // Ripple 效果
         if (ripple.draw(canvas, prefs) || invalidate) {
             invalidate();
         }
+
+        // 索引中提示
         if (PieLauncherApp.appMenu.isIndexing()) {
             drawTip(canvas, loadingTip);
         }
+
+        // 永遠最後畫底下 bar
+        drawBottomBar(canvas);
+    }
+
+
+    private void drawBottomBar(Canvas canvas) {
+        // 背景圓角
+        int save = canvas.save();
+        android.graphics.Path path = new android.graphics.Path();
+        float r = barRadius;
+        path.addRoundRect(new android.graphics.RectF(barRect), new float[]{r, r, r, r, r, r, r, r}, android.graphics.Path.Direction.CW);
+        canvas.clipPath(path);
+        canvas.drawRect(barRect, paintDropZone);
+        canvas.restoreToCount(save);
+
+        // 畫 5 格
+        int s = iconSize;
+        for (int i = 0; i < BAR_COLS; i++) {
+            Rect cell = barSlotRects[i];
+
+            // 拖曳 hover 高亮
+            if (i == barHoverIndex) {
+                canvas.drawRect(cell, paintPressed);
+            }
+
+            AppMenu.AppIcon app = barSlots[i];
+            if (app != null && app.bitmap != null) {
+                int cx = cell.centerX();
+                int cy = cell.centerY();
+                drawRect.set(cx - (s >> 1), cy - (s >> 1), cx + (s >> 1), cy + (s >> 1));
+                canvas.drawBitmap(app.bitmap, null, drawRect, paintList);
+            } else {
+                // 空槽簡單畫個 +
+                int cx = cell.centerX(), cy = cell.centerY();
+                int half = Math.round(s * 0.25f);
+                canvas.drawLine(cx - half, cy, cx + half, cy, paintText);
+                canvas.drawLine(cx, cy - half, cx, cy + half, paintText);
+            }
+        }
+
+        // 你本來就有的「拖曳中的圖示跟著手指」在 drawList() 末端已畫，這裡不用重複
     }
 
     @Override
@@ -471,6 +589,67 @@ public class AppPieView extends View {
     protected int computeVerticalScrollOffset() {
         return getScrollY();
     }
+
+    private AppMenu.AppIcon cloneForBar(AppMenu.AppIcon src) {
+        // 這裡的 Drawable 只用來餵給建構子；實際顯示會用 src.bitmap
+        Drawable ph = Converter.getDrawable(getResources(), R.drawable.ic_placeholder);
+        AppMenu.AppIcon d = new AppMenu.AppIcon(src.componentName, src.label, ph, src.userHandle);
+
+        // 可選：若你想直接沿用來源的 bitmap（避免取資源）
+        d.bitmap = src.bitmap;
+
+        return d; // 不要重新 new hitRect（它是 final）
+    }
+
+
+    private void saveBar() {
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray();
+            for (int i = 0; i < BAR_COLS; i++) {
+                String flat = (barSlots[i] != null && barSlots[i].componentName != null)
+                        ? barSlots[i].componentName.flattenToString()
+                        : "";
+                arr.put(flat);
+            }
+            getContext().getSharedPreferences(PREFS_BAR, Context.MODE_PRIVATE)
+                    .edit().putString(KEY_SLOTS, arr.toString()).apply();
+        } catch (Exception ignore) {
+        }
+    }
+
+    private void restoreBar() {
+        String json = getContext()
+                .getSharedPreferences(PREFS_BAR, Context.MODE_PRIVATE)
+                .getString(KEY_SLOTS, "[]");
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray(json);
+            android.content.pm.PackageManager pm = getContext().getPackageManager();
+            for (int i = 0; i < BAR_COLS && i < arr.length(); i++) {
+                String comp = arr.optString(i, "");
+                if (comp.isEmpty()) {
+                    barSlots[i] = null;
+                    continue;
+                }
+                android.content.ComponentName cn = android.content.ComponentName.unflattenFromString(comp);
+                if (cn == null) {
+                    barSlots[i] = null;
+                    continue;
+                }
+                try {
+                    android.graphics.drawable.Drawable d = pm.getActivityIcon(cn);
+                    CharSequence labelCs = pm.getActivityInfo(cn, 0).loadLabel(pm);
+                    String label = (labelCs == null) ? "" : labelCs.toString();
+                    AppMenu.AppIcon icon = new AppMenu.AppIcon(cn, label, d, null);
+                    icon.hitRect = new Rect();
+                    barSlots[i] = icon;
+                } catch (Exception e) {
+                    barSlots[i] = null;
+                }
+            }
+        } catch (Exception ignore) {
+        }
+    }
+
 
     private void initTouchListener() {
         setOnTouchListener(new OnTouchListener() {
@@ -511,30 +690,35 @@ public class AppPieView extends View {
                         }
                         break;
                     case MotionEvent.ACTION_DOWN:
-                        if (cancelPerformAction()) {
-                            // Ignore additional ACTION_DOWN's when there
-                            // is a pending action.
-                            break;
-                        }
+                        if (cancelPerformAction()) break;
                         addTouch(event);
                         long eventTime = event.getEventTime();
+
+                        // ★ 先看是否點在底部 bar
+                        if (barRect.contains(touch.x, touch.y)) {
+                            barPressedIndex = whichBarIndex(touch.x);
+                            if (barPressedIndex >= 0 && barSlots[barPressedIndex] != null) {
+                                startBarLongPress();    // 排程長按
+                                // 顯示 hover 效果
+                                barHoverIndex = barPressedIndex;
+                                invalidate();
+                                // 不要讓事件走到 Pie/List 處理
+                                return true;
+                            } else {
+                                // 點到空槽就不用長按，直接記錄 index（可看你要不要處理空槽行為）
+                                barPressedIndex = -1;
+                            }
+                        }
+
                         switch (mode) {
                             case MODE_PIE:
-                                if (inDeadZone()) {
-                                    return false;
-                                }
+                                if (inDeadZone()) return false;
                                 setCenter(touch.x, touch.y);
                                 fadePie.fadeIn(eventTime);
-                                performHapticFeedbackIfAllowed(
-                                        HAPTIC_FEEDBACK_DOWN);
+                                performHapticFeedbackIfAllowed(HAPTIC_FEEDBACK_DOWN);
                                 break;
                             case MODE_LIST:
-                                // Ignore ACTION_DOWN during animation to
-                                // prevent starting a long press from the
-                                // wrong coordinates.
-                                if (fadeList.isFadingIn(eventTime)) {
-                                    return false;
-                                }
+                                if (fadeList.isFadingIn(eventTime)) return false;
                                 initScroll(event);
                                 initLongPress(v.getContext());
                                 break;
@@ -545,39 +729,76 @@ public class AppPieView extends View {
                         invalidate();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        if (draggingFromList) {
-                            // 跟著手指移動，並回報 hover 狀態給 Hotseat 做高亮
-                            boolean over = hotseatRect.contains(touch.x, touch.y);
-                            if (hotseatTarget != null) hotseatTarget.onHoverHotseat(over);
+                        // ★ 拖曳或移動時的 Bar 處理
+                        if (barPressedIndex >= 0) {
+                            // 如果手指移出 bar 範圍，就取消長按 & hover
+                            if (!barRect.contains(touch.x, touch.y)) {
+                                resetBarPressState();
+                                invalidate();
+                                // 不把事件往下傳，這次手勢視為處理完
+                                return true;
+                            }
+                            // 移動量過大也取消長按（避免誤觸）
+                            TouchReference tr = touchReferences.get(primaryId);
+                            if (tr != null && distSq(tr.x, tr.y, touch.x, touch.y) > touchSlopSq) {
+                                cancelBarLongPress();
+                            }
+                            // 更新 hover 格（可選）
+                            barHoverIndex = whichBarIndex(touch.x);
                             invalidate();
-                            return true;  // 拖曳時不要捲動清單
+                            return true;
+                        }
+
+                        // === 原本的流程 ===
+                        if (draggingFromList) {
+                            boolean over = barRect.contains(touch.x, touch.y);
+                            barHoverIndex = -1;
+                            if (over) {
+                                barHoverIndex = whichBarIndex(touch.x);
+                            }
+                            invalidate();
+                            return true;
                         }
                         if (mode == MODE_PIE) {
                             spin(event);
                         } else if (mode == MODE_LIST) {
-                            if (isScroll(event)) {
-                                cancelLongPress();
-                            }
+                            if (isScroll(event)) cancelLongPress();
                             scroll(event);
                         }
                         invalidate();
                         break;
                     case MotionEvent.ACTION_UP:
+                        // ★ Bar 的點擊 / 長按收尾
+                        if (barPressedIndex >= 0) {
+                            AppMenu.AppIcon app = barSlots[barPressedIndex];
+                            boolean handled = false;
+
+                            if (!barLongPressFired && app != null) {
+                                // 不是長按 → 視為「點擊」，啟動 App
+                                PieLauncherApp.appMenu.launchApp(getContext(), app);
+                                handled = true;
+                            }
+                            resetBarPressState();
+                            invalidate();
+                            if (handled) return true;
+                            // 如果長按已經處理了（有跳選單），也攔截這次手勢
+                            if (barLongPressFired) return true;
+                        }
+
                         if (mode == MODE_PIE) {
                             cancelSpin();
                         } else if (mode == MODE_LIST) {
                             cancelLongPress();
                             cancelDragDownList();
                             if (draggingFromList) {
-                                boolean over = hotseatRect.contains(touch.x, touch.y);
-                                if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
-                                if (over && hotseatTarget != null && draggedIcon != null) {
-                                    hotseatTarget.acceptDrop(draggedIcon);
+                                if (barHoverIndex >= 0 && draggedIcon != null) {
+                                    barSlots[barHoverIndex] = cloneForBar(draggedIcon);
+                                    saveBar();
                                 }
                                 draggingFromList = false;
                                 draggedIcon = null;
+                                barHoverIndex = -1;
                                 invalidate();
-                                // 不再繼續 list 的點擊行為
                                 return true;
                             }
                             keepScrolling(event);
@@ -585,6 +806,7 @@ public class AppPieView extends View {
                         postPerformAction(v, event);
                         break;
                     case MotionEvent.ACTION_CANCEL:
+                        resetBarPressState();
                         if (draggingFromList) {
                             if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
                             draggingFromList = false;
@@ -971,6 +1193,8 @@ public class AppPieView extends View {
         listFadeHeight = Math.round(viewHeight * .5f);
 
         layoutEditorControls(height > width);
+
+        computeBarLayout();
     }
 
     private void layoutEditorControls(boolean portrait) {
@@ -1134,8 +1358,19 @@ public class AppPieView extends View {
         }
     }
 
-    private boolean performAction(Context context, Point at, boolean wasTap,
-                                  boolean wasDoubleTap, boolean wasLongPress) {
+    private boolean performAction(Context context, Point at,
+                                  boolean wasTap, boolean wasDoubleTap, boolean wasLongPress) {
+        // ★ 先檢查是不是點在 Hotseat Bar 上
+        if (barRect.contains(at.x, at.y)) {
+            int idx = whichBarIndex(at.x);
+            AppMenu.AppIcon app = (idx >= 0) ? barSlots[idx] : null;
+            if (app != null) {
+                PieLauncherApp.appMenu.launchApp(context, app);
+                return true;
+            }
+        }
+
+        // 原本 Pie / List / Edit 的處理
         if (mode == MODE_PIE && fadePie.isVisible()) {
             fadeOutMode();
             return performPieAction(context, at,
@@ -1149,6 +1384,12 @@ public class AppPieView extends View {
             return result;
         }
         return false;
+    }
+
+    private int whichBarIndex(int x) {
+        int slotW = barRect.width() / BAR_COLS;
+        int idx = (x - barRect.left) / slotW;
+        return (idx >= 0 && idx < BAR_COLS) ? idx : -1;
     }
 
     private boolean performPieAction(Context context, Point at,
@@ -1474,101 +1715,101 @@ public class AppPieView extends View {
         }
     }
 
-	private boolean drawList(Canvas canvas, float f) {
-		if (f <= 0) return false;
+    private boolean drawList(Canvas canvas, float f) {
+        if (f <= 0) return false;
 
-		// === 外層：把 426dp 的虛擬寬置中到整個螢幕 ===
-		int fullWidth  = getWidth();
-		int fullHeight = getHeight();
-		int outerXOffset = (fullWidth  - viewWidth)  / 2;   // ★ 新：水平外偏移
-		// 如需垂直也置中，開下面這行：
-		// int outerYOffset = (fullHeight - viewHeight) / 2;
-		int outerYOffset = 0;
+        // === 外層：把 426dp 的虛擬寬置中到整個螢幕 ===
+        int fullWidth = getWidth();
+        int fullHeight = getHeight();
+        int outerXOffset = (fullWidth - viewWidth) / 2;   // ★ 新：水平外偏移
+        // 如需垂直也置中，開下面這行：
+        // int outerYOffset = (fullHeight - viewHeight) / 2;
+        int outerYOffset = 0;
 
-		int innerWidth = viewWidth - listPadding * 2;
-		boolean showAppNames = showAppNames();
-		int iconAndTextHeight = iconSize + (showAppNames ? iconTextPadding + Math.round(textHeight) : 0);
+        int innerWidth = viewWidth - listPadding * 2;
+        boolean showAppNames = showAppNames();
+        int iconAndTextHeight = iconSize + (showAppNames ? iconTextPadding + Math.round(textHeight) : 0);
 
-		// 固定 cell 寬高
-		int cellWidth  = iconSize + iconTextPadding * 2;
-		int cellHeight = iconAndTextHeight + iconTextPadding * 2;
+        // 固定 cell 寬高
+        int cellWidth = iconSize + iconTextPadding * 2;
+        int cellHeight = iconAndTextHeight + iconTextPadding * 2;
 
-		int columns   = Math.min(5, Math.max(1, innerWidth / cellWidth));
-		int gridWidth = columns * cellWidth;
+        int columns = Math.min(5, Math.max(1, innerWidth / cellWidth));
+        int gridWidth = columns * cellWidth;
 
-		// ★ 水平置中（加上外偏移）
-		int xStart = outerXOffset + listPadding + (innerWidth - gridWidth) / 2;
-		int wrapX  = xStart + gridWidth;
+        // ★ 水平置中（加上外偏移）
+        int xStart = outerXOffset + listPadding + (innerWidth - gridWidth) / 2;
+        int wrapX = xStart + gridWidth;
 
-		int size = getIconCount();
-		int maxTextWidth = cellWidth - iconTextPadding;
-		int hpad = (cellWidth - iconSize) / 2;
-		int vpad = (cellHeight - iconAndTextHeight) / 2;
-		int labelX = cellWidth >> 1;
-		int labelY = cellHeight - vpad - Math.round(textOffset);
-		int scrollY = getScrollY();
-		int viewTop = scrollY - cellHeight;
-		int viewBottom = scrollY + viewHeight;
+        int size = getIconCount();
+        int maxTextWidth = cellWidth - iconTextPadding;
+        int hpad = (cellWidth - iconSize) / 2;
+        int vpad = (cellHeight - iconAndTextHeight) / 2;
+        int labelX = cellWidth >> 1;
+        int labelY = cellHeight - vpad - Math.round(textOffset);
+        int scrollY = getScrollY();
+        int viewTop = scrollY - cellHeight;
+        int viewBottom = scrollY + viewHeight;
 
-		int baseY = outerYOffset + searchInputHeight + listPadding;
-		int y = baseY;
-		int x = xStart;
+        int baseY = outerYOffset + searchInputHeight + listPadding;
+        int y = baseY;
+        int x = xStart;
 
-		// 動畫
-		if (prefs.listAnimationAppearance() == Preferences.LIST_APPEARANCE_ANIMATION_SLIDE || isDraggingDownList()) {
-			y += Math.round((1f - f) * listFadeHeight);
-		}
-		paintList.setAlpha(Math.round(f * 255f));
-		paintText.setAlpha(Math.round(f * alphaText));
+        // 動畫
+        if (prefs.listAnimationAppearance() == Preferences.LIST_APPEARANCE_ANIMATION_SLIDE || isDraggingDownList()) {
+            y += Math.round((1f - f) * listFadeHeight);
+        }
+        paintList.setAlpha(Math.round(f * 255f));
+        paintText.setAlpha(Math.round(f * alphaText));
 
-		// 選取標記
-		if (selectedApp > -1 && size > 0) {
-			int offset = Math.min(selectedApp, size - 1);
-			int ix = x + (offset % columns) * cellWidth;
-			int iy = y + (offset / columns) * cellHeight;
-			canvas.drawBitmap(iconLaunchFirst, ix + labelX - iconLaunchFirstHalf, iy - listPadding, paintList);
-		}
+        // 選取標記
+        if (selectedApp > -1 && size > 0) {
+            int offset = Math.min(selectedApp, size - 1);
+            int ix = x + (offset % columns) * cellWidth;
+            int iy = y + (offset / columns) * cellHeight;
+            canvas.drawBitmap(iconLaunchFirst, ix + labelX - iconLaunchFirstHalf, iy - listPadding, paintList);
+        }
 
-		int magSize = Math.round(Math.max(cellWidth, cellHeight) * .3f);
-		boolean invalidate = f < 1f;
-		if (highlightedFrom > 0) {
-			float ad = prefs.getAnimationDuration();
-			if (ad > 0) {
-				long now = SystemClock.uptimeMillis();
-				float t = Math.min(1f, (now - highlightedFrom) / ad);
-				if (t < 1f) invalidate = true;
-				magSize = Math.round(magSize * t);
-			} else {
-				magSize = 0;
-			}
-		}
+        int magSize = Math.round(Math.max(cellWidth, cellHeight) * .3f);
+        boolean invalidate = f < 1f;
+        if (highlightedFrom > 0) {
+            float ad = prefs.getAnimationDuration();
+            if (ad > 0) {
+                long now = SystemClock.uptimeMillis();
+                float t = Math.min(1f, (now - highlightedFrom) / ad);
+                if (t < 1f) invalidate = true;
+                magSize = Math.round(magSize * t);
+            } else {
+                magSize = 0;
+            }
+        }
 
-		// 繪製
-		for (int i = 0; i < size; ++i) {
-			if (y > viewTop && y < viewBottom) {
-				AppMenu.AppIcon appIcon = appList.get(i);
-				appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
-				int ix = x + hpad;
-				int iy = y + vpad;
-				int mag = appIcon == highlightedIcon ? magSize : 0;
-				drawRect.set(ix - mag, iy - mag, ix + iconSize + mag, iy + iconSize + mag);
-				canvas.drawBitmap(appIcon.bitmap, null, drawRect, paintList);
-				if (showAppNames) {
-					CharSequence label = TextUtils.ellipsize(appIcon.label, paintText, maxTextWidth, TextUtils.TruncateAt.END);
-					canvas.drawText(label, 0, label.length(), x + labelX, y + labelY, paintText);
-				}
-			}
-			x += cellWidth;
-			if (x >= wrapX) {
-				x = xStart;        // ★ 修正：換行後也從置中的 xStart 開始
-				y += cellHeight;
-			}
-		}
+        // 繪製
+        for (int i = 0; i < size; ++i) {
+            if (y > viewTop && y < viewBottom) {
+                AppMenu.AppIcon appIcon = appList.get(i);
+                appIcon.hitRect.set(x, y, x + cellWidth, y + cellHeight);
+                int ix = x + hpad;
+                int iy = y + vpad;
+                int mag = appIcon == highlightedIcon ? magSize : 0;
+                drawRect.set(ix - mag, iy - mag, ix + iconSize + mag, iy + iconSize + mag);
+                canvas.drawBitmap(appIcon.bitmap, null, drawRect, paintList);
+                if (showAppNames) {
+                    CharSequence label = TextUtils.ellipsize(appIcon.label, paintText, maxTextWidth, TextUtils.TruncateAt.END);
+                    canvas.drawText(label, 0, label.length(), x + labelX, y + labelY, paintText);
+                }
+            }
+            x += cellWidth;
+            if (x >= wrapX) {
+                x = xStart;        // ★ 修正：換行後也從置中的 xStart 開始
+                y += cellHeight;
+            }
+        }
 
-		// ★ 修正：這裡也改用 xStart 判斷
-		int maxHeight = y + listPadding + (x > xStart ? cellHeight : 0);
-		int viewHeightMinusPadding = viewHeight - getPaddingBottom();
-		maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
+        // ★ 修正：這裡也改用 xStart 判斷
+        int maxHeight = y + listPadding + (x > xStart ? cellHeight : 0);
+        int viewHeightMinusPadding = viewHeight - getPaddingBottom();
+        maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
 
         // ★ 畫出被拖曳的 App Icon（跟著指標）
         if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
@@ -1579,8 +1820,8 @@ public class AppPieView extends View {
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
 
-		return invalidate;
-	}
+        return invalidate;
+    }
 
 
     private boolean showAppNames() {
@@ -1983,6 +2224,57 @@ public class AppPieView extends View {
             return 0;
         }
     }
+
+    private void startBarLongPress() {
+        cancelBarLongPress();
+        barLongPressRunnable = () -> {
+            barLongPressFired = true;
+            performHapticFeedbackIfAllowed(HapticFeedbackConstants.LONG_PRESS);
+            if (barPressedIndex >= 0) {
+                showBarSlotMenu(barPressedIndex);
+            }
+        };
+        postDelayed(barLongPressRunnable, longPressTimeout);
+    }
+
+    private void cancelBarLongPress() {
+        if (barLongPressRunnable != null) {
+            removeCallbacks(barLongPressRunnable);
+            barLongPressRunnable = null;
+        }
+        barLongPressFired = false;
+    }
+
+    private void resetBarPressState() {
+        cancelBarLongPress();
+        barPressedIndex = -1;
+        barHoverIndex = -1;
+    }
+
+    private void showBarSlotMenu(int idx) {
+        AppMenu.AppIcon app = barSlots[idx];
+        if (app == null) return;
+
+        ArrayList<String> items = new ArrayList<>();
+        items.add("Remove"); // 你可以在 strings.xml 補這個字串
+        items.add(getContext().getString(R.string.show_app_info));
+
+        OptionsDialog.show(getContext(), R.string.edit_app,
+                items.toArray(new CharSequence[0]),
+                (v, which) -> {
+                    switch (which) {
+                        case 0: // 移除
+                            barSlots[idx] = null;
+                            saveBar();
+                            invalidate();
+                            break;
+                        case 1: // App 資訊
+                            PieLauncherApp.appMenu.launchAppInfo(getContext(), app);
+                            break;
+                    }
+                });
+    }
+
 
     private static float easeSlowerIn(float x) {
         return x * x;
