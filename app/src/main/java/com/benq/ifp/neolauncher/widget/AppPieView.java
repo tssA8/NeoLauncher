@@ -341,7 +341,6 @@ public class AppPieView extends View {
         barHeight = getResources().getDimensionPixelSize(R.dimen.menu_bar_icon_container_height);
 
         // 既有尺寸
-//        barHeight  = Math.round(84f * dp);
         barPaddingH = Math.round(24f * dp);
         barRadius  = Math.round(18f * dp);
 
@@ -365,7 +364,11 @@ public class AppPieView extends View {
             int l = barRect.left + i * cellW;
             barSlotRects[i].set(l, barRect.top, l + cellW, barRect.bottom);
         }
+
+        // ★ 設定底部 bar 的 icon size（比高度稍微小一點）
+        iconSizeBar = Math.round(barHeight * 0.8f);
     }
+
 
 
 
@@ -631,7 +634,7 @@ public class AppPieView extends View {
         canvas.restoreToCount(saveClip);
 
         // 畫 5 格
-        int s = iconSize;
+        int s = iconSizeBar; // ← 改成專屬 bar 的大小
         for (int i = 0; i < BAR_COLS; i++) {
             Rect cell = barSlotRects[i];
 
