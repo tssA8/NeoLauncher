@@ -5,6 +5,7 @@
 	<include
 		android:id="@+id/menubar"
 		layout="@layout/menubar"
+		android:visibility="gone"
 		android:layout_gravity="bottom"
 		android:layout_width="match_parent"
 		android:layout_height="@dimen/menubar_height" />

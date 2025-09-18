@@ -40,6 +40,7 @@ import com.benq.ifp.neolauncher.graphics.CanvasPieMenu;
 import com.benq.ifp.neolauncher.graphics.Converter;
 import com.benq.ifp.neolauncher.graphics.PieMenu;
 import com.benq.ifp.neolauncher.graphics.Ripple;
+import com.benq.ifp.neolauncher.menubar.CanvasMenuBar;
 import com.benq.ifp.neolauncher.preference.Preferences;
 
 public class AppPieView extends View {
@@ -211,6 +212,8 @@ public class AppPieView extends View {
     private static final String PREFS_BAR = "hotseat_bar";
     private static final String KEY_SLOTS = "slots";
 
+    private CanvasMenuBar menuBar;
+
 
     public interface HotseatDropTarget {
         /**
@@ -224,11 +227,17 @@ public class AppPieView extends View {
         void onHoverHotseat(boolean hovered);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        menuBar.layout(w, h);   // 告訴 MenuBar 目前的畫布大小，讓它自己排版
+    }
 
     public AppPieView(Context context, AttributeSet attr) {
         super(context, attr);
 
         prefs = PieLauncherApp.getPrefs(context);
+        menuBar = new CanvasMenuBar(context);
 
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
@@ -604,6 +613,11 @@ public class AppPieView extends View {
             drawTip(canvas, loadingTip);
         }
 
+
+        if (menuBar != null) {
+            menuBar.draw(canvas);
+        }
+
         // ④ 最後畫底部 Bar（固定，不跟著捲動）
         drawBottomBar(canvas);
 
@@ -616,8 +630,8 @@ public class AppPieView extends View {
             drawRect.set(ix, iy, ix + s, iy + s);
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
-    }
 
+    }
 
 
     private void drawBottomBar(Canvas canvas) {

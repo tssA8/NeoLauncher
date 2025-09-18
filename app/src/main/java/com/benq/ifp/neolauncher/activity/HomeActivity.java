@@ -102,6 +102,7 @@ public class HomeActivity extends Activity {
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
 		pieView.setWindow(getWindow());
+//		pieView.setActivity(this);
 
 		// 啟用 immersive，隱藏底部導航列
 		pieView.enableImmersive(getWindow());

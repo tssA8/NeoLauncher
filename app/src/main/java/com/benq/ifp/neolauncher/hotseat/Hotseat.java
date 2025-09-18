@@ -133,4 +133,5 @@ public class Hotseat extends FrameLayout implements AppPieView.HotseatDropTarget
         super.performClick();
         return true; // 交給子 View 處理
     }
+
 }
