@@ -2,6 +2,12 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
+	<include
+		android:id="@+id/menubar"
+		layout="@layout/menubar"
+		android:layout_gravity="bottom"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/menubar_height" />
 
 	<com.benq.ifp.neolauncher.widget.AppPieView
 		android:id="@+id/pie"
@@ -9,13 +15,6 @@
 		android:layout_height="match_parent"
 		android:layout_gravity="center"
 		android:scrollbars="vertical"/>
-
-	<include
-		android:id="@+id/menubar"
-		layout="@layout/menubar"
-		android:layout_gravity="bottom"
-		android:layout_width="match_parent"
-		android:layout_height="@dimen/menubar_height" />
 
 	<EditText
 		tools:ignore="LabelFor"
@@ -46,5 +45,6 @@
 		android:contentDescription="@string/preferences"
 		android:src="@drawable/ic_preferences"
 		android:visibility="gone"/>
+
 
 </merge>

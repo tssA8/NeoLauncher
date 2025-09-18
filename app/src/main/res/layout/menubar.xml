@@ -153,6 +153,7 @@
                 <com.benq.ifp.neolauncher.hotseat.Hotseat
                     android:id="@+id/hotseat"
                     android:layout_width="200dp"
+                    android:visibility="gone"
                     android:layout_height="match_parent">
                 </com.benq.ifp.neolauncher.hotseat.Hotseat>
 
@@ -163,7 +164,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="@dimen/menu_bar_icon_margin_start"
                     android:background="@color/searchbar_border_white"
-                    android:visibility="visible"></FrameLayout>
+                    android:visibility="gone"></FrameLayout>
 
             </FrameLayout>
 

@@ -58,6 +58,8 @@ public class AppPieView extends View {
     private static final int FORCE_H = 2160;
     private static final int FORCE_DPI = 480; // 480dpi -> density = 480/160 = 3.0f
 
+    private int sysBarBottomInset = 0;
+
     private static final int HAPTIC_FEEDBACK_DOWN =
             Build.VERSION.SDK_INT < Build.VERSION_CODES.M
                     ? HapticFeedbackConstants.KEYBOARD_TAP
@@ -73,7 +75,6 @@ public class AppPieView extends View {
     private static final int MODE_PIE = 0;
     private static final int MODE_LIST = 1;
     private static final int MODE_EDIT = 2;
-
     private static final int MODE_HOME = 99;
 
     private final Fade fadePie = new Fade();
@@ -194,6 +195,9 @@ public class AppPieView extends View {
     private boolean barLongPressFired = false;
     private Runnable barLongPressRunnable = null;
 
+    private int iconSizeList;
+    private int iconSizeBar;
+
 
     // UI 尺寸
     private int barHeight;          // 長條高度
@@ -312,23 +316,98 @@ public class AppPieView extends View {
 
     }
 
-    private void computeBarLayout() {
-        barHeight = Math.round(84f * dp);
-        barPaddingH = Math.round(24f * dp);
-        barRadius = Math.round(18f * dp);
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(this, (v, insets) -> {
+            androidx.core.graphics.Insets sb =
+                    insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            sysBarBottomInset = sb.bottom;            // ← 導航列高度（或手勢區）
+            computeBarLayout();                        // 重新算 bar 位置
+            invalidate();
+            return insets;
+        });
+        requestApplyInsets();
+    }
 
-        int left = barPaddingH;
-        int right = viewWidth - barPaddingH;
-        int bottom = viewHeight - Math.round(24f * dp);
-        int top = bottom - barHeight;
+
+
+    private void computeBarLayout() {
+        // 固定數值（你的螢幕）
+        final int SCREEN_W = 3840;
+        final int SCREEN_H = 2160;
+
+        // 讀取 menubar 高度
+        barHeight = getResources().getDimensionPixelSize(R.dimen.menu_bar_icon_container_height);
+
+        // 既有尺寸
+//        barHeight  = Math.round(84f * dp);
+        barPaddingH = Math.round(24f * dp);
+        barRadius  = Math.round(18f * dp);
+
+        // ★ 固定寬度 320dp
+        int barWidth = Math.round(320f * dp);
+
+        // 置中再往左偏移 50px
+        int offsetX = 500;
+        int left   = (SCREEN_W - barWidth) / 2 - offsetX;
+        int right  = left + barWidth;
+
+        // 貼在螢幕底部
+        int bottom = SCREEN_H;
+        int top    = bottom - barHeight;
+
         barRect.set(left, top, right, bottom);
 
+        // 均分 5 格
         int cellW = barRect.width() / BAR_COLS;
         for (int i = 0; i < BAR_COLS; i++) {
-            int cx = barRect.left + i * cellW;
-            barSlotRects[i].set(cx, barRect.top, cx + cellW, barRect.bottom);
+            int l = barRect.left + i * cellW;
+            barSlotRects[i].set(l, barRect.top, l + cellW, barRect.bottom);
         }
     }
+
+
+
+    public static void enableImmersive(Window window) {
+        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, false);
+        androidx.core.view.WindowInsetsControllerCompat c =
+                new androidx.core.view.WindowInsetsControllerCompat(window, window.getDecorView());
+        c.setSystemBarsBehavior(
+                androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        c.hide(androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+    }
+
+    public static void disableImmersive(Window window) {
+        androidx.core.view.WindowInsetsControllerCompat c =
+                new androidx.core.view.WindowInsetsControllerCompat(window, window.getDecorView());
+        c.show(androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+    }
+
+
+//
+//    private void computeBarLayout() {
+//        barHeight   = Math.round(84f * dp);
+//        barPaddingH = 0;                // 不要左右縮進
+//        barRadius   = Math.round(18f * dp);
+//
+//        int left   = 800;
+//        int right = viewWidth + 800;
+//
+//        // 緊貼螢幕底部，距離底邊留 24dp（如果不要留白就改成 0）
+//        int bottom = 2160;
+//        int top    = 2160 - barHeight;
+//
+//        barRect.set(left, top, right, bottom);
+//
+//        // 平均切成 5 格
+//        int cellW = barRect.width() / BAR_COLS;
+//        for (int i = 0; i < BAR_COLS; i++) {
+//            int cx = barRect.left + i * cellW;
+//            barSlotRects[i].set(cx, barRect.top, cx + cellW, barRect.bottom);
+//        }
+//    }
+
 
 
     public void setHotseatDropTarget(View view, HotseatDropTarget target) {
@@ -367,9 +446,7 @@ public class AppPieView extends View {
     }
 
     public void showList() {
-        if (mode == MODE_LIST) {
-            return;
-        }
+        if (mode == MODE_LIST) return;
         mode = MODE_LIST;
         cancelRipple();
         scrollList(lastScrollY, false);
@@ -377,18 +454,24 @@ public class AppPieView extends View {
         resetDragDownList();
         fadeList.fadeIn();
         invalidate();
+
+        if (window != null) {
+            enableImmersive(window);
+        }
     }
 
     public void hideList() {
-        if (mode == MODE_PIE) {
-            return;
-        }
+        if (mode == MODE_PIE) return;
         fadeList.maxIn = dragProgress;
         fadeOutMode();
         mode = MODE_HOME;
         resetScrollWithoutAnimation();
         setVerticalScrollBarEnabled(false);
         invalidate();
+
+        if (window != null) {
+            disableImmersive(window);
+        }
     }
 
     public void dragDownListBy(float y) {

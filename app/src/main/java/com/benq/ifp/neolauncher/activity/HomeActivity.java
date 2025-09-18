@@ -101,6 +101,10 @@ public class HomeActivity extends Activity {
 
 		toolbarBackground = new ToolbarBackground(getResources());
 		pieView = findViewById(R.id.pie);
+		pieView.setWindow(getWindow());
+
+		// 啟用 immersive，隱藏底部導航列
+		pieView.enableImmersive(getWindow());
 		menubar = findViewById(R.id.menubar);
 		hotseatView = menubar.findViewById(R.id.hotseat);
 		Log.d(TAG," TAG hotseatView : "+hotseatView);
