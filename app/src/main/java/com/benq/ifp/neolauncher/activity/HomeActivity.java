@@ -102,6 +102,8 @@ public class HomeActivity extends Activity {
 		pieView = findViewById(R.id.pie);
 		pieView.setWindow(getWindow());
 		pieView.setActivity(this);
+		pieView.setVerticalScrollBarEnabled(false);
+		pieView.setHorizontalScrollBarEnabled(false);
 
 		// 啟用 immersive，隱藏底部導航列
 		pieView.enableImmersive(getWindow());

@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.SystemClock;
@@ -224,6 +225,8 @@ public class AppPieView extends View {
     private final Paint paintAllAppsCell      = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintAllAppsCellStroke= new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint paintAllAppsHover     = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintScrollTrack = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintScrollThumb = new Paint(Paint.ANTI_ALIAS_FLAG);
 
 
 
@@ -325,6 +328,13 @@ public class AppPieView extends View {
         paintAllAppsHover.setStyle(Paint.Style.FILL);
         paintAllAppsHover.setColor(res.getColor(R.color.all_apps_cs_tips_color));
         paintAllAppsHover.setAlpha(36);
+
+        paintScrollTrack.setColor(0x30FFFFFF); // 淺色透明軌道
+        paintScrollTrack.setStyle(Paint.Style.FILL);
+
+        paintScrollThumb.setColor(0xB0FFFFFF); // 白色拇指
+        paintScrollThumb.setStyle(Paint.Style.FILL);
+
 
         iconAdd = Converter.getBitmapFromDrawable(res, R.drawable.ic_add);
         iconEdit = Converter.getBitmapFromDrawable(res, R.drawable.ic_edit);
@@ -433,31 +443,6 @@ public class AppPieView extends View {
     }
 
 
-//
-//    private void computeBarLayout() {
-//        barHeight   = Math.round(84f * dp);
-//        barPaddingH = 0;                // 不要左右縮進
-//        barRadius   = Math.round(18f * dp);
-//
-//        int left   = 800;
-//        int right = viewWidth + 800;
-//
-//        // 緊貼螢幕底部，距離底邊留 24dp（如果不要留白就改成 0）
-//        int bottom = 2160;
-//        int top    = 2160 - barHeight;
-//
-//        barRect.set(left, top, right, bottom);
-//
-//        // 平均切成 5 格
-//        int cellW = barRect.width() / BAR_COLS;
-//        for (int i = 0; i < BAR_COLS; i++) {
-//            int cx = barRect.left + i * cellW;
-//            barSlotRects[i].set(cx, barRect.top, cx + cellW, barRect.bottom);
-//        }
-//    }
-
-
-
     public void setHotseatDropTarget(View view, HotseatDropTarget target) {
         this.hotseatView = view;
         this.hotseatTarget = target;
@@ -498,7 +483,6 @@ public class AppPieView extends View {
         mode = MODE_LIST;
         cancelRipple();
         scrollList(lastScrollY, false);
-        setVerticalScrollBarEnabled(true);
         resetDragDownList();
         fadeList.fadeIn();
         invalidate();
@@ -615,7 +599,6 @@ public class AppPieView extends View {
     }
     @Override
     protected void onDraw(Canvas canvas) {
-        // ① 抵銷系統在 View.draw() 時的 -scrollY（讓整個畫布回到(0,0)）
         final int sc = getScrollY();
         if (sc != 0) canvas.translate(0, sc);
 
@@ -634,38 +617,31 @@ public class AppPieView extends View {
         final int outerXOffset = (fullW - listW) / 2;
         final int outerYOffset = (fullH - listH) / 2;
 
-        // ② 先畫 All Apps 的固定背景（不跟著捲動）
+        // ★ 提前宣告 bgRect，整個方法都能使用
+        android.graphics.RectF bgRect = new android.graphics.RectF(
+                outerXOffset,
+                outerYOffset,
+                outerXOffset + listW,
+                outerYOffset + listH
+        );
+
+        // ② 畫 All Apps 的固定背景
         if (mode == MODE_LIST) {
-            android.graphics.RectF bgRect = new android.graphics.RectF(
-                    outerXOffset,
-                    outerYOffset,
-                    outerXOffset + listW,
-                    outerYOffset + listH
-            );
-            // 背景也跟著淡入
             paintAllAppsBg.setAlpha(Math.round(fList * 255f));
             float bgRadius = 20f * dp;
             canvas.drawRoundRect(bgRect, bgRadius, bgRadius, paintAllAppsBg);
         }
 
-        // ③ 再畫會捲動的清單內容（只對內容做 -sc，且限制在面板範圍內）
+        // ③ 畫可捲動的清單內容
         if (mode == MODE_LIST) {
             canvas.save();
-            // 擋住溢出：只允許內容畫在面板裡
-            canvas.clipRect(
-                    outerXOffset,
-                    outerYOffset,
-                    outerXOffset + listW,
-                    outerYOffset + listH
-            );
-            // 內容才跟著捲動
+            canvas.clipRect(bgRect);
             canvas.translate(0, -sc);
-            // drawList 內部已用 outerOffset 計算座標（或自身計算），這裡不再平移
             invalidate |= drawList(canvas, fList);
             canvas.restore();
         }
 
-        // ④ 編輯模式（固定）
+        // ④ 編輯模式
         if (mode == MODE_EDIT) {
             invalidate |= drawEditor(canvas, fEdit);
         }
@@ -679,10 +655,10 @@ public class AppPieView extends View {
             menuBar.draw(canvas);
         }
 
-        // ⑤ 底部 Bar（固定）
+        // ⑤ 底部 Bar
         drawBottomBar(canvas);
 
-        // ⑥ 拖曳中的浮動圖示（固定）
+        // ⑥ 拖曳圖示
         if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
             int s = iconSize;
             int ix = touch.x - (s >> 1);
@@ -690,30 +666,39 @@ public class AppPieView extends View {
             drawRect.set(ix, iy, ix + s, iy + s);
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
+
+        // ⑦ 畫 Scrollbar（固定在背景右側）
+        if (mode == MODE_LIST) {
+            drawScrollbarOverlay(canvas, bgRect, fList);
+        }
     }
 
 
 
-    private void drawAllAppsBackground(Canvas canvas, float f) {
-        if (f <= 0) return;
 
-        final int listW = Math.round(426f * dp);
-        final int listH = Math.round(480f * dp);
-        final int fullW = getWidth();
-        final int fullH = getHeight();
-        final int outerXOffset = (fullW - listW) / 2;
-        final int outerYOffset = (fullH - listH) / 2;
+    private void drawScrollbarOverlay(Canvas canvas, RectF bgRect, float alpha) {
+        if (maxScrollY <= 0) return; // 不需要 scrollbar
 
-        android.graphics.RectF bgRect = new android.graphics.RectF(
-                outerXOffset,
-                outerYOffset,
-                outerXOffset + listW,
-                outerYOffset + listH
-        );
+        float trackLeft  = bgRect.right - dp * 6;  // 靠背景右邊
+        float trackRight = bgRect.right - dp * 2;
+        float trackTop   = bgRect.top + dp * 8;
+        float trackBottom= bgRect.bottom - dp * 8;
 
-        paintAllAppsBg.setAlpha(Math.round(f * 255f));
-        float bgRadius = 20f * dp;
-        canvas.drawRoundRect(bgRect, bgRadius, bgRadius, paintAllAppsBg);
+        // 軌道
+        paintScrollTrack.setAlpha(Math.round(alpha * 255f * 0.5f));
+        canvas.drawRoundRect(trackLeft, trackTop, trackRight, trackBottom, dp * 3, dp * 3, paintScrollTrack);
+
+        // 計算 thumb 位置
+        float ratio = (float) getScrollY() / (float) maxScrollY;
+        float visibleRatio = (float) viewHeight / (float) (viewHeight + maxScrollY);
+        float thumbHeight = (trackBottom - trackTop) * visibleRatio;
+
+        float thumbTop = trackTop + (trackBottom - trackTop - thumbHeight) * ratio;
+        float thumbBottom = thumbTop + thumbHeight;
+
+        // thumb
+        paintScrollThumb.setAlpha(Math.round(alpha * 255f));
+        canvas.drawRoundRect(trackLeft, thumbTop, trackRight, thumbBottom, dp * 3, dp * 3, paintScrollThumb);
     }
 
 
