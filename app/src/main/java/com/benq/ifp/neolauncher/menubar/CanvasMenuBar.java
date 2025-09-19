@@ -28,6 +28,8 @@ public class CanvasMenuBar {
     private Context ctx;
     private int slotH, slotW;
 
+    private Bitmap bmpUser;   // 新增人頭 bitmap
+
     public CanvasMenuBar(Context ctx) {
         this.ctx = ctx.getApplicationContext();
         p.setFilterBitmap(true);
@@ -51,6 +53,9 @@ public class CanvasMenuBar {
         }
         if (bmpHelp == null || bmpHelp.isRecycled()) {
             bmpHelp = safeDecode(R.drawable.help_52);
+        }
+        if (bmpUser == null || bmpUser.isRecycled()) {
+            bmpUser = safeDecode(R.drawable.svg_icon_login_user); // 你的人頭圖
         }
     }
 
@@ -79,7 +84,6 @@ public class CanvasMenuBar {
     public boolean hitTest(int x, int y) {
         return getAllSlotsRect().contains(x, y);
     }
-
 
     public void draw(Canvas canvas) {
         paintBg.setColor(Color.argb(160, 0, 0, 0));
@@ -111,10 +115,8 @@ public class CanvasMenuBar {
             drawSlot(canvas, rect, bmp);
         }
 
-        // 畫 userName 文字
-        paintText.setColor(Color.WHITE);
-        paintText.setTextSize(24f * ctx.getResources().getDisplayMetrics().density);
-        canvas.drawText(userName, barRect.left + 20, cy + (paintText.getTextSize() / 2), paintText);
+        // 畫左下角人頭 + admin
+        drawUserInfo(canvas);
     }
 
     /**
@@ -135,9 +137,6 @@ public class CanvasMenuBar {
         );
     }
 
-
-
-
     private void drawSlot(Canvas canvas, Rect dst, Bitmap bmp) {
         if (bmp == null || bmp.isRecycled()) {
             p.setStyle(Paint.Style.STROKE);
@@ -147,7 +146,7 @@ public class CanvasMenuBar {
         }
 
         // ==== 固定 ICON SIZE (例如 48dp) ====
-        int iconSize = (int) (48 * ctx.getResources().getDisplayMetrics().density);
+        int iconSize = (int) (30 * ctx.getResources().getDisplayMetrics().density);
 
         int cx = dst.centerX();
         int cy = dst.centerY();
@@ -162,6 +161,46 @@ public class CanvasMenuBar {
 
         canvas.drawBitmap(bmp, null, iconRect, p);
     }
+
+    private void drawUserInfo(Canvas canvas) {
+        float density = ctx.getResources().getDisplayMetrics().density;
+        float scaledDensity = ctx.getResources().getDisplayMetrics().scaledDensity;
+
+        int marginStart = (int) (16 * density);    // 左邊 marginStart 16dp
+        int iconSize = (int) (24 * density);       // icon 24dp
+        int textSize = (int) (12 * scaledDensity); // 文字 12sp
+
+        // 設定文字畫筆
+        paintText.setColor(Color.WHITE);
+        paintText.setTextSize(textSize);
+
+        // === 垂直置中 ===
+        int centerY = barRect.centerY();
+
+        // 人頭位置：左邊 + marginStart，垂直置中
+        int left = barRect.left + marginStart;
+        Rect userRect = new Rect(
+                left,
+                centerY - iconSize / 2,
+                left + iconSize,
+                centerY + iconSize / 2
+        );
+
+        // 畫人頭
+        if (bmpUser != null && !bmpUser.isRecycled()) {
+            canvas.drawBitmap(bmpUser, null, userRect, p);
+        } else {
+            p.setStyle(Paint.Style.STROKE);
+            p.setColor(Color.WHITE);
+            canvas.drawCircle(userRect.centerX(), userRect.centerY(), iconSize / 2f, p);
+        }
+
+        // 畫文字（在人頭右邊，垂直置中）
+        float textX = userRect.right + (8 * density); // 人頭和文字間隔 8dp
+        float textY = userRect.centerY() - ((paintText.descent() + paintText.ascent()) / 2);
+        canvas.drawText(userName, textX, textY, paintText);
+    }
+
 
 
     public boolean handleTouch(int x, int y, HomeActivity launcher) {
@@ -190,5 +229,4 @@ public class CanvasMenuBar {
         Log.d("CanvasMenuBar", "no slot hit");
         return false;
     }
-
 }
