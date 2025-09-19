@@ -77,37 +77,9 @@ public class CanvasMenuBar {
     }
 
     public boolean hitTest(int x, int y) {
-        return barRect.contains(x, y);
+        return getAllSlotsRect().contains(x, y);
     }
 
-//    public void draw(Canvas canvas) {
-//        // 畫背景 bar
-//        paintBg.setColor(Color.argb(160, 0, 0, 0));
-//        canvas.drawRect(barRect, paintBg);
-//
-//        int cx = barRect.centerX();
-//        int cy = barRect.centerY();
-//
-//        // 四個 slot 的總寬度
-//        int totalSlots = 4;
-//        int totalWidth = slotW * totalSlots;
-//
-//        // 從中心點向左右展開，再整體往右偏移 500px
-//        int offsetX = 500;
-//        int startX = cx - totalWidth / 2 + offsetX;
-//        int y = barRect.top;
-//
-//        // 分別畫 slot
-//        drawSlot(canvas, new Rect(startX, y, startX + slotW, y + slotH), bmpCasting);
-//        drawSlot(canvas, new Rect(startX + slotW, y, startX + 2 * slotW, y + slotH), bmpSettings);
-//        drawSlot(canvas, new Rect(startX + 2 * slotW, y, startX + 3 * slotW, y + slotH), bmpAllApps);
-//        drawSlot(canvas, new Rect(startX + 3 * slotW, y, startX + 4 * slotW, y + slotH), bmpHelp);
-//
-//        // userName 不動，還是畫在左邊
-//        paintText.setColor(Color.WHITE);
-//        paintText.setTextSize(24f * ctx.getResources().getDisplayMetrics().density);
-//        canvas.drawText(userName, barRect.left + 20, cy + (paintText.getTextSize() / 2), paintText);
-//    }
 
     public void draw(Canvas canvas) {
         paintBg.setColor(Color.argb(160, 0, 0, 0));
@@ -144,6 +116,25 @@ public class CanvasMenuBar {
         paintText.setTextSize(24f * ctx.getResources().getDisplayMetrics().density);
         canvas.drawText(userName, barRect.left + 20, cy + (paintText.getTextSize() / 2), paintText);
     }
+
+    /**
+     * 回傳一個 Rect，包含所有 slot 的範圍。
+     * 注意：必須在 draw() 執行過至少一次之後才會準確，
+     * 因為 slotRects[] 是在 draw() 裡 set 的。
+     */
+    public Rect getAllSlotsRect() {
+        if (slotRects[0].isEmpty() || slotRects[SLOT_COUNT - 1].isEmpty()) {
+            // 還沒初始化，回傳 barRect 當 fallback
+            return new Rect(barRect);
+        }
+        return new Rect(
+                slotRects[0].left,
+                barRect.top,
+                slotRects[SLOT_COUNT - 1].right,
+                barRect.bottom
+        );
+    }
+
 
 
 

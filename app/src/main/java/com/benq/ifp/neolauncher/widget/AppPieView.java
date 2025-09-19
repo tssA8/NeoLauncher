@@ -17,7 +17,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -215,10 +214,15 @@ public class AppPieView extends View {
     private static final String KEY_SLOTS = "slots";
 
     private CanvasMenuBar menuBar;
+
     private HomeActivity mLauncher;
     private boolean menuBarPressed = false;
 
 
+
+    public void setActivity(HomeActivity activity) {
+        mLauncher = activity;
+    }
 
     public interface HotseatDropTarget {
         /**
@@ -236,10 +240,6 @@ public class AppPieView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         menuBar.layout(w, h);   // 告訴 MenuBar 目前的畫布大小，讓它自己排版
-    }
-
-    public void setActivity(HomeActivity activity) {
-     mLauncher = activity;
     }
 
     public AppPieView(Context context, AttributeSet attr) {
@@ -639,6 +639,7 @@ public class AppPieView extends View {
             drawRect.set(ix, iy, ix + s, iy + s);
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
+
     }
 
 
@@ -773,8 +774,6 @@ public class AppPieView extends View {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
-
                 touch.set(Math.round(event.getX()), Math.round(event.getY()));
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -799,6 +798,7 @@ public class AppPieView extends View {
                         if (cancelPerformAction()) break;
                         addTouch(event);
                         long eventTime = event.getEventTime();
+
                         int x = (int) event.getX();
                         int y = (int) event.getY();
 
@@ -807,22 +807,27 @@ public class AppPieView extends View {
                             menuBarPressed = true;   // ← 鎖定這次手勢
                             return true;             // 讓後續 MOVE/UP 都回到這支 listener
                         }
+
                         // ★ 先看是否點在底部 bar
                         if (barRect.contains(touch.x, touch.y)) {
                             barPressedIndex = whichBarIndex(touch.x);
-                            if (barPressedIndex >= 0 && barSlots[barPressedIndex] != null) {
-                                startBarLongPress();    // 排程長按
-                                // 顯示 hover 效果
-                                barHoverIndex = barPressedIndex;
+                            if (barPressedIndex >= 0) {
+                                // 要求父層別攔截（避免外層捲動等把事件吃掉）
+                                android.view.ViewParent p = getParent();
+                                if (p != null) p.requestDisallowInterceptTouchEvent(true);
+
+                                barHoverIndex = barPressedIndex;  // 顯示 hover
+                                if (barSlots[barPressedIndex] != null) {
+                                    startBarLongPress();          // 有 App → 可以長按
+                                } else {
+                                    cancelBarLongPress();         // 空槽（All Apps）→ 不要長按
+                                }
                                 invalidate();
-                                // 不要讓事件走到 Pie/List 處理
-                                return true;
+                                return true; // 不再往 Pie / List 流程傳
                             } else {
-                                // 點到空槽就不用長按，直接記錄 index（可看你要不要處理空槽行為）
                                 barPressedIndex = -1;
                             }
                         }
-
                         switch (mode) {
                             case MODE_PIE:
                                 if (inDeadZone()) return false;
@@ -844,24 +849,22 @@ public class AppPieView extends View {
                     case MotionEvent.ACTION_MOVE:
                         // ★ 拖曳或移動時的 Bar 處理
                         if (barPressedIndex >= 0) {
-                            // 如果手指移出 bar 範圍，就取消長按 & hover
                             if (!barRect.contains(touch.x, touch.y)) {
                                 resetBarPressState();
                                 invalidate();
-                                // 不把事件往下傳，這次手勢視為處理完
                                 return true;
                             }
-                            // 移動量過大也取消長按（避免誤觸）
+                            // 放寬一點的 slop，避免高 DPI 下微動就取消
                             TouchReference tr = touchReferences.get(primaryId);
-                            if (tr != null && distSq(tr.x, tr.y, touch.x, touch.y) > touchSlopSq) {
+                            float slop = ViewConfiguration.get(getContext()).getScaledTouchSlop() * 3f;
+                            if (tr != null && distSq(tr.x, tr.y, touch.x, touch.y) > slop * slop) {
                                 cancelBarLongPress();
                             }
-                            // 更新 hover 格（可選）
+
                             barHoverIndex = whichBarIndex(touch.x);
                             invalidate();
                             return true;
                         }
-
                         // === 原本的流程 ===
                         if (draggingFromList) {
                             boolean over = barRect.contains(touch.x, touch.y);
@@ -893,22 +896,38 @@ public class AppPieView extends View {
                             return true;        // ❗沒命中 slot 也吞掉，避免落到底層流程
                         }
 
-                        // ★ Bar 的點擊 / 長按收尾
                         if (barPressedIndex >= 0) {
+                            // 還原父層攔截
+                            android.view.ViewParent p = getParent();
+                            if (p != null) p.requestDisallowInterceptTouchEvent(false);
+
                             AppMenu.AppIcon app = barSlots[barPressedIndex];
                             boolean handled = false;
 
-                            if (!barLongPressFired && app != null) {
-                                // 不是長按 → 視為「點擊」，啟動 App
-                                PieLauncherApp.appMenu.launchApp(getContext(), app);
-                                handled = true;
+                            if (!barLongPressFired) {
+                                if (app != null) {
+                                    // 有 App → 單擊啟動
+                                    PieLauncherApp.appMenu.launchApp(getContext(), app);
+                                    handled = true;
+                                } else {
+                                    // 空槽 → 視為 All Apps
+                                    if (listListener != null) {
+                                        listListener.onOpenList(false);
+                                    } else {
+                                        // 保底：直接切到清單模式
+                                        mode = MODE_LIST;
+                                        fadeList.fadeIn();
+                                        invalidate();
+                                    }
+                                    handled = true;
+                                }
                             }
                             resetBarPressState();
                             invalidate();
                             if (handled) return true;
-                            // 如果長按已經處理了（有跳選單），也攔截這次手勢
-                            if (barLongPressFired) return true;
+                            if (barLongPressFired) return true; // 長按已處理（彈選單）→ 攔截
                         }
+
 
                         if (mode == MODE_PIE) {
                             cancelSpin();
@@ -931,10 +950,8 @@ public class AppPieView extends View {
                         postPerformAction(v, event);
                         break;
                     case MotionEvent.ACTION_CANCEL:
-                        if (menuBarPressed) {
-                            menuBarPressed = false;
-                            return true;
-                        }
+                        android.view.ViewParent p = getParent();
+                        if (p != null) p.requestDisallowInterceptTouchEvent(false);
                         resetBarPressState();
                         if (draggingFromList) {
                             if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
@@ -1492,9 +1509,20 @@ public class AppPieView extends View {
         // ★ 先檢查是不是點在 Hotseat Bar 上
         if (barRect.contains(at.x, at.y)) {
             int idx = whichBarIndex(at.x);
-            AppMenu.AppIcon app = (idx >= 0) ? barSlots[idx] : null;
-            if (app != null) {
-                PieLauncherApp.appMenu.launchApp(context, app);
+            if (idx >= 0) {
+                AppMenu.AppIcon app = barSlots[idx];
+                if (app != null) {
+                    PieLauncherApp.appMenu.launchApp(context, app);
+                } else {
+                    // ← All Apps（空槽）
+                    if (listListener != null) {
+                        listListener.onOpenList(false);
+                    } else {
+                        mode = MODE_LIST;
+                        fadeList.fadeIn();
+                        invalidate();
+                    }
+                }
                 return true;
             }
         }
@@ -1516,6 +1544,7 @@ public class AppPieView extends View {
     }
 
     private int whichBarIndex(int x) {
+        if (!barRect.contains(x, (barRect.top + barRect.bottom) / 2)) return -1;
         int slotW = barRect.width() / BAR_COLS;
         int idx = (x - barRect.left) / slotW;
         return (idx >= 0 && idx < BAR_COLS) ? idx : -1;
@@ -2402,19 +2431,4 @@ public class AppPieView extends View {
     private static float easeSlowerOut(float x) {
         return 1f - (1f - x) * (1f - x);
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-
-        Log.d("AppPieView", "onTouchEvent: x=" + x + " y=" + y);
-
-        if (menuBar != null && menuBar.handleTouch(x, y, mLauncher)) {
-            Log.d("AppPieView", "menuBar consumed touch!");
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
 }
