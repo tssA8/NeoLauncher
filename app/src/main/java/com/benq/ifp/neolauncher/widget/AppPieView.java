@@ -192,6 +192,7 @@ public class AppPieView extends View {
     private final Rect[] barSlotRects = new Rect[BAR_COLS]; // 每一格的矩形
     private final AppMenu.AppIcon[] barSlots = new AppMenu.AppIcon[BAR_COLS]; // 每格放的 App
 
+
     // --- Bar 點擊/長按狀態 ---
     private int barPressedIndex = -1;
     private boolean barLongPressFired = false;
@@ -217,6 +218,12 @@ public class AppPieView extends View {
 
     private HomeActivity mLauncher;
     private boolean menuBarPressed = false;
+
+    // === All Apps List 風格 ===
+    private final Paint paintAllAppsBg        = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintAllAppsCell      = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintAllAppsCellStroke= new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint paintAllAppsHover     = new Paint(Paint.ANTI_ALIAS_FLAG);
 
 
 
@@ -298,6 +305,26 @@ public class AppPieView extends View {
         textHeight = paintText.descent() - paintText.ascent();
         textOffset = (textHeight / 2) - paintText.descent();
         translucentBackgroundColor = res.getColor(R.color.bg_ui);
+
+        // AllApps 背景（整頁）
+        paintAllAppsBg.setStyle(Paint.Style.FILL);
+        paintAllAppsBg.setColor(res.getColor(R.color.all_app_widget_bgs));
+
+        // 每個 cell 的底色（微透明，和整體背景同系）
+        paintAllAppsCell.setStyle(Paint.Style.FILL);
+        paintAllAppsCell.setColor(res.getColor(R.color.all_app_widget_bgs));
+        paintAllAppsCell.setAlpha(210);
+
+        // cell 外框（淡淡的描邊，與 tips 同色）
+        paintAllAppsCellStroke.setStyle(Paint.Style.STROKE);
+        paintAllAppsCellStroke.setStrokeWidth(Math.round(1f * dp));
+        paintAllAppsCellStroke.setColor(res.getColor(R.color.all_apps_cs_tips_color));
+        paintAllAppsCellStroke.setAlpha(64);
+
+        // hover/高亮底（與 tips 同色，透明度更淡）
+        paintAllAppsHover.setStyle(Paint.Style.FILL);
+        paintAllAppsHover.setColor(res.getColor(R.color.all_apps_cs_tips_color));
+        paintAllAppsHover.setAlpha(36);
 
         iconAdd = Converter.getBitmapFromDrawable(res, R.drawable.ic_add);
         iconEdit = Converter.getBitmapFromDrawable(res, R.drawable.ic_edit);
@@ -587,51 +614,46 @@ public class AppPieView extends View {
         restoreBar();
     }
 
-
     @Override
     protected void onDraw(Canvas canvas) {
-        // ① 先抵銷系統對整個 View 的 -scrollY
+        // ① 抵銷系統在 View.draw() 時的 -scrollY（讓整個畫布回到(0,0)）
         final int sc = getScrollY();
         if (sc != 0) canvas.translate(0, sc);
 
         long now = SystemClock.uptimeMillis();
-        float ad = prefs.getAnimationDuration();
-        float fList = Math.min(fadeList.get(now, ad), dragProgress);
-        float fEdit = fadeEdit.get(now, ad);
-        float fMax  = Math.max(fList, fEdit);
-
+        float ad   = prefs.getAnimationDuration();
+        float fList= Math.min(fadeList.get(now, ad), dragProgress);
+        float fEdit= fadeEdit.get(now, ad);
 
         boolean invalidate = false;
 
-        // ② 只在清單時，暫時把畫布往上移「sc」來畫清單內容（清單才捲動）
+        // ② 先畫 All Apps 的固定背景（不跟著捲動）
+        if (mode == MODE_LIST) {
+            drawAllAppsBackground(canvas, fList);
+        }
+
+        // ③ 再畫會捲動的清單內容（只對內容做 -sc）
         if (mode == MODE_LIST) {
             canvas.save();
             canvas.translate(0, -sc);
-            invalidate |= drawList(canvas, fList);   // ← drawList 不要再自行 translate
+            invalidate |= drawList(canvas, fList);   // drawList 只畫 icon/文字，不畫背景
             canvas.restore();
         }
 
-        // ③ 編輯模式（固定，不跟著捲動）
+        // ④ 編輯模式（固定）
         if (mode == MODE_EDIT) {
             invalidate |= drawEditor(canvas, fEdit);
         }
 
         if (ripple.draw(canvas, prefs) || invalidate) invalidate();
+        if (PieLauncherApp.appMenu.isIndexing()) drawTip(canvas, loadingTip);
 
-        if (PieLauncherApp.appMenu.isIndexing()) {
-            drawTip(canvas, loadingTip);
-        }
+        if (menuBar != null) menuBar.draw(canvas);
 
-
-        if (menuBar != null) {
-            menuBar.draw(canvas);
-        }
-
-        // ④ 最後畫底部 Bar（固定，不跟著捲動）
+        // ⑤ 底部 Bar（固定）
         drawBottomBar(canvas);
 
-
-        // ★ 拖曳中的浮動圖示：用螢幕座標畫（不受 scroll 影響）
+        // ⑥ 拖曳中的浮動圖示（固定）
         if (draggingFromList && draggedIcon != null && draggedIcon.bitmap != null) {
             int s = iconSize;
             int ix = touch.x - (s >> 1);
@@ -639,8 +661,32 @@ public class AppPieView extends View {
             drawRect.set(ix, iy, ix + s, iy + s);
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
-
     }
+
+
+
+    private void drawAllAppsBackground(Canvas canvas, float f) {
+        if (f <= 0) return;
+
+        final int listW = Math.round(426f * dp);
+        final int listH = Math.round(480f * dp);
+        final int fullW = getWidth();
+        final int fullH = getHeight();
+        final int outerXOffset = (fullW - listW) / 2;
+        final int outerYOffset = (fullH - listH) / 2;
+
+        android.graphics.RectF bgRect = new android.graphics.RectF(
+                outerXOffset,
+                outerYOffset,
+                outerXOffset + listW,
+                outerYOffset + listH
+        );
+
+        paintAllAppsBg.setAlpha(Math.round(f * 255f));
+        float bgRadius = 20f * dp;
+        canvas.drawRoundRect(bgRect, bgRadius, bgRadius, paintAllAppsBg);
+    }
+
 
 
     private void drawBottomBar(Canvas canvas) {
@@ -1878,10 +1924,35 @@ public class AppPieView extends View {
 
         final int sc = getScrollY();
 
-        // === 外層：把 426dp 的虛擬寬置中到整個螢幕 ===
+        // ====== 只新增底色（不改清單的排版與捲動）======
+        // 固定 All Apps 背板大小：426dp x 480dp，置中
+        final int listW = Math.round(426f * dp);
+        final int listH = Math.round(480f * dp);
+        final int fullW = getWidth();
+        final int fullH = getHeight();
+        final int outerXOffset = (fullW - listW) / 2;
+        final int outerYOffset = (fullH - listH) / 2;
+
+        // 底色跟著淡入
+        paintAllAppsBg.setAlpha(Math.round(f * 255f));
+
+        // 畫圓角矩形當背景，不做 clip、不影響清單區域與捲動
+        float bgRadius = 20f * dp; // 圓角半徑可調
+        android.graphics.RectF bgRect = new android.graphics.RectF(
+                outerXOffset,
+                outerYOffset,
+                outerXOffset + listW,
+                outerYOffset + listH
+        );
+        canvas.drawRoundRect(bgRect, bgRadius, bgRadius, paintAllAppsBg);
+        // ====== 底色結束 =======
+
+        // ↓↓↓ 從這裡開始，保持你原本的 drawList() 內容完全不變 ↓↓↓
+
+        // === 外層：把 426dp 的虛擬寬置中到整個螢幕（原本邏輯） ===
         int fullWidth = getWidth();
-        int outerXOffset = (fullWidth - viewWidth) / 2;
-        int outerYOffset = 0;
+        int outerXOffsetOld = (fullWidth - viewWidth) / 2;
+        int outerYOffsetOld = 0;
 
         int innerWidth = viewWidth - listPadding * 2;
         boolean showAppNames = showAppNames();
@@ -1894,7 +1965,7 @@ public class AppPieView extends View {
         int columns   = Math.min(5, Math.max(1, innerWidth / cellWidth));
         int gridWidth = columns * cellWidth;
 
-        int xStart = outerXOffset + listPadding + (innerWidth - gridWidth) / 2;
+        int xStart = outerXOffsetOld + listPadding + (innerWidth - gridWidth) / 2;
         int wrapX  = xStart + gridWidth;
 
         int size = getIconCount();
@@ -1904,15 +1975,14 @@ public class AppPieView extends View {
         int labelX = cellWidth >> 1;
         int labelY = cellHeight - vpad - Math.round(textOffset);
 
-        // 用 sc 做可視範圍裁切（座標仍是內容座標系）
+        // 用 sc 做可視範圍裁切（維持原本的 viewHeight）
         int viewTop    = sc - cellHeight;
         int viewBottom = sc + viewHeight;
 
-        int baseY = outerYOffset + searchInputHeight + listPadding;
+        int baseY = outerYOffsetOld + searchInputHeight + listPadding;
         int y = baseY;
         int x = xStart;
 
-        // 動畫
         if (prefs.listAnimationAppearance() == Preferences.LIST_APPEARANCE_ANIMATION_SLIDE || isDraggingDownList()) {
             y += Math.round((1f - f) * listFadeHeight);
         }
@@ -1940,7 +2010,6 @@ public class AppPieView extends View {
             }
         }
 
-        // 繪製清單（內容座標）
         for (int i = 0; i < size; ++i) {
             if (y > viewTop && y < viewBottom) {
                 AppMenu.AppIcon appIcon = appList.get(i);
@@ -1966,10 +2035,9 @@ public class AppPieView extends View {
         int viewHeightMinusPadding = viewHeight - getPaddingBottom();
         maxScrollY = Math.max(maxHeight - viewHeightMinusPadding, 0);
 
-
-
         return invalidate;
     }
+
 
 
     private boolean showAppNames() {
