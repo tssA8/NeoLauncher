@@ -73,35 +73,78 @@ public class CanvasMenuBar {
         // slot 高度和 bar 一致
         slotH = barH;
         slotW = barH; // 如果要正方形 slot
+        Log.d("CanvasMenuBar", "layout() barRect = " + barRect.toShortString());
     }
+
+    public boolean hitTest(int x, int y) {
+        return barRect.contains(x, y);
+    }
+
+//    public void draw(Canvas canvas) {
+//        // 畫背景 bar
+//        paintBg.setColor(Color.argb(160, 0, 0, 0));
+//        canvas.drawRect(barRect, paintBg);
+//
+//        int cx = barRect.centerX();
+//        int cy = barRect.centerY();
+//
+//        // 四個 slot 的總寬度
+//        int totalSlots = 4;
+//        int totalWidth = slotW * totalSlots;
+//
+//        // 從中心點向左右展開，再整體往右偏移 500px
+//        int offsetX = 500;
+//        int startX = cx - totalWidth / 2 + offsetX;
+//        int y = barRect.top;
+//
+//        // 分別畫 slot
+//        drawSlot(canvas, new Rect(startX, y, startX + slotW, y + slotH), bmpCasting);
+//        drawSlot(canvas, new Rect(startX + slotW, y, startX + 2 * slotW, y + slotH), bmpSettings);
+//        drawSlot(canvas, new Rect(startX + 2 * slotW, y, startX + 3 * slotW, y + slotH), bmpAllApps);
+//        drawSlot(canvas, new Rect(startX + 3 * slotW, y, startX + 4 * slotW, y + slotH), bmpHelp);
+//
+//        // userName 不動，還是畫在左邊
+//        paintText.setColor(Color.WHITE);
+//        paintText.setTextSize(24f * ctx.getResources().getDisplayMetrics().density);
+//        canvas.drawText(userName, barRect.left + 20, cy + (paintText.getTextSize() / 2), paintText);
+//    }
+
     public void draw(Canvas canvas) {
-        // 畫背景 bar
         paintBg.setColor(Color.argb(160, 0, 0, 0));
         canvas.drawRect(barRect, paintBg);
 
         int cx = barRect.centerX();
         int cy = barRect.centerY();
 
-        // 四個 slot 的總寬度
-        int totalSlots = 4;
-        int totalWidth = slotW * totalSlots;
-
-        // 從中心點向左右展開，再整體往右偏移 500px
+        int totalWidth = slotW * SLOT_COUNT;
         int offsetX = 500;
         int startX = cx - totalWidth / 2 + offsetX;
         int y = barRect.top;
 
-        // 分別畫 slot
-        drawSlot(canvas, new Rect(startX, y, startX + slotW, y + slotH), bmpCasting);
-        drawSlot(canvas, new Rect(startX + slotW, y, startX + 2 * slotW, y + slotH), bmpSettings);
-        drawSlot(canvas, new Rect(startX + 2 * slotW, y, startX + 3 * slotW, y + slotH), bmpAllApps);
-        drawSlot(canvas, new Rect(startX + 3 * slotW, y, startX + 4 * slotW, y + slotH), bmpHelp);
+        // 設定 slotRects 並畫 icon
+        for (int i = 0; i < SLOT_COUNT; i++) {
+            int left = startX + i * slotW;
+            int right = left + slotW;
+            Rect rect = slotRects[i];
+            rect.set(left, y, right, y + slotH); // ★★ 這一行很重要！
 
-        // userName 不動，還是畫在左邊
+            Bitmap bmp = null;
+            switch (i) {
+                case 0: bmp = bmpCasting; break;
+                case 1: bmp = bmpSettings; break;
+                case 2: bmp = bmpAllApps; break;
+                case 3: bmp = bmpHelp; break;
+            }
+
+            drawSlot(canvas, rect, bmp);
+        }
+
+        // 畫 userName 文字
         paintText.setColor(Color.WHITE);
         paintText.setTextSize(24f * ctx.getResources().getDisplayMetrics().density);
         canvas.drawText(userName, barRect.left + 20, cy + (paintText.getTextSize() / 2), paintText);
     }
+
 
 
     private void drawSlot(Canvas canvas, Rect dst, Bitmap bmp) {
@@ -130,30 +173,31 @@ public class CanvasMenuBar {
     }
 
 
-    /** 處理點擊事件 */
-    public boolean handleTouch(int x, int y, HomeActivity mLauncher) {
-        if (!barRect.contains(x, y)) return false;
+    public boolean handleTouch(int x, int y, HomeActivity launcher) {
+        Log.d("CanvasMenuBar", "handleTouch() touch=(" + x + "," + y + ")");
+        if (!barRect.contains(x, y)) {
+            Log.d("CanvasMenuBar", "touch not in barRect");
+            return false;
+        }
 
         for (int i = 0; i < SLOT_COUNT; i++) {
             if (slotRects[i].contains(x, y)) {
+                Log.d("CanvasMenuBar", "hit slot[" + i + "]");
                 switch (i) {
-                    case 0: // Casting
-                       Log.d("CanvasMenuBar", "handleTouch: Casting");
+                    case 0: Log.d("CanvasMenuBar", "Casting clicked"); break;
+                    case 1: Log.d("CanvasMenuBar", "Settings clicked"); break;
+                    case 2:
+                        Log.d("CanvasMenuBar", "AllApps clicked");
+                        if (launcher != null) launcher.showAllApps();
                         break;
-                    case 1: // Settings
-                        Log.d("CanvasMenuBar", "handleTouch: Settings");
-                        break;
-                    case 2: // AllApps
-                        Log.d("CanvasMenuBar", "handleTouch: AllApps");
-                        if (mLauncher != null) mLauncher.showAllApps();
-                        break;
-                    case 3: // Help
-                        Log.d("CanvasMenuBar", "handleTouch: AllApps");
-                        break;
+                    case 3: Log.d("CanvasMenuBar", "Help clicked"); break;
                 }
                 return true;
             }
         }
+
+        Log.d("CanvasMenuBar", "no slot hit");
         return false;
     }
+
 }

@@ -17,6 +17,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.benq.ifp.neolauncher.R;
+import com.benq.ifp.neolauncher.activity.HomeActivity;
 import com.benq.ifp.neolauncher.activity.PickIconActivity;
 import com.benq.ifp.neolauncher.activity.PreferencesActivity;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
@@ -213,6 +215,9 @@ public class AppPieView extends View {
     private static final String KEY_SLOTS = "slots";
 
     private CanvasMenuBar menuBar;
+    private HomeActivity mLauncher;
+    private boolean menuBarPressed = false;
+
 
 
     public interface HotseatDropTarget {
@@ -231,6 +236,10 @@ public class AppPieView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         menuBar.layout(w, h);   // 告訴 MenuBar 目前的畫布大小，讓它自己排版
+    }
+
+    public void setActivity(HomeActivity activity) {
+     mLauncher = activity;
     }
 
     public AppPieView(Context context, AttributeSet attr) {
@@ -630,7 +639,6 @@ public class AppPieView extends View {
             drawRect.set(ix, iy, ix + s, iy + s);
             canvas.drawBitmap(draggedIcon.bitmap, null, drawRect, paintList);
         }
-
     }
 
 
@@ -765,6 +773,8 @@ public class AppPieView extends View {
             @SuppressLint("ClickableViewAccessibility")
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
+
                 touch.set(Math.round(event.getX()), Math.round(event.getY()));
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -789,7 +799,14 @@ public class AppPieView extends View {
                         if (cancelPerformAction()) break;
                         addTouch(event);
                         long eventTime = event.getEventTime();
+                        int x = (int) event.getX();
+                        int y = (int) event.getY();
 
+                        // ★ 先檢查是不是點在 CanvasMenuBar 裡
+                        if (menuBar != null && menuBar.hitTest(x, y)) {
+                            menuBarPressed = true;   // ← 鎖定這次手勢
+                            return true;             // 讓後續 MOVE/UP 都回到這支 listener
+                        }
                         // ★ 先看是否點在底部 bar
                         if (barRect.contains(touch.x, touch.y)) {
                             barPressedIndex = whichBarIndex(touch.x);
@@ -864,6 +881,18 @@ public class AppPieView extends View {
                         invalidate();
                         break;
                     case MotionEvent.ACTION_UP:
+
+                        int x2 = (int) event.getX();
+                        int y2 = (int) event.getY();
+
+                        if (menuBarPressed) {
+                            menuBarPressed = false;
+                            if (menuBar != null && menuBar.handleTouch(x2, y2, mLauncher)) {
+                                return true;    // 命中 slot → 事件消耗
+                            }
+                            return true;        // ❗沒命中 slot 也吞掉，避免落到底層流程
+                        }
+
                         // ★ Bar 的點擊 / 長按收尾
                         if (barPressedIndex >= 0) {
                             AppMenu.AppIcon app = barSlots[barPressedIndex];
@@ -902,6 +931,10 @@ public class AppPieView extends View {
                         postPerformAction(v, event);
                         break;
                     case MotionEvent.ACTION_CANCEL:
+                        if (menuBarPressed) {
+                            menuBarPressed = false;
+                            return true;
+                        }
                         resetBarPressState();
                         if (draggingFromList) {
                             if (hotseatTarget != null) hotseatTarget.onHoverHotseat(false);
@@ -2369,4 +2402,19 @@ public class AppPieView extends View {
     private static float easeSlowerOut(float x) {
         return 1f - (1f - x) * (1f - x);
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+
+        Log.d("AppPieView", "onTouchEvent: x=" + x + " y=" + y);
+
+        if (menuBar != null && menuBar.handleTouch(x, y, mLauncher)) {
+            Log.d("AppPieView", "menuBar consumed touch!");
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
 }
