@@ -613,30 +613,55 @@ public class AppPieView extends View {
         }
         restoreBar();
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
         // ① 抵銷系統在 View.draw() 時的 -scrollY（讓整個畫布回到(0,0)）
         final int sc = getScrollY();
         if (sc != 0) canvas.translate(0, sc);
 
-        long now = SystemClock.uptimeMillis();
-        float ad   = prefs.getAnimationDuration();
-        float fList= Math.min(fadeList.get(now, ad), dragProgress);
-        float fEdit= fadeEdit.get(now, ad);
+        long now  = SystemClock.uptimeMillis();
+        float ad  = prefs.getAnimationDuration();
+        float fList = Math.min(fadeList.get(now, ad), dragProgress);
+        float fEdit = fadeEdit.get(now, ad);
 
         boolean invalidate = false;
 
+        // ===== All Apps 面板尺寸（固定 426dp x 480dp，置中）=====
+        final int listW = Math.round(426f * dp);
+        final int listH = Math.round(480f * dp);
+        final int fullW = getWidth();
+        final int fullH = getHeight();
+        final int outerXOffset = (fullW - listW) / 2;
+        final int outerYOffset = (fullH - listH) / 2;
+
         // ② 先畫 All Apps 的固定背景（不跟著捲動）
         if (mode == MODE_LIST) {
-            drawAllAppsBackground(canvas, fList);
+            android.graphics.RectF bgRect = new android.graphics.RectF(
+                    outerXOffset,
+                    outerYOffset,
+                    outerXOffset + listW,
+                    outerYOffset + listH
+            );
+            // 背景也跟著淡入
+            paintAllAppsBg.setAlpha(Math.round(fList * 255f));
+            float bgRadius = 20f * dp;
+            canvas.drawRoundRect(bgRect, bgRadius, bgRadius, paintAllAppsBg);
         }
 
-        // ③ 再畫會捲動的清單內容（只對內容做 -sc）
+        // ③ 再畫會捲動的清單內容（只對內容做 -sc，且限制在面板範圍內）
         if (mode == MODE_LIST) {
             canvas.save();
+            // 擋住溢出：只允許內容畫在面板裡
+            canvas.clipRect(
+                    outerXOffset,
+                    outerYOffset,
+                    outerXOffset + listW,
+                    outerYOffset + listH
+            );
+            // 內容才跟著捲動
             canvas.translate(0, -sc);
-            invalidate |= drawList(canvas, fList);   // drawList 只畫 icon/文字，不畫背景
+            // drawList 內部已用 outerOffset 計算座標（或自身計算），這裡不再平移
+            invalidate |= drawList(canvas, fList);
             canvas.restore();
         }
 
@@ -646,9 +671,13 @@ public class AppPieView extends View {
         }
 
         if (ripple.draw(canvas, prefs) || invalidate) invalidate();
-        if (PieLauncherApp.appMenu.isIndexing()) drawTip(canvas, loadingTip);
+        if (PieLauncherApp.appMenu.isIndexing()) {
+            drawTip(canvas, loadingTip);
+        }
 
-        if (menuBar != null) menuBar.draw(canvas);
+        if (menuBar != null) {
+            menuBar.draw(canvas);
+        }
 
         // ⑤ 底部 Bar（固定）
         drawBottomBar(canvas);
