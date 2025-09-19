@@ -38,87 +38,26 @@ class RecommendRow(context: Context, attributeSet: AttributeSet?) :
         rcMiddle = findViewById(R.id.rrFileManager)
         root = findViewById(R.id.llrecommendRow)
 
-//        root.setOnFocusChangeListener { _, hasFocus ->
-//            if (hasFocus)
-//                rcMiddle.requestFocus()
-//        }
+        // 綁定點擊事件
+        rcLeft.setOnClickListener {
+            Log.d(TAG," rcLeft ")
+            // 左邊 → 無線投影
+            launchApp(INSTANT_SHARE_TWO_EDLA)   // 先嘗試 EDLA
+                ?: launchApp(INSTANT_SHARE_TWO) // 再 fallback 到一般版
+        }
 
-//        RxView.clicks(rcRight).throttleFirst(2000, TimeUnit.MILLISECONDS).subscribe {
-//            launchApp(EZ_WRITE_PKG_NAME6)
-//        }
-//
-//        RxView.clicks(rcLeft).throttleFirst(2000, TimeUnit.MILLISECONDS).subscribe {
-//            launchApp(INSTANT_SHARE_TWO_EDLA, INSTANT_SHARE_TWO)
-//        }
-//
-//        RxView.clicks(rcMiddle).throttleFirst(2000, TimeUnit.MILLISECONDS).subscribe {
-//            startActivityByPackageName(PKG_NAME_AMS)
-//        }
-//
-//        isHideView = Utils.getSystemProperty(PROP_HIDE_RECOMMENTROW_KEY, "false") == "true"
-//        val action = if (isHideView) GONE else VISIBLE
-//        rcRight.visibility = action
-//        rcLeft.visibility = action
-//        rcMiddle.visibility = action
-//
-//        val listener = OnFocusChangeListener { v, hasFocus ->
-//            var nextFocus = NO_ID
-//            val launcher = context as Launcher
-//            widgetBarCellLayout = launcher.workspace.currentDropLayout
-//                ?: return@OnFocusChangeListener
-//            if (hasFocus) {
-//                for (i in 0..6) {
-//                    val view = widgetBarCellLayout.getChildAt(i, 0) ?: continue
-//                    nextFocus = view.id
-//                    break
-//                }
-//            }
-//
-//            val hasWidgetBarLastView = widgetBarCellLayout?.shortcutsAndWidgets?.mLastFocusView?.id
-//            v?.nextFocusDownId = hasWidgetBarLastView ?: nextFocus
-//        }
-//        rcRight.onFocusChangeListener = listener
-//        rcLeft.onFocusChangeListener = listener
-//        rcMiddle.onFocusChangeListener = listener
+        rcMiddle.setOnClickListener {
+            Log.d(TAG," rcMiddle ")
+            // 中間 → 檔案管理
+            launchApp(PKG_NAME_AMS)
+        }
+
+        rcRight.setOnClickListener {
+            Log.d(TAG," rcRight ")
+            // 右邊 → 白板 / EZWrite
+            launchApp(EZ_WRITE_PKG_NAME6)
+        }
     }
-
-//    private fun launchApp(firstPriorityAppName: String, secondPriorityAppName: String) {
-//        //Intent firstPriorityAppName
-//        if (!Utils.startActivityByPackageName(context, firstPriorityAppName)) {
-//            if (Launcher.DEVELOP) Toast.makeText(
-//                context,
-//                "activity not found: pkg = $firstPriorityAppName",
-//                Toast.LENGTH_SHORT
-//            ).show()
-//            //Intent secondPriorityAppName
-//            if (!Utils.startActivityByPackageName(context, secondPriorityAppName)) {
-//                if (Launcher.DEVELOP) Toast.makeText(
-//                    context,
-//                    "activity not found : $secondPriorityAppName",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//                context.packageManager.getLaunchIntentForPackage(PKG_NAME_BENQ_SUGGEST)?.apply {
-//                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                    addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-//                    if (Utils.isAvailable(context, this)) context.startActivity(this)
-//                    else {
-//                        if (Launcher.DEVELOP) Toast.makeText(
-//                            context,
-//                            "activity not found : $PKG_NAME_BENQ_SUGGEST",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun startActivityByPackageName(packageName: String) {
-//        if (!Utils.startActivityByPackageName(context, packageName)) {
-//            Toast.makeText(context, "activity not found: pkg = $packageName", Toast.LENGTH_SHORT)
-//                .show()
-//        }
-//    }
 
     private fun launchApp(mPkg: String) {
         try {
@@ -197,38 +136,8 @@ class RecommendRow(context: Context, attributeSet: AttributeSet?) :
     }
 
 
-//    fun enableOrDisableAllView(enabled: Boolean) {
-//        Log.d("RecommendRow", "enableOrDisableAllView : $enabled")
-//        rcRight.isClickable = enabled
-//        rcMiddle.isClickable = enabled
-//        rcLeft.isClickable = enabled
-//
-//        val isHideView = Utils.getSystemProperty(PROP_HIDE_RECOMMENTROW_KEY, "false") == "true"
-//        when (isHideView) {
-//            true -> {
-//                rcRight.visibility = GONE
-//                rcMiddle.visibility = GONE
-//                rcLeft.visibility = GONE
-//            }
-//
-//            false -> {
-//                rcRight.visibility = VISIBLE
-//                rcMiddle.visibility = VISIBLE
-//                rcLeft.visibility = VISIBLE
-//            }
-//        }
-//    }
-
-    fun hideRecommendRow(isHide: Boolean) {
-        Log.d("RecommendRow", "hideRecommendRow : $isHide")
-        when(isHide) {
-            true -> root.visibility = GONE
-            false -> root.visibility = VISIBLE
-        }
-    }
-
-
     companion object {
+        private const val TAG = "RecommendRow"
         private const val CASTING_PKG_NAME = "com.ecloud.eshare.server"
         const val BUNDLE_DATA_KEY_INTENT_PAGE_START = "com.ifp.unilauncher.intent.bundle.key"
         private const val PROP_HIDE_RECOMMENTROW_KEY = "persist.benq.recommend_off"
