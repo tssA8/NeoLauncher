@@ -2,20 +2,31 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<include
-		android:id="@+id/menubar"
-		layout="@layout/menubar"
-		android:visibility="gone"
-		android:layout_gravity="bottom"
+
+	<RelativeLayout
+		android:id="@+id/llVariantContainer"
 		android:layout_width="match_parent"
-		android:layout_height="@dimen/menubar_height" />
+		android:layout_height="match_parent"
+		android:layout_gravity="center"
+		android:clipChildren="false">
+
+		<include
+			layout="@layout/recommend_row"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_centerHorizontal="true"
+			android:layout_marginBottom="@dimen/recommend_row_margin_bottom"
+			android:clipChildren="false" />
+	</RelativeLayout>
+
 
 	<com.benq.ifp.neolauncher.widget.AppPieView
 		android:id="@+id/pie"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:layout_gravity="center"
-		android:scrollbars="vertical"/>
+		android:scrollbars="vertical" />
 
 	<EditText
 		tools:ignore="LabelFor"
@@ -34,6 +45,7 @@
 		android:maxLength="128"
 		android:importantForAutofill="no"
 		android:visibility="gone"/>
+
 	<com.benq.ifp.neolauncher.widget.ActionButton
 		android:id="@+id/preferences"
 		android:layout_width="wrap_content"
@@ -46,6 +58,5 @@
 		android:contentDescription="@string/preferences"
 		android:src="@drawable/ic_preferences"
 		android:visibility="gone"/>
-
 
 </merge>

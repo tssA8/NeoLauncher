@@ -106,4 +106,54 @@
 	<string name="activity_not_enabled">Activity not enabled\n</string>
 
 	<string name="menu_bar_account_name">Account control</string>
+
+
+	<!-- home internet information view -->
+	<string name="home_internet_info_connecting">Connecting...</string>
+	<string name="home_internet_info_no_internet">No internet</string>
+	<string name="home_internet_info_disabled">Disabled</string>
+	<string name="home_internet_info_connected">Recommended Function</string>
+
+	<!-- recommend_row cp -->
+	<string name="recommend_row_wireless_projection">Wireless Projection</string>
+
+	<!-- recommend_function -->
+
+
+	<!-- E800 qmenu -->
+
+	<!-- E800 all apps -->
+
+	<!-- E800 app list editor -->
+
+	<string name="recommend_ezwrite_content_introduce">"EZWrite 5.0 is powerful whiteboard, you can create innovation idea\nand collaboration with your team members no matter where you\nare. It can download and upload files to cloud services directly, and\nDuo Boards, Board to Board, Cloud Whiteboard functions provide\nyou unlimited collaboration experience."</string>
+	<string name="recommend_pen_content_introduce">"TPY11 Active Pen perfectly work with DuoBoard, via using TPY11\nyou can quickly initiate floating tool and annotating information\nduring your discussion, 1024 levels of sensitivity provide nature\nhandwriting experience; Moreover, TPY11 can be your presentation\nremote, you can use pointer, page up, page down function during\nyour presentation."</string>
+	<string name="recommend_duo_window_content_introduce">"Duo Windows support two apps running side-by-side in split-screen\nmode, users can collaborate between two apps or co-work between\nandroid app / input source for any tasks, Duo Windows help you to\nimplement multi task perfectly."</string>
+	<string name="recommend_duo_os_pip_introduce">"Duo OS provide a floating window to display extra information from\nother device, it can support users to collaborating cross-platform,\ncompatibility between Android, iOS, macOS, and Windows OS.\nUsers can capture a picture from their own device and insert it to\nEZWrite immediately for further discussion, or save it to IFP / Cloud\ndrive for further use."</string>
+	<string name="recommend_duo_mode_content_introduce">"Duo Boards extended users collaborating space and style, it\nextended working area for user inspirit innovation idea, all you need\njust make two IFP side by side then it will start Duo Board mode for\nyou. \nMoreover, you can search IFP in intranet and build connection\nbetween two IFP then send file between two IFP no matter where\nmeeting room you are."</string>
+	<string name="recommend_blizz_content_introduce">"DuoBoard embedded camera and array Mic, it provided echo\ncancellation, noise reduction function with Blizz, now you can enjoy\nexcellent video conference experience by one click.\n\nBlizz support: \n1. PC (app + browser) + Android + iOS \n2. 1 Organizer / 5 participants for free \n3. 4K screen sharing"</string>
+	<string name="recommend_ezwrite_start_now">Get Started Now</string>
+	<string name="recommend_pen">Stylus Pen</string>
+	<string name="title_activity_introduce">IntroduceActivity</string>
+
+	<string name="recommend_icon_ez">EZWrite</string>
+	<string name="recommend_icon_pen">Active Pen</string>
+	<string name="recommend_icon_duo_window">Duo window</string>
+	<string name="recommend_icon_duo_screen">Duo OS</string>
+	<string name="recommend_icon_duo_mode">Duo Boards</string>
+	<string name="recommend_icon_blizz">Blizz</string>
+
+
+	<string name="recommend_row_ams">File Manager</string>
+
+
+	<string name="recommend_row_start_meeting">Start Meeting</string>
+
+
+	<string name="recommend_row_video_conference">Video Conference</string>
+
+
+	<string name="recommend_row_white_board">Whiteboard</string>
+
+	<string name="recommend_icon_connection">Connection</string>
 </resources>

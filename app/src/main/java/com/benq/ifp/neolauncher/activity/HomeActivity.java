@@ -18,15 +18,12 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.benq.ifp.neolauncher.CellLayout;
 import com.benq.ifp.neolauncher.DeviceProfile;
 import com.benq.ifp.neolauncher.R;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
-import com.benq.ifp.neolauncher.content.AppMenu;
 import com.benq.ifp.neolauncher.graphics.ToolbarBackground;
-import com.benq.ifp.neolauncher.hotseat.Hotseat;
-import com.benq.ifp.neolauncher.menubar.MenuBar;
 import com.benq.ifp.neolauncher.preference.Preferences;
+import com.benq.ifp.neolauncher.recommend.RecommendRow;
 import com.benq.ifp.neolauncher.view.SoftKeyboard;
 import com.benq.ifp.neolauncher.view.SystemBars;
 import com.benq.ifp.neolauncher.widget.AppPieView;
@@ -38,14 +35,13 @@ public class HomeActivity extends Activity {
 	private GestureDetector gestureDetector;
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
-	private Hotseat hotseatView;
-	private MenuBar menubar;
 	private EditText searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
 	private boolean showAllAppsOnResume = false;
 	private int immersiveMode = Preferences.IMMERSIVE_MODE_DISABLED;
 	private long pausedAt = 0L;
+	private RecommendRow recommendRow;
 
 	private DeviceProfile mDeviceProfile;
 
@@ -106,11 +102,9 @@ public class HomeActivity extends Activity {
 
 		// 啟用 immersive，隱藏底部導航列
 		pieView.enableImmersive(getWindow());
-		menubar = findViewById(R.id.menubar);
-		hotseatView = menubar.findViewById(R.id.hotseat);
-		Log.d(TAG," TAG hotseatView : "+hotseatView);
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
+//		recommendRow = findViewById(R.id.recommendRow);
 
 		initPieView();
 		initSearchInput();
@@ -210,12 +204,6 @@ public class HomeActivity extends Activity {
 	}
 
 	private void initPieView() {
-		// 2) 綁定 Host + Hotseat（可為 null，MenuBar 內會自己再 rootView.findViewById 當備援）
-		if (menubar != null) {
-			menubar.bindHost(this, (hotseatView instanceof Hotseat)
-					? hotseatView
-					: null);
-		}
 
 		// 3) 原本初始化 AppPieView 的流程
 		pieView.setWindow(getWindow());
@@ -253,45 +241,6 @@ public class HomeActivity extends Activity {
 			searchInput.getText().clear();
 			updateAppList();
 		});
-
-		if (hotseatView != null) {
-			Log.d(TAG,"TAG hotseatView 2 : "+hotseatView);
-			pieView.setHotseatDropTarget(hotseatView, new AppPieView.HotseatDropTarget() {
-				@Override public boolean acceptDrop(AppMenu.AppIcon app) {
-					Log.d(TAG,"TAG hotseatView acceptDrop 3 : "+hotseatView);
-					Hotseat hs = hotseatView;
-					if (hs == null || !hs.isAttachedToWindow()) return false;
-					CellLayout layout = hs.getLayout();
-					if (layout == null) return false;
-
-					if (layout.getShortcutsAndWidgets().getChildCount()
-							>= getDeviceProfile().inv.numHotseatIcons) return false;
-
-					ImageView iv = new ImageView(hotseatView.getContext());
-					iv.setImageBitmap(app.bitmap);
-					iv.setContentDescription(app.label);
-
-					int nextRank = layout.getShortcutsAndWidgets().getChildCount();
-					int x = hs.getCellXFromOrder(nextRank);
-					int y = hs.getCellYFromOrder(nextRank);
-					CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x, y, 1, 1);
-					lp.canReorder = true;
-
-					layout.addViewToCellLayout(iv, -1, View.generateViewId(), lp, true);
-					return true;
-				}
-
-				@Override public void onHoverHotseat(boolean hovered) {
-					Log.d(TAG,"TAG hotseatView onHoverHotseat 4 : "+hotseatView);
-					if (hotseatView != null && hotseatView.isAttachedToWindow()) {
-						hotseatView.setActivated(hovered);
-					}
-				}
-			});
-		} else {
-			Log.w("HomeActivity","No hotseat in this layout; disable drop/hover");
-			pieView.setHotseatDropTarget(null, null); // 告知沒有 Hotseat
-		}
 
 	}
 
