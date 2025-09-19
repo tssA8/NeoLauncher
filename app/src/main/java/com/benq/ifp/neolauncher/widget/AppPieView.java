@@ -2055,14 +2055,15 @@ public class AppPieView extends View {
 
 
     private boolean showAppNames() {
-        switch (prefs.showAppNames()) {
-            case Preferences.SHOW_APP_NAMES_ALWAYS:
-                return true;
-            case Preferences.SHOW_APP_NAMES_SEARCH:
-                return appListIsFiltered;
-            default:
-                return false;
-        }
+        return true;
+//        switch (prefs.showAppNames()) {
+//            case Preferences.SHOW_APP_NAMES_ALWAYS:
+//                return true;
+//            case Preferences.SHOW_APP_NAMES_SEARCH:
+//                return appListIsFiltered;
+//            default:
+//                return false;
+//        }
     }
 
     private boolean drawEditor(Canvas canvas, float f) {
