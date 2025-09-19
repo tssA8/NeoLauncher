@@ -17,6 +17,7 @@ import android.view.ViewConfiguration;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.benq.ifp.neolauncher.DeviceProfile;
 import com.benq.ifp.neolauncher.R;
@@ -41,7 +42,7 @@ public class HomeActivity extends Activity {
 	private boolean showAllAppsOnResume = false;
 	private int immersiveMode = Preferences.IMMERSIVE_MODE_DISABLED;
 	private long pausedAt = 0L;
-	private RecommendRow recommendRow;
+	private RelativeLayout recommendRow;
 
 	private DeviceProfile mDeviceProfile;
 
@@ -91,6 +92,8 @@ public class HomeActivity extends Activity {
 
 		setContentView(R.layout.home_activity);
 
+		recommendRow = findViewById(R.id.llVariantContainer);
+
 		if (!PreferencesActivity.isReady(this)) {
 			PreferencesActivity.startWelcome(this);
 		}
@@ -104,7 +107,6 @@ public class HomeActivity extends Activity {
 		pieView.enableImmersive(getWindow());
 		searchInput = findViewById(R.id.search);
 		prefsButton = findViewById(R.id.preferences);
-//		recommendRow = findViewById(R.id.recommendRow);
 
 		initPieView();
 		initSearchInput();
@@ -375,6 +377,8 @@ public class HomeActivity extends Activity {
 	}
 
 	public void showAllApps() {
+		if (recommendRow != null) recommendRow.setVisibility(View.GONE);
+
 		if (isSearchVisible()) {
 			return;
 		}
@@ -408,6 +412,7 @@ public class HomeActivity extends Activity {
 	}
 
 	private void hideAllApps() {
+		if (recommendRow != null) recommendRow.setVisibility(View.VISIBLE);
 		if (isSearchVisible()) {
 			searchInput.setVisibility(View.GONE);
 			hideKeyboadAndPrefsButton();
