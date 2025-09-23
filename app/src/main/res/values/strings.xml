@@ -156,4 +156,6 @@
 	<string name="recommend_row_white_board">Whiteboard</string>
 
 	<string name="recommend_icon_connection">Connection</string>
+
+	<string name="location_search_hint">Search</string>
 </resources>

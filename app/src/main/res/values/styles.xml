@@ -69,4 +69,11 @@
 		</attr>
 	</declare-styleable>
 
+	<declare-styleable name="EditTextFocusShift">
+		<attr name="focusShiftRight" format="boolean" />
+		<attr name="focusShiftLeft" format="boolean" />
+		<attr name="focusShiftUp" format="boolean" />
+		<attr name="focusShiftDown" format="boolean" />
+	</declare-styleable>
+
 </resources>

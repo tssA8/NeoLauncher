@@ -21,6 +21,7 @@ import android.widget.RelativeLayout;
 
 import com.benq.ifp.neolauncher.DeviceProfile;
 import com.benq.ifp.neolauncher.R;
+import com.benq.ifp.neolauncher.SearchBarComponentView.SearchBarComponent;
 import com.benq.ifp.neolauncher.app.PieLauncherApp;
 import com.benq.ifp.neolauncher.graphics.ToolbarBackground;
 import com.benq.ifp.neolauncher.preference.Preferences;
@@ -36,6 +37,8 @@ public class HomeActivity extends Activity {
 	private GestureDetector gestureDetector;
 	private ToolbarBackground toolbarBackground;
 	private AppPieView pieView;
+
+	private SearchBarComponent searchBarComponent;
 	private EditText searchInput;
 	private ImageView prefsButton;
 	private boolean updateAfterTextChange = true;
@@ -107,7 +110,37 @@ public class HomeActivity extends Activity {
 
 		// 啟用 immersive，隱藏底部導航列
 		pieView.enableImmersive(getWindow());
-		searchInput = findViewById(R.id.search);
+		searchBarComponent = findViewById(R.id.ll_search);
+
+		searchBarComponent.setOnSearchBarClickListener(new SearchBarComponent.OnSearchBarClickListener() {
+			@Override
+			public void onSearchBarClicked(String text) {
+				// Handle the click event here.
+				// The `text` parameter is the current text in the search bar.
+//				searchIcon.setImageResource(R.drawable.ic_arrow_left);
+			}
+
+			@Override
+			public void onSearchBarEmpty() {
+				// Log the event
+				Log.d(TAG, "onSearchBarEmpty");
+
+			}
+
+			@Override
+			public void onSearchBarChangeListener(CharSequence s, int start, int before, int count) {
+//				if (s != null) {
+//					if (s.length() > 0) {
+//						mCsAdapter.getFilter().filter(s.toString());
+//						clearIcon.setVisibility(View.VISIBLE);
+//					} else {
+//						clearIcon.setVisibility(View.GONE);
+//					}
+//				}
+			}
+		});
+
+		searchInput = searchBarComponent.getSearchEditText();
 		prefsButton = findViewById(R.id.preferences);
 
 		initPieView();
@@ -229,8 +262,7 @@ public class HomeActivity extends Activity {
 				if (isScrolling && y != 0) {
 					hideKeyboadAndPrefsButton();
 				}
-				searchInput.setBackgroundColor(
-						toolbarBackground.getColorForY(y));
+				searchInput.setBackgroundColor(toolbarBackground.getColorForY(y));
 			}
 
 			@Override
@@ -384,7 +416,7 @@ public class HomeActivity extends Activity {
 		if (isSearchVisible()) {
 			return;
 		}
-
+		searchBarComponent.setVisibility(View.VISIBLE);
 		searchInput.setVisibility(View.VISIBLE);
 		prefsButton.setVisibility(View.VISIBLE);
 		setAlpha(searchInput, 1f);
@@ -416,6 +448,7 @@ public class HomeActivity extends Activity {
 	private void hideAllApps() {
 		if (recommendRow != null) recommendRow.setVisibility(View.VISIBLE);
 		if (isSearchVisible()) {
+			searchBarComponent.setVisibility(View.GONE);
 			searchInput.setVisibility(View.GONE);
 			hideKeyboadAndPrefsButton();
 		}

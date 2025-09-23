@@ -28,23 +28,35 @@
     </RelativeLayout>
 
 
-    <EditText
-        android:id="@+id/search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:gravity="center"
-        android:imeOptions="actionSearch|flagNoExtractUi"
-        android:importantForAutofill="no"
-        android:inputType="textNoSuggestions|textFilter|textVisiblePassword"
-        android:maxLength="128"
-        android:maxLines="1"
-        android:paddingTop="64dp"
-        android:paddingBottom="16dp"
-        android:privateImeOptions="nm"
-        android:textColor="@color/text_color"
+<!--    <EditText-->
+<!--        android:id="@+id/search"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:gravity="center"-->
+<!--        android:imeOptions="actionSearch|flagNoExtractUi"-->
+<!--        android:importantForAutofill="no"-->
+<!--        android:inputType="textNoSuggestions|textFilter|textVisiblePassword"-->
+<!--        android:maxLength="128"-->
+<!--        android:maxLines="1"-->
+<!--        android:paddingTop="64dp"-->
+<!--        android:paddingBottom="16dp"-->
+<!--        android:privateImeOptions="nm"-->
+<!--        android:textColor="@color/text_color"-->
+<!--        android:visibility="gone"-->
+<!--        tools:ignore="LabelFor" />-->
+
+
+    <com.benq.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
+        android:id="@+id/ll_search"
+        android:layout_width="426dp"
+        android:layout_height="@dimen/bookmark_search_layout_arrow_width"
+        android:layout_margin="@dimen/bookmark_search_bar_margin_top"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="200dp"
         android:visibility="gone"
-        tools:ignore="LabelFor" />
+        android:descendantFocusability="afterDescendants"
+        android:focusable="true" />
 
     <com.benq.ifp.neolauncher.widget.ActionButton
         android:id="@+id/preferences"

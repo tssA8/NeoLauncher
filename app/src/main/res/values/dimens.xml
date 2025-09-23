@@ -359,6 +359,21 @@
 	<dimen name="hotseat_horizontal_padding">16dp</dimen>
 	<dimen name="hotseat_icon_text_size">12sp</dimen>
 
+	<dimen name="bookmark_search_layout_arrow_width">35dp</dimen>
+	<dimen name="bookmark_search_image_height">20dp</dimen>
+	<dimen name="bookmark_search_clear_width">42dp</dimen>
+	<dimen name="bookmark_search_image_margin">13dp</dimen>
+	<dimen name="bookmark_recycle_margin_top">13dp</dimen>
+	<dimen name="bookmark_search_et_margin">11dp</dimen>
+	<dimen name="bookmark_search_bar_padding_top">20dp</dimen>
+	<dimen name="bookmark_search_ic_clear_width">21dp</dimen>
+	<dimen name="bookmark_search_bar_margin_top">13dp</dimen>
+	<dimen name="bookmark_search_bar_margin_start">30dp</dimen>
+	<dimen name="bookmark_search_text_size">9sp</dimen>
+	<dimen name="bookmark_search_no_result_text_size">16sp</dimen>
+	<dimen name="bookmark_search_no_result_margin_bottom">30dp</dimen>
+	<dimen name="bookmark_search_no_result_description_text_size">12sp</dimen>
+
 	<dimen name="dp_5">3dp</dimen>
 	<dimen name="dp_10">6dp</dimen>
 	<dimen name="dp_12">8dp</dimen>

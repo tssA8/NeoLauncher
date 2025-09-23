@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_search"
+    android:background="@drawable/search_bar_selector"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:descendantFocusability="afterDescendants"
+    android:focusable="true">
+
+    <ImageView
+        android:id="@+id/iv_search"
+        android:layout_width="@dimen/bookmark_search_clear_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|center_vertical"
+        android:background="@drawable/bookmark_clear_selector"
+        android:contentDescription="@null"
+        android:paddingTop="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_12"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_search"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_et_search_container"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/bookmark_clear_selector"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true">
+
+        <com.benq.ifp.neolauncher.SearchBarComponentView.EditTextFocusShift
+            android:id="@+id/et_search"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="start|center_vertical"
+            android:hint="@string/location_search_hint"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
+            android:textColor="#FF3B3B3B"
+            android:textColorHint="#FF959595"
+            android:textSize="12sp"
+            app:focusShiftDown="true"
+            app:focusShiftLeft="true"
+            app:focusShiftRight="true"
+            app:focusShiftUp="true"
+            android:background="@null"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_clear"
+        android:layout_width="@dimen/bookmark_search_clear_width"
+        android:layout_height="match_parent"
+        android:background="@drawable/focus_frame"
+        android:contentDescription="@null"
+        android:paddingTop="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_12"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_icon_text_field_close_circle"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</LinearLayout>
