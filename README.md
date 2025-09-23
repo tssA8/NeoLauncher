@@ -2,5 +2,6 @@
 
 Android home screen launcher that uses a dynamic
 
-![Uploading image.png…]()
+![我的截圖](https://drive.google.com/uc?export=view&id=1qmTkClRUoRf95p6ivREpLDvm5uqtk9FO)
+
 
