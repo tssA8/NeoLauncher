@@ -5,7 +5,7 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-	namespace 'com.benq.ifp.neolauncher'
+	namespace 'com.pt.ifp.neolauncher'
 	compileSdk 34
 
 	defaultConfig {

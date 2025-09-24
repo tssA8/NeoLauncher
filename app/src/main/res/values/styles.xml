@@ -43,7 +43,7 @@
 	</style>
 	<style name="LightDialog" parent="android:Theme.Light"/>
 
-	<declare-styleable name="BenQ">
+	<declare-styleable name="PT">
 		<attr name="text" format="string" />
 		<attr name="drawable" format="reference" />
 		<attr name="drawable_focused" format="reference" />

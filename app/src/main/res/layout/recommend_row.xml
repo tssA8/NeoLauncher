@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.benq.ifp.neolauncher.recommend.RecommendRow xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:benq="http://schemas.android.com/apk/res-auto"
+<com.pt.ifp.neolauncher.recommend.RecommendRow xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pt="http://schemas.android.com/apk/res-auto"
     android:id="@+id/llrecommendRow"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -9,7 +9,7 @@
     android:focusable="true"
     android:orientation="horizontal">
 
-    <com.benq.ifp.neolauncher.recommend.RecommendRowItemView
+    <com.pt.ifp.neolauncher.recommend.RecommendRowItemView
         android:id="@+id/rrWirelessProjection"
         android:layout_width="@dimen/recommend_row_item_width"
         android:layout_height="@dimen/recommend_row_item_height"
@@ -17,9 +17,9 @@
         android:layout_marginEnd="@dimen/recommend_row_item_horizontal_margin"
         android:background="@drawable/recommandrow_left"
         android:nextFocusLeft="@id/rrWirelessProjection"
-        benq:text="@string/recommend_row_wireless_projection" />
+        pt:text="@string/recommend_row_wireless_projection" />
 
-    <com.benq.ifp.neolauncher.recommend.RecommendRowItemView
+    <com.pt.ifp.neolauncher.recommend.RecommendRowItemView
         android:id="@+id/rrFileManager"
         android:layout_width="@dimen/recommend_row_item_width"
         android:layout_height="@dimen/recommend_row_item_height"
@@ -27,10 +27,10 @@
         android:layout_marginEnd="@dimen/recommend_row_item_horizontal_margin"
         android:background="@drawable/recommandrow_right"
         android:clipChildren="false"
-        benq:text="@string/recommend_row_ams" />
+        pt:text="@string/recommend_row_ams" />
 
 
-    <com.benq.ifp.neolauncher.recommend.RecommendRowItemView
+    <com.pt.ifp.neolauncher.recommend.RecommendRowItemView
         android:id="@+id/rrWhiteboard"
         android:layout_width="@dimen/recommend_row_item_width"
         android:layout_height="@dimen/recommend_row_item_height"
@@ -38,7 +38,7 @@
         android:layout_marginEnd="@dimen/recommend_row_item_horizontal_margin"
         android:background="@drawable/uni_ezwrite_button_selector"
         android:nextFocusRight="@id/rrWhiteboard"
-        benq:text="@string/recommend_row_white_board">
+        pt:text="@string/recommend_row_white_board">
         <!--<requestFocus/>-->
-    </com.benq.ifp.neolauncher.recommend.RecommendRowItemView>
-</com.benq.ifp.neolauncher.recommend.RecommendRow>
+    </com.pt.ifp.neolauncher.recommend.RecommendRowItemView>
+</com.pt.ifp.neolauncher.recommend.RecommendRow>

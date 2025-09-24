@@ -1,7 +1,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="com.benq.ifp.neolauncher"
+	package="com.pt.ifp.neolauncher"
 	android:installLocation="auto">
 
 	<supports-screens
@@ -19,7 +19,7 @@
 
 	<application
 		tools:ignore="UnusedAttribute"
-		android:name=".app.PieLauncherApp"
+		android:name=".app.NeoLauncherApp"
 		android:allowBackup="true"
 		android:supportsRtl="true"
 		android:resizeableActivity="true"

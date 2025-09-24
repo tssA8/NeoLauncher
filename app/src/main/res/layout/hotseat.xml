@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.benq.ifp.neolauncher.hotseat.Hotseat xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pt.ifp.neolauncher.hotseat.Hotseat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:launcher="http://schemas.android.com/apk/res-auto"
     android:id="@+id/hotseat"
     android:layout_width="match_parent"
@@ -7,9 +7,9 @@
     android:background="@drawable/bg_hotseat"
     android:visibility="visible">
 
-    <com.benq.ifp.neolauncher.CellLayout
+    <com.pt.ifp.neolauncher.CellLayout
         android:id="@+id/cell_layout"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center" />
-</com.benq.ifp.neolauncher.hotseat.Hotseat>
+</com.pt.ifp.neolauncher.hotseat.Hotseat>

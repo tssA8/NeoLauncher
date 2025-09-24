@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">Neo Launcher</string>
 	<string name="tip_loading">Загрузка…</string>
 	<string name="tip_drag_to_order">Перетаскивайте для изменения порядка</string>
 	<string name="tip_remove_icon">Удалить иконку</string>

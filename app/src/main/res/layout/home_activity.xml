@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.benq.ifp.neolauncher.widget.AppPieView
+    <com.pt.ifp.neolauncher.widget.AppPieView
         android:id="@+id/pie"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -47,7 +47,7 @@
 <!--        tools:ignore="LabelFor" />-->
 
 
-    <com.benq.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
+    <com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
         android:id="@+id/ll_search"
         android:layout_width="426dp"
         android:layout_height="@dimen/bookmark_search_layout_arrow_width"
@@ -58,7 +58,7 @@
         android:descendantFocusability="afterDescendants"
         android:focusable="true" />
 
-    <com.benq.ifp.neolauncher.widget.ActionButton
+    <com.pt.ifp.neolauncher.widget.ActionButton
         android:id="@+id/preferences"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

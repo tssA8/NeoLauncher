@@ -35,7 +35,7 @@
         android:descendantFocusability="beforeDescendants"
         android:focusable="true">
 
-        <com.benq.ifp.neolauncher.SearchBarComponentView.EditTextFocusShift
+        <com.pt.ifp.neolauncher.SearchBarComponentView.EditTextFocusShift
             android:id="@+id/et_search"
             android:layout_width="0dp"
             android:layout_height="match_parent"

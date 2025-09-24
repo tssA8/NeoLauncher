@@ -1,5 +1,5 @@
 <resources>
-	<string name="app_name">Pie Launcher</string>
+	<string name="app_name">Neo Launcher</string>
 	<string name="tip_loading">Laddar …</string>
 	<string name="tip_drag_to_order">Dra för att ordna, cirkla för att ändra ordning</string>
 	<string name="tip_remove_icon">Ta bort ikon från cirkelmenyn</string>
