@@ -1,20 +1,20 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- res/layout/home_activity.xml（把原本 <merge> 整體改成 FrameLayout） -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.pt.ifp.neolauncher.widget.AppPieView
         android:id="@+id/pie"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:scrollbars="vertical" />
-
 
     <RelativeLayout
         android:id="@+id/llVariantContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
         android:clipChildren="false">
 
         <include
@@ -27,32 +27,12 @@
             android:clipChildren="false" />
     </RelativeLayout>
 
-
-<!--    <EditText-->
-<!--        android:id="@+id/search"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:gravity="center"-->
-<!--        android:imeOptions="actionSearch|flagNoExtractUi"-->
-<!--        android:importantForAutofill="no"-->
-<!--        android:inputType="textNoSuggestions|textFilter|textVisiblePassword"-->
-<!--        android:maxLength="128"-->
-<!--        android:maxLines="1"-->
-<!--        android:paddingTop="64dp"-->
-<!--        android:paddingBottom="16dp"-->
-<!--        android:privateImeOptions="nm"-->
-<!--        android:textColor="@color/text_color"-->
-<!--        android:visibility="gone"-->
-<!--        tools:ignore="LabelFor" />-->
-
-
     <com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
         android:id="@+id/ll_search"
         android:layout_width="426dp"
         android:layout_height="@dimen/bookmark_search_layout_arrow_width"
         android:layout_margin="@dimen/bookmark_search_bar_margin_top"
-        android:layout_gravity="top|center"
+        android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="200dp"
         android:visibility="gone"
         android:descendantFocusability="afterDescendants"
@@ -65,10 +45,16 @@
         android:layout_gravity="end"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:contentDescription="@string/preferences"
         android:padding="16dp"
         android:src="@drawable/ic_preferences"
         android:visibility="gone" />
 
-</merge>
+    <!-- ✅ 新增：Compose 置底工具列 -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/menubarcompose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" />
+
+</FrameLayout>

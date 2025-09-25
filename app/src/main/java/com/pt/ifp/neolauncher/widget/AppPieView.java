@@ -213,7 +213,7 @@ public class AppPieView extends View {
     private static final String PREFS_BAR = "hotseat_bar";
     private static final String KEY_SLOTS = "slots";
 
-    private CanvasMenuBar menuBar;
+//    private CanvasMenuBar menuBar;
 
     private HomeActivity mLauncher;
     private boolean menuBarPressed = false;
@@ -247,14 +247,14 @@ public class AppPieView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        menuBar.layout(w, h);   // 告訴 MenuBar 目前的畫布大小，讓它自己排版
+//        menuBar.layout(w, h);   // 告訴 MenuBar 目前的畫布大小，讓它自己排版
     }
 
     public AppPieView(Context context, AttributeSet attr) {
         super(context, attr);
 
         prefs = NeoLauncherApp.getPrefs(context);
-        menuBar = new CanvasMenuBar(context);
+//        menuBar = new CanvasMenuBar(context);
 
         Resources res = context.getResources();
         DisplayMetrics dm = res.getDisplayMetrics();
@@ -391,7 +391,7 @@ public class AppPieView extends View {
         final int SCREEN_H = 2160;
 
         // 讀取 menubar 高度
-        barHeight = getResources().getDimensionPixelSize(R.dimen.menu_bar_icon_container_height);
+        barHeight = getResources().getDimensionPixelSize(R.dimen.menu_bar_container_height);
 
         // 既有尺寸
         barPaddingH = Math.round(24f * dp);
@@ -649,9 +649,9 @@ public class AppPieView extends View {
             drawTip(canvas, loadingTip);
         }
 
-        if (menuBar != null) {
-            menuBar.draw(canvas);
-        }
+//        if (menuBar != null) {
+//            menuBar.draw(canvas);
+//        }
 
         // ⑤ 底部 Bar
         drawBottomBar(canvas);
@@ -702,20 +702,11 @@ public class AppPieView extends View {
 
 
     private void drawBottomBar(Canvas canvas) {
-
-        // 背景圓角
-        int saveClip = canvas.save();
-        android.graphics.Path path = new android.graphics.Path();
-        float r = barRadius;
-        path.addRoundRect(new android.graphics.RectF(barRect),
-                new float[]{r, r, r, r, r, r, r, r},
-                android.graphics.Path.Direction.CW);
-        canvas.clipPath(path);
+        // 直接畫直角矩形背景
         canvas.drawRect(barRect, paintDropZone);
-        canvas.restoreToCount(saveClip);
 
         // 畫 5 格
-        int s = iconSizeBar; // ← 改成專屬 bar 的大小
+        int s = iconSizeBar;
         for (int i = 0; i < BAR_COLS; i++) {
             Rect cell = barSlotRects[i];
 
@@ -739,8 +730,8 @@ public class AppPieView extends View {
                 canvas.drawLine(cx, cy - half, cx, cy + half, paintText);
             }
         }
-
     }
+
 
 
     @Override
@@ -861,10 +852,10 @@ public class AppPieView extends View {
                         int y = (int) event.getY();
 
                         // ★ 先檢查是不是點在 CanvasMenuBar 裡
-                        if (menuBar != null && menuBar.hitTest(x, y)) {
-                            menuBarPressed = true;   // ← 鎖定這次手勢
-                            return true;             // 讓後續 MOVE/UP 都回到這支 listener
-                        }
+//                        if (menuBar != null && menuBar.hitTest(x, y)) {
+//                            menuBarPressed = true;   // ← 鎖定這次手勢
+//                            return true;             // 讓後續 MOVE/UP 都回到這支 listener
+//                        }
 
                         // ★ 先看是否點在底部 bar
                         if (barRect.contains(touch.x, touch.y)) {
@@ -946,13 +937,13 @@ public class AppPieView extends View {
                         int x2 = (int) event.getX();
                         int y2 = (int) event.getY();
 
-                        if (menuBarPressed) {
-                            menuBarPressed = false;
-                            if (menuBar != null && menuBar.handleTouch(x2, y2, mLauncher)) {
-                                return true;    // 命中 slot → 事件消耗
-                            }
-                            return true;        // ❗沒命中 slot 也吞掉，避免落到底層流程
-                        }
+//                        if (menuBarPressed) {
+//                            menuBarPressed = false;
+//                            if (menuBar != null && menuBar.handleTouch(x2, y2, mLauncher)) {
+//                                return true;    // 命中 slot → 事件消耗
+//                            }
+//                            return true;        // ❗沒命中 slot 也吞掉，避免落到底層流程
+//                        }
 
                         if (barPressedIndex >= 0) {
                             // 還原父層攔截
