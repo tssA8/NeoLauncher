@@ -239,7 +239,6 @@ class HomeActivity : ComponentActivity() {
             override fun onHideList() { hideAllApps() }
             override fun onScrollList(y: Int, isScrolling: Boolean) {
                 if (isScrolling && y != 0) hideKeyboadAndPrefsButton()
-                searchInput.setBackgroundColor(toolbarBackground.getColorForY(y))
             }
             override fun onDragDown(alpha: Float) {
                 hideKeyboadAndPrefsButton()

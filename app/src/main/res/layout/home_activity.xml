@@ -9,6 +9,7 @@
         android:id="@+id/pie"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/recommend_row_transparent"
         android:scrollbars="vertical" />
 
     <RelativeLayout
@@ -35,6 +36,7 @@
         android:layout_margin="@dimen/bookmark_search_bar_margin_top"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="200dp"
+        android:elevation="16dp"
         android:visibility="gone"
         android:descendantFocusability="afterDescendants"
         android:focusable="true" />
