@@ -66,7 +66,15 @@ fun CanvasMenuBarCompose(
 
         Spacer(modifier = Modifier.fillMaxHeight().width(250.dp))
 
-        MenubarSlotContainer()
+        MenubarSlotContainer(
+            barHeight = barHeight,
+            slotIconSize = slotIconSize,
+            icons = icons,
+            onCasting = onCasting,
+            onSettings = onSettings,
+            onAllApps = onAllApps,
+            onHelp = onHelp
+        )
     }
 }
 
