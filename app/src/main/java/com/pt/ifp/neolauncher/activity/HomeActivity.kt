@@ -22,11 +22,14 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
 import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBar
+import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBarWithHistory
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
@@ -57,6 +60,9 @@ class HomeActivity : ComponentActivity() {
     private var mDeviceProfile: DeviceProfile? = null
 
     private lateinit var googleSearchView: ComposeView
+
+    private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
+
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -125,8 +131,16 @@ class HomeActivity : ComponentActivity() {
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         googleSearchView.setContent {
+//            MaterialTheme {
+//                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
+//            }
+
             MaterialTheme {
-                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
+                GoogleSearchBarWithHistory(
+                    showHistory = showHistoryState.value,
+                    onDismissHistory = { showHistoryState.value = false },
+                    onShowHistory = { showHistoryState.value = true }
+                )
             }
         }
 
@@ -141,6 +155,9 @@ class HomeActivity : ComponentActivity() {
         pieView.setActivity(this)
         pieView.isVerticalScrollBarEnabled = false
         pieView.isHorizontalScrollBarEnabled = false
+        pieView.setOnClickListener {
+            showHistoryState.value = false   // ✅ 只改狀態，不要重建 setContent
+        }
 
         // 啟用 immersive，隱藏底部導航列
         AppPieView.enableImmersive(window)

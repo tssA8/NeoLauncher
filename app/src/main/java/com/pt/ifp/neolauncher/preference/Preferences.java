@@ -9,6 +9,11 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Preferences {
 	public static final int DEAD_ZONE_NONE = 0;
 	public static final int DEAD_ZONE_TOP = 1;
@@ -66,6 +71,8 @@ public class Preferences {
 	private static final String HAPTIC_FEEDBACK = "haptic_feedback";
 	private static final String USE_LIGHT_DIALOGS = "use_light_dialogs";
 	private static final String FORCE_RELAUNCH = "force_relaunch";
+
+	private static final String SEARCH_HISTORY = "search_history";
 
 	private final SharedPreferences preferences;
 	private final SystemSettings systemSettings;
@@ -354,6 +361,23 @@ public class Preferences {
 	public void setForceRelaunch(boolean forceRelaunch) {
 		this.forceRelaunch = forceRelaunch;
 		put(FORCE_RELAUNCH, forceRelaunch).apply();
+	}
+
+
+	// --- 新增方法 ---
+	public void saveSearchHistory(List<String> history) {
+		preferences.edit()
+				.putStringSet(SEARCH_HISTORY, new HashSet<>(history))
+				.apply();
+	}
+
+	public List<String> getSearchHistory() {
+		Set<String> set = preferences.getStringSet(SEARCH_HISTORY, new HashSet<>());
+		return new ArrayList<>(set);
+	}
+
+	public void clearSearchHistory() {
+		preferences.edit().remove(SEARCH_HISTORY).apply();
 	}
 
 	public float getAnimationDuration() {

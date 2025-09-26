@@ -2,6 +2,9 @@
 package com.pt.ifp.neolauncher.SearchBarComponentView
 
 import android.app.Activity
+import android.app.SearchManager
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.speech.RecognizerIntent
@@ -100,6 +103,24 @@ fun GoogleSearchBar(
         )
     }
 
+
+    fun launchGoogleSearch(q: String) {
+        try {
+            val intent = Intent(Intent.ACTION_WEB_SEARCH).apply {
+                putExtra(SearchManager.QUERY, q)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // fallback
+            val url = "https://www.google.com/search?q=" + Uri.encode(q)
+            context.startActivity(
+                Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            )
+        }
+    }
+
+
     Surface(
         color = Color.Transparent,
         modifier = modifier.fillMaxWidth()
@@ -115,7 +136,7 @@ fun GoogleSearchBar(
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() }
-                ) { launchWebSearch(query) }
+                ) { launchGoogleSearch(query) }
                 .fillMaxWidth()
                 .heightIn(min = 40.dp)
         ) {
@@ -147,7 +168,7 @@ fun GoogleSearchBar(
                     ),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = { launchWebSearch(query) }),
+                    keyboardActions = KeyboardActions(onSearch = { launchGoogleSearch(query) }),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -190,7 +211,7 @@ fun GoogleSearchBar(
             }
 
             // 右三：搜尋按鈕
-            IconButton(onClick = { launchWebSearch(query) }) {
+            IconButton(onClick = { launchGoogleSearch(query) }) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "Search",
@@ -200,4 +221,5 @@ fun GoogleSearchBar(
             }
         }
     }
+    
 }
