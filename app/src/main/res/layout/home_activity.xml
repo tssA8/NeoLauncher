@@ -51,12 +51,6 @@
         android:src="@drawable/ic_preferences"
         android:visibility="gone" />
 
-    <!-- ✅ 新增：Compose 置底工具列 -->
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/menubarcompose"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal" />
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/googlesearchcompose"
@@ -64,6 +58,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginTop="100dp"/>
+
+
+    <!-- ✅ 新增：Compose 置底工具列 -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/menubarcompose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" />
 
 
 </FrameLayout>
