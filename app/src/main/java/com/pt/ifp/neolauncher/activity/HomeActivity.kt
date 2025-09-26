@@ -56,6 +56,8 @@ class HomeActivity : ComponentActivity() {
 
     private var mDeviceProfile: DeviceProfile? = null
 
+    private lateinit var googleSearchView: ComposeView
+
     override fun onBackPressed() {
         super.onBackPressed()
         if (pieView.inEditMode()) {
@@ -118,11 +120,11 @@ class HomeActivity : ComponentActivity() {
         }
 
 
-        val searchBar = findViewById<ComposeView>(R.id.googlesearchcompose)
-        searchBar.setViewCompositionStrategy(
+        googleSearchView = findViewById<ComposeView>(R.id.googlesearchcompose)
+        googleSearchView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
-        searchBar.setContent {
+        googleSearchView.setContent {
             MaterialTheme {
                 GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
             }
