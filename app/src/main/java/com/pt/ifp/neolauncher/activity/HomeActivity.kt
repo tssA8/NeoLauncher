@@ -361,6 +361,7 @@ class HomeActivity : ComponentActivity() {
 
     fun showAllApps() {
         recommendRow?.visibility = View.GONE
+        googleSearchView?.visibility = View.GONE
         if (isSearchVisible) return
 
         searchBarComponent.visibility = View.VISIBLE
@@ -389,6 +390,7 @@ class HomeActivity : ComponentActivity() {
 
     private fun hideAllApps() {
         recommendRow?.visibility = View.VISIBLE
+        googleSearchView?.visibility = View.VISIBLE
         if (isSearchVisible) {
             searchBarComponent.visibility = View.GONE
             searchInput.visibility = View.GONE
