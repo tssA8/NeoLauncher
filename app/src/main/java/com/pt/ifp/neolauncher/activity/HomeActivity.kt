@@ -1,5 +1,6 @@
 package com.pt.ifp.neolauncher.activity
 
+import GoogleSearchBar
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
@@ -113,6 +114,17 @@ class HomeActivity : ComponentActivity() {
                     onAllApps  = { showAllApps() },
                     onHelp     = { }
                 )
+            }
+        }
+
+
+        val searchBar = findViewById<ComposeView>(R.id.googlesearchcompose)
+        searchBar.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        searchBar.setContent {
+            MaterialTheme {
+                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
             }
         }
 

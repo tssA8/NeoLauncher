@@ -27,6 +27,7 @@
             android:clipChildren="false" />
     </RelativeLayout>
 
+
     <com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
         android:id="@+id/ll_search"
         android:layout_width="426dp"
@@ -56,5 +57,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal" />
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/googlesearchcompose"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="100dp"/>
+
 
 </FrameLayout>
