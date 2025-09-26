@@ -1,6 +1,5 @@
 package com.pt.ifp.neolauncher.activity
 
-import GoogleSearchBar
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
@@ -27,6 +26,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
+import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBar
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
