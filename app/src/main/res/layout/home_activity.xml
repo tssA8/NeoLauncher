@@ -62,6 +62,13 @@
         android:layout_marginTop="100dp"/>
 
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/notecompose"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        android:layout_gravity="right|center_vertical"/>
+
+
     <!-- ✅ 新增：Compose 置底工具列 -->
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/menubarcompose"

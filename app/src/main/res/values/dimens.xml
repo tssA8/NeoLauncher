@@ -374,6 +374,25 @@
 	<dimen name="bookmark_search_no_result_margin_bottom">30dp</dimen>
 	<dimen name="bookmark_search_no_result_description_text_size">12sp</dimen>
 
+	<!-- region theme dimens -->
+	<dimen name="theme_editor_corner_radius">4dp</dimen>
+	<dimen name="theme_header_height">40dp</dimen>
+	<dimen name="theme_header_textSize">13.33sp</dimen>
+	<dimen name="theme_back_button_width_height">26.67dp</dimen>
+	<dimen name="theme_back_button_marginStart">10dp</dimen>
+	<dimen name="theme_input_corner_radius">3.33dp</dimen>
+	<dimen name="theme_focused_frame_stroke">2dp</dimen>
+
+	<dimen name="note_text_size">16sp</dimen>
+	<dimen name="note_widget_size">156dp</dimen>
+	<string name="note_mvc_view_font_size">Font Size :</string>
+	<string name="note_mvc_view_font_size_large">L</string>
+	<string name="note_mvc_view_font_size_medium">M</string>
+	<string name="note_mvc_view_font_size_small">S</string>
+
+	<dimen name="dp_1">1dp</dimen>
+	<dimen name="dp_2">2dp</dimen>
+	<dimen name="dp_3">3dp</dimen>
 	<dimen name="dp_5">3dp</dimen>
 	<dimen name="dp_10">6dp</dimen>
 	<dimen name="dp_12">8dp</dimen>

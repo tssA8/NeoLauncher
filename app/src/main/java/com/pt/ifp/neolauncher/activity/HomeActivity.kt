@@ -35,6 +35,8 @@ import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent.OnSearch
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
+import com.pt.ifp.neolauncher.note.NoteEditActivity
+import com.pt.ifp.neolauncher.note.NoteWidget
 import com.pt.ifp.neolauncher.preference.Preferences
 import com.pt.ifp.neolauncher.view.SoftKeyboard
 import com.pt.ifp.neolauncher.view.SystemBars
@@ -60,6 +62,8 @@ class HomeActivity : ComponentActivity() {
     private var mDeviceProfile: DeviceProfile? = null
 
     private lateinit var googleSearchView: ComposeView
+
+    private lateinit var noteComposeView: ComposeView
 
     private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
 
@@ -142,6 +146,17 @@ class HomeActivity : ComponentActivity() {
                     onShowHistory = { showHistoryState.value = true }
                 )
             }
+        }
+
+        noteComposeView = findViewById<ComposeView>(R.id.notecompose)
+        noteComposeView.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+        )
+        noteComposeView.setContent {
+            NoteWidget(
+                text = "點我開啟編輯",
+                onClick = { startActivity(Intent(this, NoteEditActivity::class.java)) }
+            )
         }
 
 

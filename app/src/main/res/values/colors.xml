@@ -301,5 +301,13 @@
 	<color name="focus_frame_border_color">#00ffff</color>
 	<color name="focus_frame_fill_color">#1e6996</color>
 	<color name="black50">#80000000</color>
+	<color name="theme_background">#383c60</color>
+	<color name="theme_title_background">#4b507a</color>
+	<color name="note_mvc_view_font_size_changed_solid_background">#1e6996</color>
+	<color name="theme_focused_frame">#25ffff</color>
+
+	<color name="note_press_fill_color">#1e6996</color>
+	<color name="note_press_border_color">#00ffff</color>
+	<color name="button_press_background_color">#157777</color>
 
 </resources>

@@ -158,4 +158,7 @@
 	<string name="recommend_icon_connection">Connection</string>
 
 	<string name="location_search_hint">Search</string>
+
+	<string name="btn_save">Save</string>
+	<string name="btn_cancel">Cancel</string>
 </resources>

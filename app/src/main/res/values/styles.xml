@@ -76,4 +76,42 @@
 		<attr name="focusShiftDown" format="boolean" />
 	</declare-styleable>
 
+	<!-- region widget settings theme-->
+	<style name="theme_widget_settings_header">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">@dimen/theme_header_height</item>
+		<item name="android:background">@drawable/theme_editor_background</item>
+		<item name="android:textSize">20sp</item>
+		<item name="android:textColor">#ffffff</item>
+	</style>
+
+	<style name="style_note_font_size_button">
+		<item name="android:textColor">#ffffff</item>
+		<item name="android:textSize">12sp</item>
+		<item name="android:fontFamily">sans-serif</item>
+	</style>
+
+	<style name="style_note_editor">
+		<item name="colorAccent">#00ffff</item>
+	</style>
+
+	<style name="style_widget_button">
+		<item name="android:textColor">#ffffff</item>
+		<item name="android:textSize">13dp</item>
+	</style>
+	<!-- endregion meeting room settings-->
+
+
+	<style name="Theme.WidgetSetting" parent="Theme.AppCompat.Light">
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="windowNoTitle">true</item>
+		<item name="windowActionBar">false</item>
+		<item name="android:windowFrame">@null</item>
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowFullscreen">true</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<item name="android:windowCloseOnTouchOutside">false</item>
+	</style>
+
 </resources>

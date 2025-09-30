@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <!-- 新增背景填滿顏色 -->
+            <solid android:color="@color/note_mvc_view_font_size_changed_solid_background" />
+
+            <!-- Stroke 保持原樣，並修改寬度和顏色 -->
+            <stroke
+                android:width="@dimen/dp_2"
+                android:color="@color/theme_focused_frame" />
+
+            <!-- 保持圓角設置 -->
+            <corners android:radius="666dp" />
+        </shape>
+    </item>
+</selector>
