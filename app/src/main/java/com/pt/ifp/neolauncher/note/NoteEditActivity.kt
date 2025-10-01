@@ -3,28 +3,55 @@ package com.pt.ifp.neolauncher.note
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.pt.ifp.neolauncher.Constant
+import com.pt.ifp.neolauncher.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 
 
 class NoteEditActivity : AppCompatActivity(), NoteEditViewMvc.Listener {
 
     private lateinit var viewMvc: NoteEditViewMvc
+    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_WidgetSetting)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         viewMvc = NoteEditViewMvc(layoutInflater, null)
-        viewMvc.registerListener(this)
         setContentView(viewMvc.rootView)
+        setupWindowDimAmount()
 
         // ★ 可選：把呼叫端帶來的內容預填到編輯框
-        intent.getStringExtra(EXTRA_NOTE_CONTENT)?.let { preset ->
+        intent.getStringExtra(Constant.EXTRA_NOTE_CONTENT)?.let { preset ->
             viewMvc.getEditNote().setText(preset)
             viewMvc.getEditNote().setSelection(preset.length)
         }
     }
+
+    private fun setupWindowDimAmount() {
+        val params = window.attributes
+        params.dimAmount = 0.5f
+        window.attributes = params
+        window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewMvc.registerListener(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+//        coroutineScope.coroutineContext.cancelChildren()
+        viewMvc.unregisterListener(this)
+    }
+
 
     override fun onDestroy() {
         viewMvc.unregisterListener(this)
@@ -40,8 +67,8 @@ class NoteEditActivity : AppCompatActivity(), NoteEditViewMvc.Listener {
         setResult(
             Activity.RESULT_OK,
             Intent()
-                .putExtra(EXTRA_NOTE_CONTENT, content)
-                .putExtra(EXTRA_NOTE_TEXT_SIZE, sizeSp) // ← 用這個 key 放字體大小
+                .putExtra(Constant.EXTRA_NOTE_CONTENT, content)
+                .putExtra(Constant.EXTRA_NOTE_TEXT_SIZE, sizeSp) // ← 用這個 key 放字體大小
         )
         finish()
     }
@@ -61,8 +88,5 @@ class NoteEditActivity : AppCompatActivity(), NoteEditViewMvc.Listener {
     companion object {
         const val SYS_PROPERTY_ROLE = "persist.sys.benq.role"
         const val DEFAULT_ROLE = "default"
-        const val EXTRA_NOTE_CONTENT = "extra_note_content"
-
-        const val EXTRA_NOTE_TEXT_SIZE = "extra_note_text_size"  // 字體大小（Float, 單位 sp）
     }
 }

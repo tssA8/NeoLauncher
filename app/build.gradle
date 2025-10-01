@@ -64,6 +64,9 @@ android {
 }
 
 dependencies {
+	implementation 'androidx.compose.foundation:foundation:1.9.2'
+	def lifecycle_version = "2.6.0" // 用你現有的版本變數即可
+	implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 	implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0"
 	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 

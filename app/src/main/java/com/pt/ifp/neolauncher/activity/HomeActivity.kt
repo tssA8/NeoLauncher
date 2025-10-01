@@ -24,14 +24,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import com.pt.ifp.neolauncher.Constant
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
-import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBar
 import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBarWithHistory
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
 import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent.OnSearchBarClickListener
@@ -39,17 +44,15 @@ import com.pt.ifp.neolauncher.app.NeoLauncherApp
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
 import com.pt.ifp.neolauncher.note.NoteEditActivity
+import com.pt.ifp.neolauncher.note.NoteEditorDialog
+import com.pt.ifp.neolauncher.note.NoteSharedViewModel
 import com.pt.ifp.neolauncher.note.NoteWidget
 import com.pt.ifp.neolauncher.preference.Preferences
 import com.pt.ifp.neolauncher.view.SoftKeyboard
 import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.res.dimensionResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -72,6 +75,8 @@ class HomeActivity : ComponentActivity() {
     private lateinit var googleSearchView: ComposeView
 
     private lateinit var noteComposeView: ComposeView
+
+    private lateinit var noteEditorView : ComposeView
 
     private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
 
@@ -161,35 +166,46 @@ class HomeActivity : ComponentActivity() {
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         noteComposeView.setContent {
-            // 這裡是 Composable 環境
+            // 取得同一個 Activity 範圍的 ViewModel
+            val vm: NoteSharedViewModel = viewModel()
+
+            // 如果需要用資源的預設字體大小，可在初次時寫回 VM（只做一次）
             val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
-
-            var noteText by rememberSaveable { mutableStateOf("點我開啟編輯") }
-            var noteSizeSp by rememberSaveable { mutableStateOf(defaultSizeSp) }
-
-            val launcher = rememberLauncherForActivityResult(
-                ActivityResultContracts.StartActivityForResult()
-            ) { res ->
-                if (res.resultCode == Activity.RESULT_OK) {
-                    noteText = res.data?.getStringExtra(NoteEditActivity.EXTRA_NOTE_CONTENT).orEmpty()
-                    res.data?.getFloatExtra(NoteEditActivity.EXTRA_NOTE_TEXT_SIZE, Float.NaN)
-                        ?.takeIf { !it.isNaN() }
-                        ?.let { noteSizeSp = it }
-                }
+            LaunchedEffect(Unit) {
+                if (vm.sizeSp <= 0f) vm.update(sizeSp = defaultSizeSp)
             }
 
             NoteWidget(
-                text = noteText,
-                fontSizeSp = noteSizeSp,
-                onClick = {
-                    val intent = Intent(this, NoteEditActivity::class.java).apply {
-                        putExtra(NoteEditActivity.EXTRA_NOTE_CONTENT, noteText) // 可選：預填
-                    }
-                    launcher.launch(intent)
-                }
+                text = vm.text,
+                fontSizeSp = vm.sizeSp,
+                onClick = { noteEditorView.visibility = View.VISIBLE } // 打開編輯器 overlay
             )
         }
 
+
+        noteEditorView = findViewById<ComposeView>(R.id.noteeditorcompose)
+        noteEditorView.setContent {
+            val vm: NoteSharedViewModel = viewModel()
+
+            val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
+            val presetText = vm.text
+            val presetSize = if (vm.sizeSp > 0f) vm.sizeSp else defaultSizeSp
+
+            NoteEditorDialog(
+                initialText = presetText,
+                initialSizeSp = presetSize,
+                onSave = { text, sizeSp ->
+                    vm.update(text = text, sizeSp = sizeSp)      // ← 更新共享狀態
+                    noteEditorView.visibility = View.GONE        // ← 關閉編輯器
+                },
+                onCancel = {
+                    noteEditorView.visibility = View.GONE
+                },
+                size = DpSize(426.dp, 526.dp),
+                useDialogWindow = false,
+                scale = 1.4f
+            )
+        }
 
         if (!PreferencesActivity.isReady(this)) {
             PreferencesActivity.startWelcome(this)
