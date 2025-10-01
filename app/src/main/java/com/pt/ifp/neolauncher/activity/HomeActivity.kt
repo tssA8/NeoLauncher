@@ -21,9 +21,12 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import com.pt.ifp.neolauncher.DeviceProfile
@@ -42,6 +45,11 @@ import com.pt.ifp.neolauncher.view.SoftKeyboard
 import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.res.dimensionResource
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -153,9 +161,32 @@ class HomeActivity : ComponentActivity() {
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         noteComposeView.setContent {
+            // 這裡是 Composable 環境
+            val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
+
+            var noteText by rememberSaveable { mutableStateOf("點我開啟編輯") }
+            var noteSizeSp by rememberSaveable { mutableStateOf(defaultSizeSp) }
+
+            val launcher = rememberLauncherForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) { res ->
+                if (res.resultCode == Activity.RESULT_OK) {
+                    noteText = res.data?.getStringExtra(NoteEditActivity.EXTRA_NOTE_CONTENT).orEmpty()
+                    res.data?.getFloatExtra(NoteEditActivity.EXTRA_NOTE_TEXT_SIZE, Float.NaN)
+                        ?.takeIf { !it.isNaN() }
+                        ?.let { noteSizeSp = it }
+                }
+            }
+
             NoteWidget(
-                text = "點我開啟編輯",
-                onClick = { startActivity(Intent(this, NoteEditActivity::class.java)) }
+                text = noteText,
+                fontSizeSp = noteSizeSp,
+                onClick = {
+                    val intent = Intent(this, NoteEditActivity::class.java).apply {
+                        putExtra(NoteEditActivity.EXTRA_NOTE_CONTENT, noteText) // 可選：預填
+                    }
+                    launcher.launch(intent)
+                }
             )
         }
 
@@ -261,7 +292,6 @@ class HomeActivity : ComponentActivity() {
     }
 
     private fun initPieView() {
-        // ❌ pieView.setWindow(window) 這裡不要再重複呼叫
         pieView.setListListener(object : ListListener {
             override fun onOpenList(resume: Boolean) {
                 showAllAppsOnResume = resume

@@ -13,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.pt.ifp.neolauncher.R
 
 class NoteEditViewMvc(
@@ -166,13 +167,13 @@ class NoteEditViewMvc(
     }
 
     private fun setNoteTextBackground(selectView: View) {
-//        val drawablePressed = ContextCompat.getDrawable(context, R.drawable.widget_note_text_press)
-//        val drawableNormal = ContextCompat.getDrawable(context, R.drawable.widget_note_text_unpress)
-//        val buttonList = mutableListOf(noteTextSizeLarge, noteTextSizeMedium, noteTextSizeSmall)
-//
-//        for (button in buttonList) {
-//            if (button == selectView) button.background = drawablePressed else button.background = drawableNormal
-//        }
+        val drawablePressed = ContextCompat.getDrawable(context, R.drawable.widget_note_text_press)
+        val drawableNormal = ContextCompat.getDrawable(context, R.drawable.widget_note_text_unpress)
+        val buttonList = mutableListOf(noteTextSizeLarge, noteTextSizeMedium, noteTextSizeSmall)
+
+        for (button in buttonList) {
+            if (button == selectView) button.background = drawablePressed else button.background = drawableNormal
+        }
     }
 
     fun getEditNote(): EditText {
@@ -194,6 +195,7 @@ class NoteEditViewMvc(
     fun getNoteCancel():Button {
         return noteCancel
     }
+
 
     companion object {
         private const val TEXT_SIZE_LARGE = 40f

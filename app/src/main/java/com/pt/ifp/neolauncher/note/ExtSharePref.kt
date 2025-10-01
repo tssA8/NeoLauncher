@@ -58,6 +58,7 @@ fun getPrefUsersNote(context: Context, role: String): MutableList<NoteData> {
 }
 
 fun savePrefUserNoteData(context: Context, userNoteList: MutableList<NoteData>) {
+    Log.d(" NoteEditViewMvc ","savePrefUserNoteData  ")
     val key = SHARED_PREF_KEY_USER_ROLE_List
     setPrefSting(context, key, Gson().toJson(userNoteList))
 }

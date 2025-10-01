@@ -30,16 +30,14 @@ import com.pt.ifp.neolauncher.R
 fun NoteWidget(
     text: String,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,         // 可選：由外部接管點擊
+    onClick: (() -> Unit)? = null,
     backgroundRes: Int = R.drawable.ic_widget_note_bg,
     textColorRes: Int = R.color.bq_grey_10,
-    // ⚠️ 不要在預設參數呼叫 composable；改在函式內取用
+    fontSizeSp: Float? = null,                 // ★ 新增：可選外部字體大小
     outerPadding: Dp = 10.dp,
     innerPadding: Dp = 10.dp
 ) {
     val context = LocalContext.current
-
-    // 預設開啟 NoteEditActivity 的行為
     val defaultOpen: () -> Unit = {
         val intent = Intent(context, NoteEditActivity::class.java)
         if (context !is Activity) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -50,27 +48,26 @@ fun NoteWidget(
     val scroll = rememberScrollState()
     val noteColor = colorResource(id = textColorRes)
     val bgPainter = painterResource(id = backgroundRes)
-    val textSizePx = dimensionResource(id = R.dimen.note_text_size).value // 取出資源值
+
+    // 若外部沒給，就用資源的預設大小
+    val effectiveFontSizeSp =
+        fontSizeSp ?: dimensionResource(id = R.dimen.note_text_size).value
 
     val baseMod = modifier
-        .fillMaxSize() // 讓整塊佔滿父層
+        .fillMaxSize()
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
-            indication = ripple(),
+            indication = androidx.compose.material3.ripple(),
             onClick = clickHandler
         )
 
     Column(modifier = baseMod) {
         Spacer(Modifier.fillMaxWidth().weight(0.01f))
-
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.98f),
+            modifier = Modifier.fillMaxWidth().weight(0.98f),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(Modifier.fillMaxHeight().weight(0.1f))
-
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -83,11 +80,10 @@ fun NoteWidget(
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.matchParentSize()
                 )
-
                 Text(
                     text = text,
                     color = noteColor,
-                    fontSize = textSizePx.sp,           // 以 sp 顯示
+                    fontSize = effectiveFontSizeSp.sp,   // ★ 用外部/預設大小
                     textAlign = TextAlign.Start,
                     modifier = Modifier
                         .fillMaxSize()
@@ -95,13 +91,12 @@ fun NoteWidget(
                         .verticalScroll(scroll)
                 )
             }
-
             Spacer(Modifier.fillMaxHeight().weight(0.1f))
         }
-
         Spacer(Modifier.fillMaxWidth().weight(0.01f))
     }
 }
+
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 200)
 @Composable
