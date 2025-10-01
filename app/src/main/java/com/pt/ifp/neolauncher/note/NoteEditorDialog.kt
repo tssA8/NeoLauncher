@@ -191,8 +191,8 @@ fun NoteEditorDialog(
                         OutlinedButton(
                             onClick = { onSave(text.trimEnd(), sizeSp) },
                             modifier = Modifier
-                                .height(36.dp.s())
-                                .width(120.dp.s()),
+                                .height(34.dp.s())
+                                .width(97.dp.s()),
                             shape = RoundedCornerShape(24.dp.s()),
                             border = BorderStroke(1.dp, Color.White),
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -200,14 +200,14 @@ fun NoteEditorDialog(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text("Save", fontSize = 14.sp.s())
+                            Text("Save", fontSize = 13.sp.s())
                         }
 
                         OutlinedButton(
                             onClick = onCancel,
                             modifier = Modifier
-                                .height(36.dp.s())
-                                .width(120.dp.s()),
+                                .height(34.dp.s())
+                                .width(97.dp.s()),
                             shape = RoundedCornerShape(24.dp.s()),
                             border = BorderStroke(1.dp, Color.White),
                             colors = ButtonDefaults.outlinedButtonColors(
@@ -215,7 +215,7 @@ fun NoteEditorDialog(
                                 contentColor = Color.White
                             )
                         ) {
-                            Text("Cancel", fontSize = 14.sp.s())
+                            Text("Cancel", fontSize = 13.sp.s())
                         }
                     }
                 }

@@ -68,15 +68,12 @@
         android:layout_height="200dp"
         android:layout_gravity="right|center_vertical"/>
 
-
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/noteeditorcompose"
         android:layout_width="426dp"
         android:layout_height="526dp"
         android:visibility="gone"
         android:layout_gravity="center"/>
-
-
 
     <!-- ✅ 新增：Compose 置底工具列 -->
     <androidx.compose.ui.platform.ComposeView
