@@ -1,4 +1,4 @@
-package com.benq.uikit.components;
+package com.pt.uikit.components;
 
 import android.util.Log;
 

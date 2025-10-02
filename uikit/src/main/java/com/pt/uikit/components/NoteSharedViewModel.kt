@@ -1,5 +1,5 @@
 // NoteSharedViewModel.kt
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue

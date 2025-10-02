@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace 'com.benq.uikit'
+    namespace 'com.pt.uikit'
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.benq.uikit"
+        applicationId "com.pt.uikit"
         minSdk 26
         targetSdk 35
         versionCode 1

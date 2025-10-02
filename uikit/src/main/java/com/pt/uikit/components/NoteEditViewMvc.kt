@@ -1,4 +1,4 @@
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import android.util.Log
 import android.util.TypedValue
@@ -52,8 +52,8 @@ class NoteEditViewMvc(
         editNoteContainer = findViewById<ConstraintLayout>(R.id.note_edit)
 
         val role = Util.getSystemProperty(
-            NoteEditActivity.SYS_PROPERTY_ROLE,
-            NoteEditActivity.DEFAULT_ROLE
+            NoteEditActivity.Companion.SYS_PROPERTY_ROLE,
+            NoteEditActivity.Companion.DEFAULT_ROLE
         )
         val noteData = getPrefUsersNote(context, role).find { it.role == role }
         requireNotNull(noteData) { "note data must be non-null" }

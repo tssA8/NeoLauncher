@@ -86,6 +86,8 @@ dependencies {
 	implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.6'
 	implementation 'com.google.code.gson:gson:2.8.6'
 
+	implementation "com.github.tssA8.NeoLauncher:uikit:v1.0.0"
+
 	// 🧪 開發/除錯工具
 	debugImplementation "androidx.compose.ui:ui-tooling"
 	debugImplementation "androidx.compose.ui:ui-test-manifest"

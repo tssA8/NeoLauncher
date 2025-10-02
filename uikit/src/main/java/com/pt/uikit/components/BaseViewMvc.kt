@@ -1,4 +1,4 @@
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import android.content.Context
 import android.view.LayoutInflater

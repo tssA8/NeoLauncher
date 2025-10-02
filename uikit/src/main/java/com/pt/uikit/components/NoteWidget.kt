@@ -1,4 +1,4 @@
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -56,7 +57,7 @@ fun NoteWidget(
         .fillMaxSize()
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
-            indication = androidx.compose.material3.ripple(),
+            indication = ripple(),
             onClick = onClick
         )
 

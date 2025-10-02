@@ -1,4 +1,4 @@
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -47,7 +47,7 @@ fun getPrefUsersNote(context: Context, role: String): MutableList<NoteData> {
         return userNoteList
     }
 
-    val dataType = object : TypeToken<List<NoteData>>(){}.type
+    val dataType = object : com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken<List<NoteData>>(){}.type
     userNoteList.addAll(Gson().fromJson<List<NoteData>>(usersData, dataType) as MutableList<NoteData>)
     userNoteList.find { it.role == role } ?: run {
         userNoteList.add(NoteData(role, getPreviousNoteData(context), System.currentTimeMillis(), SHARED_PREF_DEFAULT_TEXT_SIZE))

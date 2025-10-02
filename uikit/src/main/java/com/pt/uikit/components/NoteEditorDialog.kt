@@ -1,5 +1,5 @@
 // NoteEditorDialog.kt
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke

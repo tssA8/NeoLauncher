@@ -1,11 +1,11 @@
-package com.benq.uikit.components
+package com.pt.uikit.components
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.benq.uikit.Constant
+import com.pt.uikit.Constant
 import com.benq.uikit.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
