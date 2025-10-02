@@ -1,0 +1,64 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+    // ✅ Kotlin 2.x 必須加：Compose Compiler plugin（版本要跟你的 Kotlin 對齊）
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.20' // 或 2.0.20 等，請用你的 Kotlin 版本
+}
+
+android {
+    namespace 'com.benq.uikit'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.benq.uikit"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.13.0'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // ✅ 改用 ktx；且只留一個（移除 androidx.core:core）
+    implementation 'androidx.core:core-ktx:1.13.1'
+
+    // ✅ Compose BOM，統一 Compose 套件版本
+    implementation platform("androidx.compose:compose-bom:2024.12.01")
+
+    // ✅ Compose 基本
+    implementation "androidx.activity:activity-compose:1.9.3"
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.material3:material3"
+    implementation "androidx.compose.material:material-icons-extended"
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.6'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'androidx.compose.runtime:runtime:1.9.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}

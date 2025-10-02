@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2012 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:focusable="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/note_edit"
+        android:layout_width="426dp"
+        android:layout_height="398dp"
+        android:layout_gravity="center"
+        android:background="@color/theme_background"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/note_edit_header"
+            style="@style/theme_widget_settings_header"
+            android:gravity="center"
+            android:text="Bulletin Board"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/text_size_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
+            android:gravity="center"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/note_editor_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/note_edit_header">
+
+            <TextView
+                android:id="@+id/note_text_size"
+                style="@style/style_note_font_size_button"
+                android:layout_width="60dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="13.3dp"
+                android:gravity="center"
+                android:text="@string/note_mvc_view_font_size" />
+
+            <Button
+                android:id="@+id/note_text_size_large"
+                style="@style/style_note_font_size_button"
+                android:layout_width="39.3dp"
+                android:layout_height="22dp"
+                android:layout_marginRight="8dp"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/note_text_size_large"
+                android:nextFocusRight="@+id/note_text_size_medium"
+                android:nextFocusDown="@+id/note_editor_container"
+                android:background="@drawable/note_mvc_view_notesize_selector"
+                android:text="@string/note_mvc_view_font_size_large" />
+
+            <Button
+                android:id="@+id/note_text_size_medium"
+                style="@style/style_note_font_size_button"
+                android:layout_width="39.3dp"
+                android:layout_height="22dp"
+                android:layout_marginRight="8dp"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/note_text_size_large"
+                android:nextFocusRight="@+id/note_text_size_small"
+                android:nextFocusDown="@+id/note_editor_container"
+                android:background="@drawable/note_mvc_view_notesize_selector"
+                android:text="@string/note_mvc_view_font_size_medium" />
+
+            <Button
+                android:id="@+id/note_text_size_small"
+                style="@style/style_note_font_size_button"
+                android:layout_width="39.3dp"
+                android:layout_height="22dp"
+                android:focusable="true"
+                android:nextFocusLeft="@+id/note_text_size_medium"
+                android:nextFocusRight="@+id/note_text_size_small"
+                android:nextFocusDown="@+id/note_editor_container"
+                android:background="@drawable/note_mvc_view_notesize_selector"
+                android:text="@string/note_mvc_view_font_size_small" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/note_editor_container"
+            android:layout_width="301dp"
+            android:layout_height="255dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_widget_note_bg"
+            android:descendantFocusability="afterDescendants"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_size_button">
+
+            <EditText
+                android:id="@+id/note_editor_view"
+                style="@style/style_note_editor"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/uni_edit_note_selector"
+                android:cursorVisible="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="sans-serif"
+                android:gravity="top|left"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:nextFocusDown="@id/note_edit_save"
+                android:radius="4dp"
+                android:scrollbars="vertical"
+                android:textColor="#383838"
+                android:textSize="30sp"
+                android:nextFocusUp="@+id/note_text_size_medium"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="co ni gi wa" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:descendantFocusability="afterDescendants"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@+id/note_editor_container">
+
+            <Button
+                android:id="@+id/note_edit_save"
+                style="@style/style_widget_button"
+                android:layout_width="97dp"
+                android:layout_height="34dp"
+                android:layout_marginRight="15dp"
+                android:background="@drawable/note_save_cancel_button_selector"
+                android:focusable="true"
+                android:text="@string/btn_save" />
+
+            <Button
+                android:id="@+id/note_edit_cancel"
+                style="@style/style_widget_button"
+                android:layout_width="97dp"
+                android:layout_height="34dp"
+                android:background="@drawable/note_save_cancel_button_selector"
+                android:focusable="true"
+                android:text="@string/btn_cancel" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

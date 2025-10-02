@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pt.ifp.neolauncher.menubar.MenuBar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menubar_root"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/menubar_height"
+    android:layout_gravity="bottom"
+    android:descendantFocusability="afterDescendants"
+    tools:ignore="MissingDefaultResource">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/menubar_user"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/menu_bar_container_height"
+        android:layout_gravity="bottom"
+        android:background="@color/menu_bar_account_control_background_color">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_local_guest_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/menu_bar_container_padding_start"
+            android:background="@drawable/bg_user_selector"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <com.pt.ifp.neolauncher.menubar.CircleImageView
+                android:id="@+id/picture"
+                android:layout_width="@dimen/pending_menu_bar_account_icon_size"
+                android:layout_height="@dimen/pending_menu_bar_account_icon_size"
+                android:layout_marginStart="@dimen/pending_menu_bar_user_icon_left"
+                android:src="@drawable/ic_account_control"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/picture"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/menu_bar_auto_start_margin_bottom"
+                    android:fontFamily="sans-serif-light"
+                    android:text="@string/menu_bar_account_name"
+                    android:textColor="@color/menu_bar_account_control_name_color"
+                    android:textSize="@dimen/menu_bar_name_text_size"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+                <ImageView
+                    android:layout_width="@dimen/menu_bar_view_line_width"
+                    android:layout_height="@dimen/menu_bar_view_line_high"
+                    android:layout_marginStart="@dimen/menu_bar_view_line_margin_start"
+                    android:background="@color/menu_bar_account_control_end_view_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/name"
+                    app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_logIn_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/menu_bar_container_padding_start"
+            android:background="@drawable/bg_user_selector"
+            android:focusable="true"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.pt.ifp.neolauncher.menubar.CircleImageView
+                android:id="@+id/picture_local_public"
+                android:layout_width="@dimen/pending_menu_bar_account_icon_size"
+                android:layout_height="@dimen/pending_menu_bar_account_icon_size"
+                android:src="@drawable/svg_icon_login_user"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/picture_local_public"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/name_local_public"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/menu_bar_text_clock_margin_start"
+                    android:layout_marginEnd="@dimen/menu_bar_text_name_margin_end"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:text="admin"
+                    android:textSize="@dimen/menu_bar_name_text_size"
+                    android:textStyle="normal"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/menubar_constraint_set_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <FrameLayout
+                android:id="@+id/menu_hotseat"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:descendantFocusability="afterDescendants">
+
+                <com.pt.ifp.neolauncher.hotseat.Hotseat
+                    android:id="@+id/hotseat"
+                    android:layout_width="200dp"
+                    android:visibility="gone"
+                    android:layout_height="match_parent">
+                </com.pt.ifp.neolauncher.hotseat.Hotseat>
+
+                <FrameLayout
+                    android:id="@+id/fl_divider"
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="@dimen/menu_bar_icon_margin_start"
+                    android:background="@color/searchbar_border_white"
+                    android:visibility="gone"></FrameLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_casting_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/menu_hotseat"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/casting"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/source_52" />
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                android:id="@+id/fl_setting_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_casting_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/setting"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/setting_52"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/fl_casting_container"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_allapps_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_setting_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/allApps"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/all_apps_52" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_ezwrite_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:layout_marginStart="@dimen/menu_bar_icon_margin_start"
+                android:layout_marginEnd="@dimen/menu_bar_icon_margin_end"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_allapps_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ezwrite"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/ezwrite_52" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_help_container"
+                android:layout_width="@dimen/menu_bar_icon_container_width"
+                android:layout_height="@dimen/menu_bar_icon_container_height"
+                android:layout_marginStart="@dimen/menu_bar_icon_margin_start"
+                android:background="@drawable/menubar_item_focus"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fl_allapps_container"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_help"
+                    android:layout_width="@dimen/pending_menu_bar_icon_size"
+                    android:layout_height="@dimen/pending_menu_bar_icon_size"
+                    android:layout_gravity="center"
+                    android:background="@drawable/menubar_item_focus"
+                    android:focusable="true"
+                    android:src="@drawable/help_52" />
+            </FrameLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.pt.ifp.neolauncher.menubar.MenuBar>

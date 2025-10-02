@@ -1,0 +1,86 @@
+<!-- res/layout/home_activity.xml（把原本 <merge> 整體改成 FrameLayout） -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.pt.ifp.neolauncher.widget.AppPieView
+        android:id="@+id/pie"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/recommend_row_transparent"
+        android:scrollbars="vertical" />
+
+    <RelativeLayout
+        android:id="@+id/llVariantContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false">
+
+        <include
+            layout="@layout/recommend_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/recommend_row_margin_bottom"
+            android:clipChildren="false" />
+    </RelativeLayout>
+
+
+    <com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
+        android:id="@+id/ll_search"
+        android:layout_width="426dp"
+        android:layout_height="@dimen/bookmark_search_layout_arrow_width"
+        android:layout_margin="@dimen/bookmark_search_bar_margin_top"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="200dp"
+        android:elevation="16dp"
+        android:visibility="gone"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="true" />
+
+    <com.pt.ifp.neolauncher.widget.ActionButton
+        android:id="@+id/preferences"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/preferences"
+        android:padding="16dp"
+        android:src="@drawable/ic_preferences"
+        android:visibility="gone" />
+
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/googlesearchcompose"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="100dp"/>
+
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/notecompose"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        android:layout_gravity="right|center_vertical"/>
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/noteeditorcompose"
+        android:layout_width="426dp"
+        android:layout_height="526dp"
+        android:visibility="gone"
+        android:layout_gravity="center"/>
+
+    <!-- ✅ 新增：Compose 置底工具列 -->
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/menubarcompose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal" />
+
+
+</FrameLayout>
