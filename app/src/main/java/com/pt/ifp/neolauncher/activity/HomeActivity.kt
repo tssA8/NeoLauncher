@@ -53,7 +53,6 @@ import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pt.uikit.components.NoteSharedViewModel
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
