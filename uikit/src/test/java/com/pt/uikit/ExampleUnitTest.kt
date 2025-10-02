@@ -1,4 +1,4 @@
-package com.benq.uikit
+package com.pt.uikit
 
 import org.junit.Test
 

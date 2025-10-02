@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.benq.uikit.R
+import com.pt.uikit.R
 
 @Composable
 fun NoteEditorDialog(

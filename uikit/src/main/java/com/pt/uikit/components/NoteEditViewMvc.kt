@@ -14,7 +14,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.benq.uikit.R
+import com.pt.uikit.R
 
 class NoteEditViewMvc(
     private val layoutInflater: LayoutInflater,
