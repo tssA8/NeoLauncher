@@ -1,39 +1,26 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'          // ⬅️ 改成 library
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
     id 'org.jetbrains.kotlin.plugin.parcelize'
-    // ✅ Kotlin 2.x 必須加：Compose Compiler plugin（版本要跟你的 Kotlin 對齊）
-    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.20' // 或 2.0.20 等，請用你的 Kotlin 版本
+    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.20'
 }
 
 android {
-    namespace 'com.pt.uikit'
+    namespace 'com.pt.uikit'          // ⬅️ 定好最終 package 前綴
     compileSdk 35
 
     defaultConfig {
-        applicationId "com.pt.uikit"
         minSdk 26
         targetSdk 35
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // ⬅️ Library 不要 applicationId
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = '11'
-    }
+    kotlinOptions { jvmTarget = '11' }
 }
 
 dependencies {
