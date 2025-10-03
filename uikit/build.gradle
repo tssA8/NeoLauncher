@@ -24,9 +24,11 @@ android {
 }
 
 dependencies {
+    def lifecycle_version = "2.6.0" // 用你現有的版本變數即可
     implementation 'com.google.android.material:material:1.13.0'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
 
     // ✅ 改用 ktx；且只留一個（移除 androidx.core:core）
     implementation 'androidx.core:core-ktx:1.13.1'
