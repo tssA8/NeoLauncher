@@ -19,7 +19,7 @@ object NoteComposeBridge {
         noteView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         noteView.setContent {
             val vm: NoteSharedViewModel = viewModel()
-            val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
+            val defaultSizeSp = dimensionResource(id = R.dimen.uikit_note_text_size).value
             LaunchedEffect(Unit) { if (vm.sizeSp <= 0f) vm.update(sizeSp = defaultSizeSp) }
             NoteWidget(
                 text = vm.text,
@@ -34,7 +34,7 @@ object NoteComposeBridge {
         editorView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
         editorView.setContent {
             val vm: NoteSharedViewModel = viewModel()
-            val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
+            val defaultSizeSp = dimensionResource(id = R.dimen.uikit_note_text_size).value
             val presetText = vm.text
             val presetSize = if (vm.sizeSp > 0f) vm.sizeSp else defaultSizeSp
             NoteEditorDialog(

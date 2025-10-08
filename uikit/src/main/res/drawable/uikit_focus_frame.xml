@@ -3,7 +3,7 @@
     <item android:state_focused="true">
         <shape android:shape="rectangle">
             <corners android:radius="6dp" />
-            <stroke android:color="@color/focus_frame_border_color"
+            <stroke android:color="@color/uikit_focus_frame_border_color"
                 android:width="2dp"/>
         </shape>
     </item>

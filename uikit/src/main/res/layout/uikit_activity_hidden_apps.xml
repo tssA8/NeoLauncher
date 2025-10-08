@@ -2,17 +2,17 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<ListView
 		android:id="@+id/apps"
-		android:background="@color/bg_ui"
+		android:background="@color/uikit_bg_ui"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:scrollbarStyle="outsideOverlay"
 		android:clipToPadding="false"
 		android:choiceMode="multipleChoice"
-		android:divider="@color/separator"
+		android:divider="@color/uikit_separator"
 		android:dividerHeight="1dp"/>
 	<TextView
 		android:id="@+id/no_hidden_apps"
-		android:background="@color/bg_ui"
+		android:background="@color/uikit_bg_ui"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:gravity="center"
@@ -23,7 +23,7 @@
 		android:id="@+id/progress"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:background="@color/bg_ui"
+		android:background="@color/uikit_bg_ui"
 		android:clickable="true"
 		android:focusable="true"
 		android:visibility="gone">
@@ -35,9 +35,9 @@
 			android:gravity="center"/>
 	</FrameLayout>
 	<TextView
-		style="@style/Toolbar"
+		style="@style/uikit_Toolbar"
 		android:id="@+id/toolbar"
-		android:drawableLeft="@drawable/ic_back"
-		android:drawableStart="@drawable/ic_back"
+		android:drawableLeft="@drawable/uikit_ic_back"
+		android:drawableStart="@drawable/uikit_ic_back"
 		android:text="@string/hidden_apps" />
 </merge>

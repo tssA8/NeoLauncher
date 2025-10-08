@@ -1,47 +1,47 @@
 <resources>
-	<style name="HomeTheme" parent="android:Theme.NoTitleBar">
+	<style name="uikit_HomeTheme" parent="android:Theme.NoTitleBar">
 		<item name="android:windowBackground">@android:color/transparent</item>
 		<item name="android:colorBackgroundCacheHint">@null</item>
 		<item name="android:windowShowWallpaper">true</item>
 		<item name="android:windowNoTitle">true</item>
 	</style>
-	<style name="Toolbar" parent="@android:style/Widget.TextView">
+	<style name="uikit_Toolbar" parent="@android:style/Widget.TextView">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:padding">16dp</item>
 		<item name="android:layout_marginBottom">1dp</item>
 		<item name="android:drawablePadding">32dp</item>
-		<item name="android:textColor">@color/text_color</item>
+		<item name="android:textColor">@color/uikit_text_color</item>
 		<item name="android:textSize">20sp</item>
 		<item name="android:textStyle">bold</item>
 	</style>
-	<style name="CategoryHeader" parent="@android:style/Widget.TextView">
+	<style name="uikit_CategoryHeader" parent="@android:style/Widget.TextView">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:padding">16dp</item>
-		<item name="android:textColor">@color/text_color</item>
+		<item name="android:textColor">@color/uikit_text_color</item>
 		<item name="android:textSize">14sp</item>
 		<item name="android:textStyle">bold</item>
 	</style>
-	<style name="Preference" parent="@android:style/Widget.TextView">
+	<style name="uikit_Preference" parent="@android:style/Widget.TextView">
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
 		<item name="android:padding">16dp</item>
-		<item name="android:textColor">@color/text_color_preference</item>
+		<item name="android:textColor">@color/uikit_text_color_preference</item>
 		<item name="android:lineSpacingExtra">3dp</item>
 	</style>
-	<style name="PreferenceWithSeparator" parent="Preference">
-		<item name="android:background">@drawable/bottom_border</item>
+	<style name="uikit_PreferenceWithSeparator" parent="uikit_Preference">
+		<item name="android:background">@drawable/uikit_bottom_border</item>
 	</style>
 	<style name="Button" parent="@android:style/Widget.Button">
 		<item name="android:layout_width">wrap_content</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:background">@drawable/button_raised</item>
+		<item name="android:background">@drawable/uikit_button_raised</item>
 		<item name="android:padding">16dp</item>
-		<item name="android:textColor">@color/button_text</item>
+		<item name="android:textColor">@color/uikit_button_text</item>
 		<item name="android:textStyle">bold</item>
 	</style>
-	<style name="LightDialog" parent="android:Theme.Light"/>
+	<style name="uikit_LightDialog" parent="android:Theme.Light"/>
 
 	<declare-styleable name="PT">
 		<attr name="text" format="string" />
@@ -49,7 +49,7 @@
 		<attr name="drawable_focused" format="reference" />
 	</declare-styleable>
 
-	<declare-styleable name="MarqueeViewStyle">
+	<declare-styleable name="uikit_MarqueeViewStyle">
 		<attr name="mvInterval" format="integer|reference"/>
 		<attr name="mvAnimDuration" format="integer|reference"/>
 		<attr name="mvTextSize" format="dimension|reference"/>
@@ -69,7 +69,7 @@
 		</attr>
 	</declare-styleable>
 
-	<declare-styleable name="EditTextFocusShift">
+	<declare-styleable name="uikit_EditTextFocusShift">
 		<attr name="focusShiftRight" format="boolean" />
 		<attr name="focusShiftLeft" format="boolean" />
 		<attr name="focusShiftUp" format="boolean" />
@@ -77,32 +77,32 @@
 	</declare-styleable>
 
 	<!-- region widget settings theme-->
-	<style name="theme_widget_settings_header">
+	<style name="uikit_theme_widget_settings_header">
 		<item name="android:layout_width">0dp</item>
-		<item name="android:layout_height">@dimen/theme_header_height</item>
-		<item name="android:background">@drawable/theme_editor_background</item>
+		<item name="android:layout_height">@dimen/uikit_theme_header_height</item>
+		<item name="android:background">@drawable/uikit_theme_editor_background</item>
 		<item name="android:textSize">20sp</item>
 		<item name="android:textColor">#ffffff</item>
 	</style>
 
-	<style name="style_note_font_size_button">
+	<style name="uikit_style_note_font_size_button">
 		<item name="android:textColor">#ffffff</item>
 		<item name="android:textSize">12sp</item>
 		<item name="android:fontFamily">sans-serif</item>
 	</style>
 
-	<style name="style_note_editor">
+	<style name="uikit_style_note_editor">
 		<item name="colorAccent">#00ffff</item>
 	</style>
 
-	<style name="style_widget_button">
+	<style name="uikit_style_widget_button">
 		<item name="android:textColor">#ffffff</item>
 		<item name="android:textSize">13dp</item>
 	</style>
 	<!-- endregion meeting room settings-->
 
 
-	<style name="Theme.WidgetSetting" parent="Theme.AppCompat.DayNight.NoActionBar">
+	<style name="uikit_Theme.WidgetSetting" parent="Theme.AppCompat.DayNight.NoActionBar">
 		<!-- 視窗完全透明 -->
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowBackground">@android:color/transparent</item>

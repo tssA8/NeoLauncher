@@ -22,7 +22,7 @@ class NoteEditViewMvc(
 ) : BaseViewMvc<NoteEditViewMvc.Listener>(
     layoutInflater,
     parent,
-    R.layout.note_edit_activity_edla
+    R.layout.uikit_note_edit_activity_edla
 ) {
 
     interface Listener {
@@ -52,8 +52,8 @@ class NoteEditViewMvc(
         editNoteContainer = findViewById<ConstraintLayout>(R.id.note_edit)
 
         val role = Util.getSystemProperty(
-            NoteEditActivity.Companion.SYS_PROPERTY_ROLE,
-            NoteEditActivity.Companion.DEFAULT_ROLE
+            Companion.SYS_PROPERTY_ROLE,
+            Companion.DEFAULT_ROLE
         )
         val noteData = getPrefUsersNote(context, role).find { it.role == role }
         requireNotNull(noteData) { "note data must be non-null" }
@@ -167,8 +167,8 @@ class NoteEditViewMvc(
     }
 
     private fun setNoteTextBackground(selectView: View) {
-        val drawablePressed = ContextCompat.getDrawable(context, R.drawable.widget_note_text_press)
-        val drawableNormal = ContextCompat.getDrawable(context, R.drawable.widget_note_text_unpress)
+        val drawablePressed = ContextCompat.getDrawable(context, R.drawable.uikit_widget_note_text_press)
+        val drawableNormal = ContextCompat.getDrawable(context, R.drawable.uikit_widget_note_text_unpress)
         val buttonList = mutableListOf(noteTextSizeLarge, noteTextSizeMedium, noteTextSizeSmall)
 
         for (button in buttonList) {
@@ -201,6 +201,10 @@ class NoteEditViewMvc(
         private const val TEXT_SIZE_LARGE = 40f
         private const val TEXT_SIZE_MEDIUM = 30f
         private const val TEXT_SIZE_SMALL = 20f
+
+        const val SYS_PROPERTY_ROLE = "persist.sys.benq.role"
+
+        const val DEFAULT_ROLE = "default"
     }
 
 }

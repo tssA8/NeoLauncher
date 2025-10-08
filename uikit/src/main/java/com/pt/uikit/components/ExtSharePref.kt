@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.util.Log
-import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 const val SHARED_PREF_USER_PROFILE = "widgetPref"
 const val SHARED_PREF_KEY_USER_ROLE_List = "userNoteList"
@@ -13,10 +13,10 @@ const val SHARED_PREF_NOTE_TEXT = "widget_note_text"
 const val SHARED_PREF_DEFAULT_TEXT_SIZE = 30f
 
 data class NoteData(
-        var role: String,
-        var content: String?,
-        var timestamp: Long,
-        var textSize: Float
+    var role: String,
+    var content: String?,
+    var timestamp: Long,
+    var textSize: Float
 )
 
 fun getPreviousNoteData(context: Context): String?{
@@ -26,7 +26,7 @@ fun getPreviousNoteData(context: Context): String?{
 }
 
 fun getSharedPreferences(context: Context): SharedPreferences =
-        context.getSharedPreferences(SHARED_PREF_USER_PROFILE, Context.MODE_PRIVATE)
+    context.getSharedPreferences(SHARED_PREF_USER_PROFILE, Context.MODE_PRIVATE)
 
 fun getPrefSting(context: Context, key: String, defaultValue: String? = null): String? {
     return getSharedPreferences(context).getString(key, defaultValue)
@@ -47,7 +47,7 @@ fun getPrefUsersNote(context: Context, role: String): MutableList<NoteData> {
         return userNoteList
     }
 
-    val dataType = object : com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken<List<NoteData>>(){}.type
+    val dataType = object : com.google.gson.reflect.TypeToken<List<NoteData>>(){}.type
     userNoteList.addAll(Gson().fromJson<List<NoteData>>(usersData, dataType) as MutableList<NoteData>)
     userNoteList.find { it.role == role } ?: run {
         userNoteList.add(NoteData(role, getPreviousNoteData(context), System.currentTimeMillis(), SHARED_PREF_DEFAULT_TEXT_SIZE))

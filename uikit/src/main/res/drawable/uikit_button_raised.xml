@@ -4,13 +4,13 @@
 	<item android:state_pressed="false">
 		<shape android:shape="rectangle">
 			<corners android:radius="2dp"/>
-			<solid android:color="@color/bg_button"/>
+			<solid android:color="@color/uikit_bg_button"/>
 		</shape>
 	</item>
 	<item android:state_pressed="true">
 		<shape android:shape="rectangle">
 			<corners android:radius="2dp"/>
-			<solid android:color="@color/bg_button_pressed"/>
+			<solid android:color="@color/uikit_bg_button_pressed"/>
 		</shape>
 	</item>
 </selector>

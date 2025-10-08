@@ -26,7 +26,7 @@
         android:layout_width="426dp"
         android:layout_height="398dp"
         android:layout_gravity="center"
-        android:background="@color/theme_background"
+        android:background="@color/uikit_theme_background"
         android:descendantFocusability="beforeDescendants"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -38,7 +38,7 @@
 
         <TextView
             android:id="@+id/note_edit_header"
-            style="@style/theme_widget_settings_header"
+            style="@style/uikit_theme_widget_settings_header"
             android:gravity="center"
             android:text="Bulletin Board"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,16 +60,16 @@
 
             <TextView
                 android:id="@+id/note_text_size"
-                style="@style/style_note_font_size_button"
+                style="@style/uikit_style_note_font_size_button"
                 android:layout_width="60dp"
                 android:layout_height="16dp"
                 android:layout_marginRight="13.3dp"
                 android:gravity="center"
-                android:text="@string/note_mvc_view_font_size" />
+                android:text="@string/uikit_note_mvc_view_font_size" />
 
             <Button
                 android:id="@+id/note_text_size_large"
-                style="@style/style_note_font_size_button"
+                style="@style/uikit_style_note_font_size_button"
                 android:layout_width="39.3dp"
                 android:layout_height="22dp"
                 android:layout_marginRight="8dp"
@@ -77,12 +77,12 @@
                 android:nextFocusLeft="@+id/note_text_size_large"
                 android:nextFocusRight="@+id/note_text_size_medium"
                 android:nextFocusDown="@+id/note_editor_container"
-                android:background="@drawable/note_mvc_view_notesize_selector"
-                android:text="@string/note_mvc_view_font_size_large" />
+                android:background="@drawable/uikit_note_mvc_view_notesize_selector"
+                android:text="@string/uikit_note_mvc_view_font_size_large" />
 
             <Button
                 android:id="@+id/note_text_size_medium"
-                style="@style/style_note_font_size_button"
+                style="@style/uikit_style_note_font_size_button"
                 android:layout_width="39.3dp"
                 android:layout_height="22dp"
                 android:layout_marginRight="8dp"
@@ -90,20 +90,20 @@
                 android:nextFocusLeft="@+id/note_text_size_large"
                 android:nextFocusRight="@+id/note_text_size_small"
                 android:nextFocusDown="@+id/note_editor_container"
-                android:background="@drawable/note_mvc_view_notesize_selector"
-                android:text="@string/note_mvc_view_font_size_medium" />
+                android:background="@drawable/uikit_note_mvc_view_notesize_selector"
+                android:text="@string/uikit_note_mvc_view_font_size_medium" />
 
             <Button
                 android:id="@+id/note_text_size_small"
-                style="@style/style_note_font_size_button"
+                style="@style/uikit_style_note_font_size_button"
                 android:layout_width="39.3dp"
                 android:layout_height="22dp"
                 android:focusable="true"
                 android:nextFocusLeft="@+id/note_text_size_medium"
                 android:nextFocusRight="@+id/note_text_size_small"
                 android:nextFocusDown="@+id/note_editor_container"
-                android:background="@drawable/note_mvc_view_notesize_selector"
-                android:text="@string/note_mvc_view_font_size_small" />
+                android:background="@drawable/uikit_note_mvc_view_notesize_selector"
+                android:text="@string/uikit_note_mvc_view_font_size_small" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -111,7 +111,7 @@
             android:layout_width="301dp"
             android:layout_height="255dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/ic_widget_note_bg"
+            android:background="@drawable/uikit_ic_widget_note_bg"
             android:descendantFocusability="afterDescendants"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -119,14 +119,14 @@
 
             <EditText
                 android:id="@+id/note_editor_view"
-                style="@style/style_note_editor"
+                style="@style/uikit_style_note_editor"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/uni_edit_note_selector"
+                android:background="@drawable/uikit_uni_edit_note_selector"
                 android:cursorVisible="true"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -159,22 +159,22 @@
 
             <Button
                 android:id="@+id/note_edit_save"
-                style="@style/style_widget_button"
+                style="@style/uikit_style_widget_button"
                 android:layout_width="97dp"
                 android:layout_height="34dp"
                 android:layout_marginRight="15dp"
-                android:background="@drawable/note_save_cancel_button_selector"
+                android:background="@drawable/uikit_note_save_cancel_button_selector"
                 android:focusable="true"
-                android:text="@string/btn_save" />
+                android:text="@string/uikit_btn_save" />
 
             <Button
                 android:id="@+id/note_edit_cancel"
-                style="@style/style_widget_button"
+                style="@style/uikit_style_widget_button"
                 android:layout_width="97dp"
                 android:layout_height="34dp"
-                android:background="@drawable/note_save_cancel_button_selector"
+                android:background="@drawable/uikit_note_save_cancel_button_selector"
                 android:focusable="true"
-                android:text="@string/btn_cancel" />
+                android:text="@string/uikit_btn_cancel" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

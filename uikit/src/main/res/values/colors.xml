@@ -1,317 +1,35 @@
 <resources>
-    <color name="ic_launcher_background">#134dca</color>
-    <color name="bg_ui">#a000</color>
-    <color name="bg_search_bar">#c000</color>
-    <color name="bg_button">#fff</color>
-    <color name="bg_button_pressed">#afff</color>
-    <color name="bg_action_pressed">#2fff</color>
-    <color name="bg_drop_zone">#8000</color>
-    <color name="button_text">#a000</color>
-    <color name="text_color">#fff</color>
-    <color name="text_color_preference">#afff</color>
-    <color name="separator">#1fff</color>
+    <color name="uikit_ic_launcher_background">#134dca</color>
+    <color name="uikit_bg_ui">#a000</color>
+    <color name="uikit_bg_search_bar">#c000</color>
+    <color name="uikit_bg_button">#fff</color>
+    <color name="uikit_bg_button_pressed">#afff</color>
+    <color name="uikit_bg_action_pressed">#2fff</color>
+    <color name="uikit_bg_drop_zone">#8000</color>
+    <color name="uikit_button_text">#a000</color>
+    <color name="uikit_text_color">#fff</color>
+    <color name="uikit_text_color_preference">#afff</color>
+    <color name="uikit_separator">#1fff</color>
 
-    <color name="delete_target_hover_tint">#FFC1C1C1</color>
-    <color name="uninstall_target_hover_tint">#FFF0592B</color>
-    <color name="info_target_hover_tint">#FF009688</color>
-    <color name="cling_scrim_background">#80000000</color>
+    <color name="uikit_black">#FF000000</color>
+    <color name="uikit_white">#FFFFFFFF</color>
 
-    <color name="focused_background">#80c6c5c5</color>
+    <color name="uikit_bq_grey_10">#1B1B1B</color>
 
-    <color name="workspace_icon_text_color">#FFFFFFFF</color>
+    <color name="uikit_focus_frame_border_color">#00ffff</color>
+    <color name="uikit_focus_frame_fill_color">#1e6996</color>
+    <color name="uikit_black50">#80000000</color>
+    <color name="uikit_theme_background">#383c60</color>
+    <color name="uikit_theme_title_background">#4b507a</color>
+    <color name="uikit_note_mvc_view_font_size_changed_solid_background">#1e6996</color>
+    <color name="uikit_theme_focused_frame">#25ffff</color>
 
-    <color name="workspace_edge_effect_color">#FFFFFFFF</color>
-    <color name="folder_edge_effect_color">#FF757575</color>
+    <color name="uikit_note_press_fill_color">#1e6996</color>
+    <color name="uikit_note_press_border_color">#00ffff</color>
+    <color name="uikit_button_press_background_color">#157777</color>
 
-    <color name="quantum_panel_text_color">#FF666666</color>
-    <color name="quantum_panel_bg_color">#FFF5F5F5</color>
-    <color name="quantum_panel_bg_color_dark">#c8374248</color>
-
-    <color name="wallpaper_picker_translucent_gray">#66000000</color>
-
-    <color name="launcher_accent_color">#ff009688</color>
-
-    <color name="login_view_hint_color">#80ffffff</color>
-    <color name="login_view_login_msg">#fa6d6d</color>
-    <color name="login_dlg_color">#FFFFFF</color>
-    <color name="menu_bar_recent_user_press_border_color">#00ffff</color>
-    <color name="menu_bar_recent_user_press_fill_color">#1e6996</color>
-
-
-    <!-- -->
-    <color name="motion_aera_revert_text_color">#ffffff</color>
-    <color name="motion_area_select_color">#B319BABA</color>
-    <color name="motion_area_line_color">#9925FFFF</color>
-    <color name="transparent_color">#00000000</color>
-    <color name="haif_transparent_color">#77000000</color>
-
-    <!--rect color -->
-    <color name="rect_bg">#FFFFFF</color>
-    <color name="select_color">#FF3333</color>
-    <color name="unselect_color">#25ffff</color>
-    <color name="trigger_color">#ff69b4</color>
-    <color name="search_bar_bg">#59121212</color>
-    <color name="searchbar_border_white">#ffffff</color>
-
-    <!-- schedule mark color -->
-    <color name="schedule_select_mark_color">#a5e4fe</color>
-
-    <color name="outline_color">#FFFFFFFF</color>
-
-    <!-- Containers -->
-    <color name="container_fastscroll_thumb_inactive_color">#62606e</color>
-    <color name="container_fastscroll_thumb_active_color">#62606e</color>
-
-    <!-- All Apps -->
-    <color name="all_apps_grid_section_text_color">#009688</color>
-    <color name="all_apps_search_market_button_focused_bg_color">#DDDDDD</color>
-
-    <!-- Widgets view -->
-    <color name="widgets_view_section_text_color">#FFFFFF</color>
-    <color name="widgets_view_item_text_color">#C4C4C4</color>
-
-    <color name="menu_bar_account_control_name_color">#ffffff</color>
-    <color name="menu_bar_account_control_end_view_color">#4cffffff</color>
-    <color name="menu_bar_account_control_background_color">#66000000</color>
-    <color name="login_in_view_background">#383c60</color>
-    <color name="login_in_view_background_2023">#d9000000</color>
-    <color name="all_app_widget_bgs">#383c60</color>
-    <color name="all_app_widget_text_view_bg">#4b507a</color>
-    <color name="all_app_tab_color">#4b507a</color>
-    <color name="all_apps_container_bg_in_edla">#d9000000</color>
-    <color name="all_apps_container_bg_in_edla_2023_q4_version">#5A5A5A</color>
-    <color name="all_apps_tab_view_height_light_off_color">#4DFFFFFF</color>
-    <color name="all_apps_dividers">#D9000000</color>
-    <color name="all_apps_widget_cell_bg_in_edla">#757575</color>
-    <color name="all_apps_widget_name_bg_in_edla">#3B3B3B</color>
-
-    <!-- Remove bar target-->
-    <color name="remove_bar_target_color_normal_v1">#CCfa6d6d</color>
-    <color name="divider_color">#1Aa9a8b0</color>
-    <color name="temperature_under_line">#3b384c</color>
-    <color name="search_bar_color">#d9000000</color>
-    <color name="circle_button_background_color">#9a40f9</color>
-    <color name="bookmark_focus_color">#25ffff</color>
-    <color name="bookmark_search_text_color">#19baba</color>
-
-    <color name="color_text_color_white">#FFFFFF</color>
-    <color name="color_text_color_gay">#7687b0</color>
-
-    <color name="colorSwitchTrackChecked">#00ffff</color>
-    <color name="colorSwitchTrackUnchecked">#505082</color>
-
-    <color name="color_ezwrite_start">#4b507a</color>
-    <color name="color_ezwrite_end">#383c60</color>
-    <color name="color_ezwrite_button">#80000000</color>
-    <color name="color_ezwrite_background_button">#157777</color>
-    <color name="color_ezwrite_background_button_unselect">#66000000</color>
-    <color name="color_multi_window_backgrounds_start">#4aa3cc</color>
-    <color name="color_multi_window_backgrounds_end">#17488f</color>
-    <color name="all_app_widgets_app_text_bg">#7c74a8</color>
-    <color name="all_app_widget_bg">#383c60</color>
-    <color name="help_page_grid_view_bg">#803b384c</color>
-    <color name="help_page_qrcode_view_bg">#383c60</color>
-    <color name="help_page_live_demo">#b36c668d</color>
-    <color name="help_page_title_bar_bg">#6c668d</color>
-    <color name="help_page_demo_video_bg">#4b507a</color>
-    <color name="all_apps_cs_tips_color">#FFFFFF</color>
-    <color name="recommend_row_focus_color">#25ffff</color>
-    <color name="recommend_row_normal_color">#d8d8d8</color>
-    <color name="recommend_row_normal_color_2025_portrait">#FFFFFF</color>
-    <color name="recommend_row_transparent">#00000000</color>
-    <color name="login_view_title_bg">#4b507a</color>
-    <color name="login_view_background_uni">#383c60</color>
-    <color name="login_view_qrcode_bg_press">#157777</color>
-    <color name="login_view_normal_bg">#33000000</color>
-    <color name="all_apps_tab_view_height_light_color">#00ffff</color>
-    <color name="demo_video_title_bg_color">#4b507a</color>
-    <color name="demo_video_bg_color">#383c60</color>
-    <color name="auto_start_app_divider_line">#4B4F6F</color>
-    <color name="white10">#26FFFFFF</color>
-    <color name="login_view_background_edla">#d9000000</color>
-    <color name="login_view_title_bg_2023">#d9000000</color>
-    <color name="all_apps_tab_view_height_light_color_edla">#FF19BABA</color>
-
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-
-    <!--2024 0409  Blue-->
-    <color name="bq_persian_green_1">#DEF3F4</color>
-    <color name="bq_persian_green_2">#ACE1E2</color>
-    <color name="bq_persian_green_3">#70CECF</color>
-    <color name="bq_persian_green_4">#19BABA</color>
-    <color name="bq_persian_green_5">#00ABA9</color>
-    <color name="bq_persian_green_6">#009B97</color>
-    <color name="bq_persian_green_7">#00BE89</color>
-    <color name="bq_persian_green_8">#007E78</color>
-    <color name="bq_persian_green_9">#006D67</color>
-    <color name="bq_persian_green_10">#005149</color>
-
-    <!--2024 0409  Grey-->
-    <color name="bq_grey_1">#F2F2F2</color>
-    <color name="bq_grey_2">#E5E5E5</color>
-    <color name="bq_grey_3">#CCCCCC</color>
-    <color name="bq_grey_4">#B5B5B5</color>
-    <color name="bq_grey_5">#959595</color>
-    <color name="bq_grey_6">#757575</color>
-    <color name="bq_grey_7">#5A5A5A</color>
-    <color name="bq_grey_8">#3B3B3B</color>
-    <color name="bq_grey_9">#333333</color>
-    <color name="bq_grey_10">#1B1B1B</color>
-
-    <!--2024 0409  Navy Peony-->
-    <color name="bq_navy_peony_1">#F2F4F6</color>
-    <color name="bq_navy_peony_2">#E6EAEE</color>
-    <color name="bq_navy_peony_3">#C0C9D6</color>
-    <color name="bq_navy_peony_4">#98A7BB</color>
-    <color name="bq_navy_peony_5">#72849F</color>
-    <color name="bq_navy_peony_6">#546BBC</color>
-    <color name="bq_navy_peony_7">#35537C</color>
-    <color name="bq_navy_peony_8">#2E4B74</color>
-    <color name="bq_navy_peony_9">#274269</color>
-    <color name="bq_navy_peony_10">#21395C</color>
-
-
-    <!--2024 0409  Royal Blue-->
-    <color name="bq_royal_blue_1">#F3F4FD</color>
-    <color name="bq_royal_blue_2">#E7EAFC</color>
-    <color name="bq_royal_blue_3">#C3CBF7</color>
-    <color name="bq_royal_blue_4">#9BA8F1</color>
-    <color name="bq_royal_blue_5">#7285EB</color>
-    <color name="bq_royal_blue_6">#546AE7</color>
-    <color name="bq_royal_blue_7">#3650E3</color>
-    <color name="bq_royal_blue_8">#3049E0</color>
-    <color name="bq_royal_blue_9">#2940DC</color>
-    <color name="bq_royal_blue_10">#2237D8</color>
-
-    <!--2024 0409 Carmine Pink-->
-    <color name="bq_carmine_pink_1">#FDEAE8</color>
-    <color name="bq_carmine_pink_2">#F9CAC6</color>
-    <color name="bq_carmine_pink_3">#F5A6A0</color>
-    <color name="bq_carmine_pink_4">#F1827A</color>
-    <color name="bq_carmine_pink_5">#EE685E</color>
-    <color name="bq_carmine_pink_6">#EB4D41</color>
-    <color name="bq_carmine_pink_7">#E9463B</color>
-    <color name="bq_carmine_pink_8">#E53D32</color>
-    <color name="bq_carmine_pink_9">#E2342A</color>
-    <color name="bq_carmine_pink_10">#DD251C</color>
-
-    <!--2024 0409 Ocean Green-->
-    <color name="bq_ocean_green_1">#E8F3EE</color>
-    <color name="bq_ocean_green_2">#C6E2D6</color>
-    <color name="bq_ocean_green_3">#A0CFBA</color>
-    <color name="bq_ocean_green_4">#79BB9E</color>
-    <color name="bq_ocean_green_5">#5DAD8A</color>
-    <color name="bq_ocean_green_6">#409E75</color>
-    <color name="bq_ocean_green_7">#3A996D</color>
-    <color name="bq_ocean_green_8">#328C62</color>
-    <color name="bq_ocean_green_9">#2A8258</color>
-    <color name="bq_ocean_green_10">#1C7045</color>
-
-    <!--2024 0409 Fuel Yellow-->
-    <color name="bq_fuel_yellow_1">#FCF4E3</color>
-    <color name="bq_fuel_yellow_2">#C6E2D6</color>
-    <color name="bq_fuel_yellow_3">#F3D38B</color>
-    <color name="bq_fuel_yellow_4">#EEC15C</color>
-    <color name="bq_fuel_yellow_5">#EAB439</color>
-    <color name="bq_fuel_yellow_6">#E6A716</color>
-    <color name="bq_fuel_yellow_7">#E39F13</color>
-    <color name="bq_fuel_yellow_8">#DF9610</color>
-    <color name="bq_fuel_yellow_9">#DB8C0C</color>
-    <color name="bq_fuel_yellow_10">#D57C06</color>
-
-
-    <!--2024 0409 Light Coral-->
-    <color name="bq_light_coral_1">#FBEFEE</color>
-    <color name="bq_light_coral_2">#F4D6D5</color>
-    <color name="bq_light_coral_3">#EDBBB9</color>
-    <color name="bq_light_coral_4">#E6A09D</color>
-    <color name="bq_light_coral_5">#E08BB8</color>
-    <color name="bq_light_coral_6">#DB7773</color>
-    <color name="bq_light_coral_7">#D76F6B</color>
-    <color name="bq_light_coral_8">#D26460</color>
-    <color name="bq_light_coral_9">#CD5A56</color>
-    <color name="bq_light_coral_10">#C44743</color>
-
-
-    <!--2024 0409 Summer Sky-->
-    <color name="bq_summer_sky_1">#E5F3F9</color>
-    <color name="bq_summer_sky_2">#F4D6D5</color>
-    <color name="bq_summer_sky_3">#95CEE8</color>
-    <color name="bq_summer_sky_4">#6ABADF</color>
-    <color name="bq_summer_sky_5">#4AABD8</color>
-    <color name="bq_summer_sky_6">#2A9CD1</color>
-    <color name="bq_summer_sky_7">#2594CC</color>
-    <color name="bq_summer_sky_8">#1F8AC6</color>
-    <color name="bq_summer_sky_9">#1980C0</color>
-    <color name="bq_summer_sky_10">#0F6EB5</color>
-
-
-    <!--2024 0409 Avocado -->
-    <color name="bq_avocado_1">#E5F3F9</color>
-    <color name="bq_avocado_2">#DBE6C4</color>
-    <color name="bq_avocado_3">#C4D69D</color>
-    <color name="bq_avocado_4">#ACC575</color>
-    <color name="bq_avocado_5">#9AB858</color>
-    <color name="bq_avocado_6">#88AC3A</color>
-    <color name="bq_avocado_7">#80A534</color>
-    <color name="bq_avocado_8">#759B2C</color>
-    <color name="bq_avocado_9">#6B9225</color>
-    <color name="bq_avocado_10">#588218</color>
-
-
-    <!--2024 0409 Salad Green -->
-    <color name="bq_salad_green_1">#F7F9E7</color>
-    <color name="bq_salad_green_2">#EAF0C3</color>
-    <color name="bq_salad_green_3">#DCE79C</color>
-    <color name="bq_salad_green_4">#CEDD74</color>
-    <color name="bq_salad_green_5">#C4D556</color>
-    <color name="bq_salad_green_6">#B9CE38</color>
-    <color name="bq_salad_green_7">#B2C932</color>
-    <color name="bq_salad_green_8">#AAC22B</color>
-    <color name="bq_salad_green_9">#A2BC24</color>
-    <color name="bq_salad_green_10">#93B017</color>
-
-
-    <!--2024 0409 Dark Orchid -->
-    <color name="bq_dark_orchid_1">#F7F9E7</color>
-    <color name="bq_dark_orchid_2">#EAF0C3</color>
-    <color name="bq_dark_orchid_3">#DCE79C</color>
-    <color name="bq_dark_orchid_4">#CEDD74</color>
-    <color name="bq_dark_orchid_5">#C4D556</color>
-    <color name="bq_dark_orchid_6">#B9CE38</color>
-    <color name="bq_dark_orchid_7">#B2C932</color>
-    <color name="bq_dark_orchid_8">#AAC22B</color>
-    <color name="bq_dark_orchid_9">#A2BC24</color>
-    <color name="bq_dark_orchid_10">#93B017</color>
-
-    <color name="bq_highlight_hint_color">#25FFFF</color>
-    <color name="bq__button_focus_color">#25FFFF</color>
-    <color name="bq_disable_color">#33FFFFFF</color>
-
-    <color name="bq_shadow_grid_line_light">#3325FFFF</color>
-    <color name="bq_shadow_grid_line_normal">#8025FFFF</color>
-    <color name="bq_shadow_grid_line_thick">#CC25FFFF</color>
-
-
-    <!--    <color name="search_bar_color">#d9000000</color>-->
-    <!--    <color name="bookmark_focus_color">#25ffff</color>-->
-    <!--    <color name="color_text_color_white">#FFFFFF</color>-->
-    <!--    <color name="color_text_color_gay">#7687b0</color>-->
-    <color name="focus_frame_border_color">#00ffff</color>
-    <color name="focus_frame_fill_color">#1e6996</color>
-    <color name="black50">#80000000</color>
-    <color name="theme_background">#383c60</color>
-    <color name="theme_title_background">#4b507a</color>
-    <color name="note_mvc_view_font_size_changed_solid_background">#1e6996</color>
-    <color name="theme_focused_frame">#25ffff</color>
-
-    <color name="note_press_fill_color">#1e6996</color>
-    <color name="note_press_border_color">#00ffff</color>
-    <color name="button_press_background_color">#157777</color>
-
-    <color name="purple_500">#6200EE</color>
-    <color name="purple_700">#3700B3</color>
-    <color name="teal_200">#03DAC5</color>
+    <color name="uikit_purple_500">#6200EE</color>
+    <color name="uikit_purple_700">#3700B3</color>
+    <color name="uikit_teal_200">#03DAC5</color>
 
 </resources>

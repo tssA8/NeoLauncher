@@ -5,7 +5,7 @@
         android:topLeftRadius="12dp"
         android:topRightRadius="12dp" />
     <stroke
-        android:width="@dimen/focus_frame_border_width"
-        android:color="@color/focus_frame_border_color" />
-    <solid android:color="@color/focus_frame_fill_color" />
+        android:width="@dimen/uikit_focus_frame_border_width"
+        android:color="@color/uikit_focus_frame_border_color" />
+    <solid android:color="@color/uikit_focus_frame_fill_color" />
 </shape>

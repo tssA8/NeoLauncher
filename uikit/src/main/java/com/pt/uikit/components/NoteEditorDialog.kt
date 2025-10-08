@@ -15,22 +15,21 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -56,8 +56,11 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.platform.LocalDensity
 import com.pt.uikit.R
 
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NoteEditorDialog(
     initialText: String,
@@ -151,32 +154,42 @@ fun NoteEditorDialog(
                             .clip(RoundedCornerShape(14.dp.s()))
                     ) {
                         Image(
-                            painter = painterResource(R.drawable.ic_widget_note_bg),
+                            painter = painterResource(R.drawable.uikit_ic_widget_note_bg),
                             contentDescription = null,
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier.matchParentSize()
                         )
+                        val minLinesWanted = (6 * scale).toInt().coerceAtLeast(4)
+
+                        // 粗略用行高 = 字體大小 * 1.2 來估算最小高度
+                        val lineHeightFactor = 1.2f
+                        val minHeight = with(LocalDensity.current) {
+                            (sizeSp * lineHeightFactor * minLinesWanted).sp.toDp()
+                        }
+
                         OutlinedTextField(
                             value = text,
                             onValueChange = { text = it },
-                            textStyle = MaterialTheme.typography.bodyLarge.copy(fontSize = sizeSp.sp),
+                            textStyle = MaterialTheme.typography.body1.copy(fontSize = sizeSp.sp),
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(14.dp.s())
-                                .verticalScroll(rememberScrollState()),
+                                .heightIn(min = minHeight), // ⬅️ 用這個取代 minLines
                             keyboardOptions = KeyboardOptions(
                                 capitalization = KeyboardCapitalization.Sentences,
                                 imeAction = ImeAction.Done
                             ),
                             singleLine = false,
                             maxLines = Int.MAX_VALUE,
-                            minLines = (6 * scale).toInt().coerceAtLeast(4),
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent
+                            colors = TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent
                             )
                         )
+
+
                     }
 
                     Spacer(Modifier.height(12.dp.s()))
@@ -196,8 +209,9 @@ fun NoteEditorDialog(
                             shape = RoundedCornerShape(24.dp.s()),
                             border = BorderStroke(1.dp, Color.White),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = Color.Transparent,
+                                backgroundColor = Color.Transparent,   // <= M2 用 backgroundColor
                                 contentColor = Color.White
+                                // disabledContentColor = ... (需要再加)
                             )
                         ) {
                             Text("Save", fontSize = 13.sp.s())
@@ -211,12 +225,13 @@ fun NoteEditorDialog(
                             shape = RoundedCornerShape(24.dp.s()),
                             border = BorderStroke(1.dp, Color.White),
                             colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = Color.Transparent,
+                                backgroundColor = Color.Transparent,   // <= 這裡也一樣
                                 contentColor = Color.White
                             )
                         ) {
                             Text("Cancel", fontSize = 13.sp.s())
                         }
+
                     }
                 }
             }
@@ -269,9 +284,10 @@ private fun SizeChip(
             .clickable { onClick(valueSp) }
             .padding(horizontal = 10.dp.s(), vertical = 6.dp.s())
     ) {
+
         Text(
             text = label,
-            fontSize = 12.sp * scale,
+            fontSize = 12.sp,
             color = if (selected) Color.White else Color(0xFF30324A)
         )
     }

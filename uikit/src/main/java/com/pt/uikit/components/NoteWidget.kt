@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.ripple.rememberRipple
 import com.pt.uikit.R
 
 @Composable
@@ -36,8 +36,8 @@ fun NoteWidget(
     text: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    backgroundRes: Int = R.drawable.ic_widget_note_bg,
-    textColorRes: Int = R.color.bq_grey_10,
+    backgroundRes: Int = R.drawable.uikit_ic_widget_note_bg,
+    textColorRes: Int = R.color.uikit_bq_grey_10,
     fontSizeSp: Float? = null,                 // ★ 新增：可選外部字體大小
     outerPadding: Dp = 10.dp,
     innerPadding: Dp = 10.dp
@@ -51,13 +51,13 @@ fun NoteWidget(
 
     // 若外部沒給，就用資源的預設大小
     val effectiveFontSizeSp =
-        fontSizeSp ?: dimensionResource(id = R.dimen.note_text_size).value
+        fontSizeSp ?: dimensionResource(id = R.dimen.uikit_note_text_size).value
 
     val baseMod = modifier
         .fillMaxSize()
         .clickable(
             interactionSource = remember { MutableInteractionSource() },
-            indication = ripple(),
+            indication = rememberRipple(),
             onClick = onClick
         )
 

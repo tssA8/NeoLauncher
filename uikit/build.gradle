@@ -1,52 +1,67 @@
-plugins {
-    id 'com.android.library'          // ⬅️ 改成 library
-    id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
-    id 'org.jetbrains.kotlin.plugin.parcelize'
-    id 'org.jetbrains.kotlin.plugin.compose' version '2.2.20'
-}
+// ✅ compat 版（AGP 7.2.2 / Kotlin 1.7.10 / Compose 1.3.0）
+// 用舊式 apply plugin，版本由 root buildscript 的 classpath 提供
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-parcelize'
 
 android {
-    namespace 'com.pt.uikit'          // ⬅️ 定好最終 package 前綴
-    compileSdk 35
+    namespace 'com.pt.uikit'
+    compileSdkVersion 34
 
     defaultConfig {
-        minSdk 26
-        targetSdk 35
-        // ⬅️ Library 不要 applicationId
+        minSdkVersion 26
+        targetSdkVersion 34
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+    // Compose for compat
+    buildFeatures { compose true }
+    composeOptions {
+        // 對應 Kotlin 1.7.10 的 Compose Compiler
+        kotlinCompilerExtensionVersion = "1.3.0"
     }
-    kotlinOptions { jvmTarget = '11' }
+
+    // 產出 Java 8 bytecode（舊專案相容）
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        // 若未用 java.time/Stream，可關掉並移除對應依賴
+        // coreLibraryDesugaringEnabled true
+    }
+    kotlinOptions { jvmTarget = '1.8' }
 }
 
+repositories { google(); mavenCentral() }
+
 dependencies {
-    def lifecycle_version = "2.6.0" // 用你現有的版本變數即可
-    implementation 'com.google.android.material:material:1.13.0'
+    // ===== Compose 1.3.0（不要用 BOM）=====
+    def compose_ver = "1.3.0"
+    implementation "androidx.compose.ui:ui:$compose_ver"
+    implementation "androidx.compose.runtime:runtime:$compose_ver"
+    implementation "androidx.compose.foundation:foundation:$compose_ver"
+    implementation "androidx.compose.material:material:$compose_ver"            // Material 2
+    implementation "androidx.compose.material:material-icons-extended:$compose_ver"
+    implementation "androidx.activity:activity-compose:1.6.1"
+    // 預覽/工具
+    implementation     "androidx.compose.ui:ui-tooling-preview:$compose_ver"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ver"
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version"
+    // ===== 基礎相依（與舊專案相容）=====
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4' // 若純 Compose 可移除
 
-    // ✅ 改用 ktx；且只留一個（移除 androidx.core:core）
-    implementation 'androidx.core:core-ktx:1.13.1'
+    // Lifecycle（與 Compose 1.3.0 相容）
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 
-    // ✅ Compose BOM，統一 Compose 套件版本
-    implementation platform("androidx.compose:compose-bom:2024.12.01")
-
-    // ✅ Compose 基本
-    implementation "androidx.activity:activity-compose:1.9.3"
-    implementation "androidx.compose.ui:ui"
-    implementation "androidx.compose.ui:ui-tooling-preview"
-    implementation "androidx.compose.material3:material3"
-    implementation "androidx.compose.material:material-icons-extended"
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'com.google.firebase:firebase-crashlytics-buildtools:3.0.6'
+    // 其他
     implementation 'com.google.code.gson:gson:2.8.6'
 
-    implementation 'androidx.compose.runtime:runtime:1.9.2'
+    // 若上面開了 desugaring 才需要
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
