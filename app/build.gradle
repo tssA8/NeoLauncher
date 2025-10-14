@@ -54,7 +54,7 @@ android {
 		compose true
 	}
 	// ❌ Kotlin 2.x 不要再設定這個，插件會自帶正確的 Compose compiler
-	// composeOptions { kotlinCompilerExtensionVersion = "1.5.1" }
+	 composeOptions { kotlinCompilerExtensionVersion = "1.5.1" }
 
 	packaging {
 		resources {

@@ -239,6 +239,10 @@
 	<dimen name="recommend_row_item_title_textsize">20sp</dimen>
 	<dimen name="recommend_row_item_title_alpha_unfocus">0.8px</dimen>
 
+
+	<dimen name="recommend_row_compose_item_width">146dp</dimen>
+	<dimen name="recommend_row_compose_item_height">158dp</dimen>
+
 	<!-- recommend function -->
 
 	<!--EDLA recommend row , change to little size -->

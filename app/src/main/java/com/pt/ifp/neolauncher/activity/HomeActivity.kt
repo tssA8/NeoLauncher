@@ -53,6 +53,7 @@ import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -68,7 +69,7 @@ class HomeActivity : ComponentActivity() {
     private var showAllAppsOnResume = false
     private var immersiveMode = Preferences.IMMERSIVE_MODE_DISABLED
     private var pausedAt = 0L
-    private var recommendRow: RelativeLayout? = null
+//    private var recommendRow: RelativeLayout? = null
 
     private var mDeviceProfile: DeviceProfile? = null
 
@@ -77,6 +78,8 @@ class HomeActivity : ComponentActivity() {
     private lateinit var noteComposeView: ComposeView
 
     private lateinit var noteEditorView : ComposeView
+
+    private lateinit var recommendRowComposeView: ComposeView
 
     private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
 
@@ -124,7 +127,7 @@ class HomeActivity : ComponentActivity() {
         setContentView(R.layout.home_activity)
 
         // ✅ 這裡的型別參數改成非空
-        recommendRow = findViewById<RelativeLayout>(R.id.llVariantContainer)
+//        recommendRow = findViewById<RelativeLayout>(R.id.llVariantContainer)
 
         val menuBar = findViewById<ComposeView>(R.id.menubarcompose)
         menuBar.setViewCompositionStrategy(
@@ -180,6 +183,26 @@ class HomeActivity : ComponentActivity() {
                 fontSizeSp = vm.sizeSp,
                 onClick = { noteEditorView.visibility = View.VISIBLE } // 打開編輯器 overlay
             )
+        }
+
+        recommendRowComposeView = findViewById<ComposeView>(R.id.recommend_row_compose)
+        recommendRowComposeView.setContent {
+            MaterialTheme {
+                RecommendRowCompose(
+                    onLeftClick = {
+                        Log.d(TAG," recommendRowComposeView onLeftClick")
+                    },
+                    onMiddle1Click = {
+                        Log.d(TAG," recommendRowComposeView onMiddle1Click")
+                    },
+                    onMiddle2Click = {
+                        Log.d(TAG," recommendRowComposeView onMiddle2Click")
+                    },
+                    onRightClick = {
+                        Log.d(TAG," recommendRowComposeView onRightClick")
+                    }
+                )   // 你現在的呼叫就好
+            }
         }
 
 
@@ -437,7 +460,8 @@ class HomeActivity : ComponentActivity() {
     }
 
     fun showAllApps() {
-        recommendRow?.visibility = View.GONE
+//        recommendRow?.visibility = View.GONE
+        recommendRowComposeView?.visibility = View.GONE
         googleSearchView?.visibility = View.GONE
         if (isSearchVisible) return
 
@@ -466,7 +490,8 @@ class HomeActivity : ComponentActivity() {
     }
 
     private fun hideAllApps() {
-        recommendRow?.visibility = View.VISIBLE
+//        recommendRow?.visibility = View.VISIBLE
+        recommendRowComposeView?.visibility = View.VISIBLE
         googleSearchView?.visibility = View.VISIBLE
         if (isSearchVisible) {
             searchBarComponent.visibility = View.GONE

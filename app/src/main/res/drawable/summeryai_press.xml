@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="314dp"
+    android:height="340dp"
+    android:viewportWidth="314"
+    android:viewportHeight="340">
+
+    <!-- 背景：紫色漸層 -->
+    <path
+        android:pathData="M157,35C80.2,35 61,54.2 61,131C61,207.8 80.2,227 157,227C233.8,227 253,207.8 253,131C253,54.2 233.8,35 157,35Z"
+        android:strokeWidth="1"
+        android:fillType="nonZero"
+        android:strokeColor="#00000000">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="157"
+                android:startY="35"
+                android:endX="157"
+                android:endY="225.45946"
+                android:type="linear">
+                <item android:offset="0" android:color="#FF8271E9"/>
+                <item android:offset="1" android:color="#FF382B8C"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- 深色疊加，讓整體更暗 -->
+    <path
+        android:pathData="M157,35C80.2,35 61,54.2 61,131C61,207.8 80.2,227 157,227C233.8,227 253,207.8 253,131C253,54.2 233.8,35 157,35Z"
+        android:strokeWidth="1"
+        android:fillType="nonZero"
+        android:strokeColor="#00000000"
+        android:fillColor="#1A1E3A"
+        android:fillAlpha="0.40"/>
+
+    <!-- 置中的新白色圖案（來自 188×188 的那個 path）-->
+    <!-- 如需往上/下調整，改 translateY；左右調整改 translateX -->
+    <group android:translateX="63" android:translateY="37">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M95.42,79.76H80.4V116.83H112.58V92.07H116.54V117.52C116.54,119.33 115.08,120.8 113.27,120.8H69.8C67.98,120.8 66.52,119.33 66.52,117.52V79.07C66.52,77.26 67.98,75.79 69.8,75.79H95.42V79.76ZM70.48,116.83H76.44V79.76H70.48V116.83ZM99.51,108.82H85.42V104.85H99.51V108.82ZM106.55,100.32H85.42V96.35H106.55V100.32ZM106.55,91.82H85.42V87.85H106.55V91.82ZM110.91,67.17C111.65,67.17 112.31,67.64 112.54,68.35L114.43,74L120.08,75.88C120.79,76.12 121.26,76.78 121.26,77.52C121.26,78.26 120.79,78.92 120.08,79.16L114.43,81.04L112.54,86.7C112.31,87.4 111.65,87.88 110.91,87.88C110.16,87.88 109.5,87.4 109.27,86.7L107.39,81.04L101.73,79.16C101.03,78.92 100.55,78.26 100.55,77.52C100.55,76.78 101.03,76.12 101.73,75.88L107.39,74L109.27,68.35C109.5,67.64 110.16,67.17 110.91,67.17Z"/>
+    </group>
+
+</vector>
