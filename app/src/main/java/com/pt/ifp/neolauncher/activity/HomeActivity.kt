@@ -218,7 +218,10 @@ class HomeActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 12.dp),
-                    clockSize = 88.dp
+                    clockSize = 88.dp,
+                    onClickClock = {
+                        Log.d(TAG," analogClockCompose click")
+                    }
                 )
             }
         }

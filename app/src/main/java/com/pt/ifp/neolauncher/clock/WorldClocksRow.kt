@@ -2,6 +2,8 @@ package com.pt.ifp.neolauncher.clock
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,6 +55,7 @@ fun WorldClocksRow(
     clockSize: Dp = 96.dp,
     horizontalPadding: Dp = 1.dp,
     verticalSpacing: Dp = 8.dp,
+    onClickClock: () -> Unit = {}
 ) {
 
     val colorNormal  = colorResource(R.color.recommend_row_normal_color)
@@ -108,11 +112,15 @@ fun WorldClocksRow(
                     "$dayWord, $offsetText"
                 }
             }
-
+            val interaction = remember { MutableInteractionSource() }
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(vertical = verticalSpacing),
+                    .padding(vertical = verticalSpacing)
+                    .clickable(                       // ← 任何一個被點都觸發同一個 callback
+                        interactionSource = interaction,
+                        onClick = onClickClock
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // 4) 時鐘
