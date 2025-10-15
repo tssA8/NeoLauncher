@@ -1,10 +1,9 @@
 // file: SearchBarComponentView/GoogleSearchBar.kt
-package com.pt.ifp.neolauncher.SearchBarComponentView
+package com.pt.ifp.neolauncher.searchbarcomponentView
 
 import android.app.Activity
 import android.app.SearchManager
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.speech.RecognizerIntent

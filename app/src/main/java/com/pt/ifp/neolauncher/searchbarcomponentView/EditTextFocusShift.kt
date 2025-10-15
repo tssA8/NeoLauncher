@@ -1,4 +1,4 @@
-package com.pt.ifp.neolauncher.SearchBarComponentView
+package com.pt.ifp.neolauncher.searchbarcomponentView
 
 import android.annotation.SuppressLint
 import android.content.Context

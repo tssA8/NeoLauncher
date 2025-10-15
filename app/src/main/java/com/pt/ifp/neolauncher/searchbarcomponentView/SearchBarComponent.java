@@ -1,4 +1,4 @@
-package com.pt.ifp.neolauncher.SearchBarComponentView;
+package com.pt.ifp.neolauncher.searchbarcomponentView;
 
 import android.content.Context;
 import android.text.Editable;

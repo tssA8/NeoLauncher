@@ -30,13 +30,21 @@
     </RelativeLayout>
 
     <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/worldclock_compose"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="top"
+        android:layout_marginStart="100dp"
+        android:layout_centerHorizontal="true" />
+
+    <androidx.compose.ui.platform.ComposeView
         android:id="@+id/recommend_row_compose"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true" />
 
 
-    <com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
+    <com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent
         android:id="@+id/ll_search"
         android:layout_width="426dp"
         android:layout_height="@dimen/bookmark_search_layout_arrow_width"

@@ -1,6 +1,5 @@
 package com.pt.ifp.neolauncher.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -18,32 +17,27 @@ import android.view.ViewConfiguration
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.pt.ifp.neolauncher.Constant
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
-import com.pt.ifp.neolauncher.SearchBarComponentView.GoogleSearchBarWithHistory
-import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent
-import com.pt.ifp.neolauncher.SearchBarComponentView.SearchBarComponent.OnSearchBarClickListener
+import com.pt.ifp.neolauncher.searchbarcomponentView.GoogleSearchBarWithHistory
+import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent
+import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
-import com.pt.ifp.neolauncher.note.NoteEditActivity
 import com.pt.ifp.neolauncher.note.NoteEditorDialog
 import com.pt.ifp.neolauncher.note.NoteSharedViewModel
 import com.pt.ifp.neolauncher.note.NoteWidget
@@ -53,6 +47,8 @@ import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pt.ifp.neolauncher.clock.CityClock
+import com.pt.ifp.neolauncher.clock.WorldClocksRow
 import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
 
 class HomeActivity : ComponentActivity() {
@@ -80,6 +76,8 @@ class HomeActivity : ComponentActivity() {
     private lateinit var noteEditorView : ComposeView
 
     private lateinit var recommendRowComposeView: ComposeView
+
+    private lateinit var analogClockCompose: ComposeView
 
     private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
 
@@ -202,6 +200,26 @@ class HomeActivity : ComponentActivity() {
                         Log.d(TAG," recommendRowComposeView onRightClick")
                     }
                 )   // 你現在的呼叫就好
+            }
+        }
+
+        analogClockCompose = findViewById(R.id.worldclock_compose)
+        analogClockCompose.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnDetachedFromWindow
+        )
+        analogClockCompose.setContent {
+            MaterialTheme {
+                WorldClocksRow(
+                    cities = listOf(
+                        CityClock("London", "Europe/London"),
+                        CityClock("New York", "America/New_York"),
+                        CityClock("Amsterdam", "Europe/Amsterdam")
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    clockSize = 88.dp
+                )
             }
         }
 
