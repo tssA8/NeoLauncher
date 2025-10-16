@@ -31,37 +31,31 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.core.view.isVisible
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
-import com.pt.ifp.neolauncher.searchbarcomponentView.GoogleSearchBarWithHistory
-import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent
-import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
+import com.pt.ifp.neolauncher.clock.CityClock
+import com.pt.ifp.neolauncher.clock.WorldClocksFromSettings
+import com.pt.ifp.neolauncher.clock.WorldClocksRow
+import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
+import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
 import com.pt.ifp.neolauncher.note.NoteEditorDialog
 import com.pt.ifp.neolauncher.note.NoteSharedViewModel
 import com.pt.ifp.neolauncher.note.NoteWidget
 import com.pt.ifp.neolauncher.preference.Preferences
+import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
+import com.pt.ifp.neolauncher.searchbarcomponentView.GoogleSearchBarWithHistory
+import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent
+import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.view.SoftKeyboard
 import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pt.ifp.neolauncher.clock.settingpage.CITY1
-import com.pt.ifp.neolauncher.clock.settingpage.CITY2
-import com.pt.ifp.neolauncher.clock.CityClock
-import com.pt.ifp.neolauncher.clock.settingpage.ClockSettingsScreen
-import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
-import com.pt.ifp.neolauncher.clock.WorldClocksRow
-import com.pt.ifp.neolauncher.clock.clocklacation.ClockLocationScreen
-import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -225,30 +219,31 @@ class HomeActivity : ComponentActivity() {
         )
         analogClockCompose.setContent {
             MaterialTheme {
-                WorldClocksRow(
-                    cities = listOf(
-                        CityClock("London", "Europe/London"),
-                        CityClock("New York", "America/New_York"),
-                        CityClock("Amsterdam", "Europe/Amsterdam")
-                    ),
+                WorldClocksFromSettings(
+                    viewModel = viewModel,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 12.dp),
-                    clockSize = 88.dp,
                     onClickClock = {
-                        Log.d(TAG," analogClockCompose click")
+                        clockSettingCompose.isVisible = true
+                        clockSettingCompose.bringToFront() // 可選，避免被其它 view 蓋住
+                        Log.d(TAG," analogClockCompose onClickClock")
                     }
                 )
             }
         }
 
         clockSettingCompose = findViewById(R.id.clocksettingcompose)
+        clockSettingCompose.isVisible = false
         clockSettingCompose.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnDetachedFromWindow
         )
         clockSettingCompose.setContent {
             MaterialTheme {
-                ClockSettingsContainer(viewModel = viewModel)
+                ClockSettingsContainer(
+                    viewModel = viewModel,
+                    onDismiss = { clockSettingCompose.isVisible = false }
+                )
             }
         }
 

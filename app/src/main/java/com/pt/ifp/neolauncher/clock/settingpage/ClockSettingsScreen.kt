@@ -13,7 +13,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -25,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,14 +41,13 @@ import kotlinx.coroutines.launch
 const val CITY1 = 1
 const val CITY2 = 2
 
-/* ===================== 主畫面 ===================== */
-
 @Composable
 fun ClockSettingsScreen(
     viewModel: ClockViewModel,
     modifier: Modifier = Modifier,
     onSelectTimezone: (which: Int) -> Unit,
     onSync: suspend () -> Boolean = { false },
+    onClose: () -> Unit
 ) {
     val ctx = LocalContext.current
     val bgDrawable = remember {
@@ -57,14 +59,12 @@ fun ClockSettingsScreen(
     val isFloating = setting.isFloating
     val transparency = setting.transparency
     val pageIndex = setting.pageIndex
-
     val showFloating = false
 
-    // 浮動/透明度本地狀態
     var localIsFloating by remember(isFloating) { mutableStateOf(isFloating) }
     var localTransparency by remember(transparency) { mutableStateOf(transparency) }
 
-    // 預覽縮圖（取代 ClockPreviewPager）
+    // 預覽縮圖
     val previews = remember(localIsFloating) {
         loadPreviewImages(ctx, isFloating = localIsFloating)
     }
@@ -76,11 +76,9 @@ fun ClockSettingsScreen(
         viewModel.addClockSetting(pageIndex = pagerState.currentPage)
     }
 
-    // isShow City1/City2
+    // 顯示控制 & 文字
     val isShowCity1 by viewModel.isShowCity1.collectAsStateWithLifecycle(false)
     val isShowCity2 by viewModel.isShowCity2.collectAsStateWithLifecycle(false)
-
-    // 城市時區副標
     val city1Tz by viewModel.city1Timezone.collectAsStateWithLifecycle("")
     val city2Tz by viewModel.city2Timezone.collectAsStateWithLifecycle("")
 
@@ -92,10 +90,10 @@ fun ClockSettingsScreen(
             .width(320.dp)
             .height(540.dp)
     ) {
-        // 背景（支援 shape/selector/vector/bitmap）
-        if (bgDrawable != null) {
+        // 背景
+        bgDrawable?.let {
             Image(
-                painter = rememberDrawablePainter(bgDrawable),
+                painter = rememberDrawablePainter(it),
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.FillBounds
@@ -107,27 +105,41 @@ fun ClockSettingsScreen(
                 .matchParentSize()
                 .padding(horizontal = 0.dp, vertical = 0.dp)
         ) {
-            // Title（對齊 XML 高 40dp 的區域）
+            // Header：中間標題 + 右上角 X
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp),
-                contentAlignment = Alignment.Center
+                    .height(40.dp)
             ) {
+                // Title 置中
                 Text(
                     text = ctx.getString(R.string.set_clock_title),
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color.White
+                    color = Color.White,
+                    modifier = Modifier.align(Alignment.Center)
                 )
+                // 右上角關閉（X）
+                IconButton(
+                    onClick = onClose,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .padding(end = 6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = Color.White
+                    )
+                }
             }
 
-            // Scroll 的內容：用 Column 模擬即可（內容高度不大）
+            // 內容
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 0.dp)
             ) {
-                // switcher：sensor_switch_view → SwitchCell
+                // 浮動模式（目前關閉）
                 AnimatedVisibility(visible = showFloating) {
                     SwitchCell(
                         title = ctx.getString(R.string.floating_mode),
@@ -141,7 +153,6 @@ fun ClockSettingsScreen(
 
                 DividerThin()
 
-                // slider：sensor_seekbar_view → SliderCellStyled（僅在浮動時顯示）
                 AnimatedVisibility(visible = localIsFloating) {
                     SliderCellStyled(
                         title = ctx.getString(R.string.opacity),
@@ -153,13 +164,12 @@ fun ClockSettingsScreen(
 
                 DividerThin()
 
+                // 預覽 + 指示點
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp, bottom = 8.dp)
                 ) {
-
-                    // ViewPager 預覽 + 指示點（用 drawBackground 套 focus_frame）
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -193,7 +203,7 @@ fun ClockSettingsScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top  = 6.dp),
+                            .padding(top = 6.dp),
                         horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -212,10 +222,9 @@ fun ClockSettingsScreen(
                     }
                 }
 
-
                 DividerThin()
 
-                // type0：目前時區（title + subtitle）
+                // 目前時區
                 InfoCellType0(
                     title = ctx.getString(R.string.current_timezone),
                     subTitle = viewModel.getCurrentGMTTime(),
@@ -224,7 +233,7 @@ fun ClockSettingsScreen(
 
                 DividerThin()
 
-                // type1：City1（可見性）
+                // City 1
                 TimezoneCellType1(
                     title = ctx.getString(R.string.select_timezone_title) +
                             " " + ctx.getString(R.string.timezone3_city1),
@@ -235,10 +244,9 @@ fun ClockSettingsScreen(
 
                 AnimatedVisibility(visible = isShowCity1) { DividerThin() }
 
-                // type2：City1 Name
                 TimezoneCellType2(
                     title = ctx.getString(R.string.city_display),
-                    name  = setting.city1DisplayName,        // ★ 直接吃 VM
+                    name = setting.city1DisplayName,
                     isShow = isShowCity1,
                     onNameChange = { new ->
                         debounce?.cancel()
@@ -250,10 +258,9 @@ fun ClockSettingsScreen(
                     innerBackgroundRes = R.drawable.focus_frame
                 )
 
-
                 AnimatedVisibility(visible = isShowCity1) { DividerThin() }
 
-                // type1：City2
+                // City 2
                 TimezoneCellType1(
                     title = ctx.getString(R.string.select_timezone_title) +
                             " " + ctx.getString(R.string.timezone3_city2),
@@ -264,10 +271,9 @@ fun ClockSettingsScreen(
 
                 AnimatedVisibility(visible = isShowCity2) { DividerThin() }
 
-                // type2：City2 Name
                 TimezoneCellType2(
                     title = ctx.getString(R.string.city_display),
-                    name  = setting.city2DisplayName,        // ★ 直接吃 VM
+                    name = setting.city2DisplayName,
                     isShow = isShowCity2,
                     onNameChange = { new ->
                         debounce?.cancel()
@@ -282,8 +288,6 @@ fun ClockSettingsScreen(
         }
     }
 }
-
-/* ===================== 子元件：type0 / divider ===================== */
 
 @Composable
 private fun InfoCellType0(
@@ -366,7 +370,6 @@ fun Modifier.drawBackground(@DrawableRes resId: Int?): Modifier {
 }
 
 /* ===================== Preview ===================== */
-// 3) Preview 也一起 OptIn（避免設計工具環境報錯）
 @OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
@@ -377,7 +380,8 @@ private fun ClockSettingsScreen_Preview() {
     MaterialTheme {
         ClockSettingsScreen(
             viewModel = vm,
-            onSelectTimezone = {}
+            onSelectTimezone = {},
+            onClose = {}
         )
     }
 }

@@ -30,7 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pt.ifp.neolauncher.R
+import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import java.time.Instant
@@ -42,39 +44,24 @@ import kotlin.math.abs
 data class CityClock(
     val city: String,
     val zoneId: String,
-    val isCenterStyle: Boolean = true   // 是否用中間版背景（可依你的資源調整）
+    val isCenterStyle: Boolean = false    // 預設不是中間樣式
 )
 
-/**
- * 三個世界時鐘一排排版（也可傳任意數量，預設三個）
- */
+
 @Composable
 fun WorldClocksRow(
-    cities: List<CityClock>,
+    cities: List<CityClock>,                 // 0=City1, 1=Local, 2=City2
     modifier: Modifier = Modifier,
     clockSize: Dp = 96.dp,
     horizontalPadding: Dp = 1.dp,
     verticalSpacing: Dp = 8.dp,
+    centerIndex: Int = 1,                    // 中間固定為 Local/Now
+    subtitles: List<String?>? = null,        // ★ 新增：每顆時鐘的副標（外部傳入）
     onClickClock: () -> Unit = {}
 ) {
-
     val colorNormal  = colorResource(R.color.recommend_row_normal_color)
     val tCityColor by animateColorAsState(colorNormal)
     val tTimeColor by animateColorAsState(colorResource(R.color.bq_grey_4))
-
-    // 1) 共用一個「對齊秒」的現在時間（用 Instant 對齊所有時區運算）
-    var nowUtc by remember { mutableStateOf(Instant.now()) }
-    LaunchedEffect(Unit) {
-        while (isActive) {
-            nowUtc = Instant.now()
-            val delayMs = 1000L - (System.currentTimeMillis() % 1000L)
-            delay(delayMs)
-        }
-    }
-
-    // 系統時區的當下時間
-    val systemZone = remember { ZoneId.systemDefault() }
-    val systemZdt = remember(nowUtc) { ZonedDateTime.ofInstant(nowUtc, systemZone) }
 
     Row(
         modifier = modifier
@@ -83,55 +70,23 @@ fun WorldClocksRow(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        cities.forEach { item ->
-            val zone = remember(item.zoneId) { ZoneId.of(item.zoneId) }
-            val cityZdt = remember(nowUtc, zone) { ZonedDateTime.ofInstant(nowUtc, zone) }
-
-            // 2) 計算相對時差（以當下 offset 計）
-            val sysOffset = systemZdt.offset.totalSeconds
-            val cityOffset = cityZdt.offset.totalSeconds
-            val deltaSec = cityOffset - sysOffset
-
-            // 3) 產生副標：Now / Today, +5 hours / Yesterday, +6 hours / Tomorrow, -3 hours / …
-            val subtitle = remember(systemZdt, cityZdt, deltaSec) {
-                val dayDelta = cityZdt.toLocalDate().toEpochDay() - systemZdt.toLocalDate().toEpochDay()
-                val dayWord = when {
-                    dayDelta < 0 -> "Yesterday"
-                    dayDelta > 0 -> "Tomorrow"
-                    else -> "Today"
-                }
-
-                if (deltaSec == 0) {
-                    "Now"
-                } else {
-                    val sign = if (deltaSec > 0) "+" else "-"
-                    val absSec = abs(deltaSec)
-                    val h = absSec / 3600
-                    val m = (absSec % 3600) / 60
-                    val offsetText = if (m == 0) "$sign${h} hours" else "$sign${h}h${m}m"
-                    "$dayWord, $offsetText"
-                }
-            }
+        cities.forEachIndexed { idx, item ->
             val interaction = remember { MutableInteractionSource() }
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = verticalSpacing)
-                    .clickable(                       // ← 任何一個被點都觸發同一個 callback
-                        interactionSource = interaction,
-                        onClick = onClickClock
-                    ),
+                    .clickable(interactionSource = interaction, indication = null, onClick = onClickClock),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 4) 時鐘
                 Box(Modifier.size(clockSize)) {
                     AnalogClockQ(
                         modifier = Modifier.fillMaxSize(),
-                        isCenter = item.isCenterStyle,
+                        isCenter = (idx == centerIndex) || item.isCenterStyle,
                         timeZoneId = item.zoneId
                     )
                 }
-                // 5) 城市名稱
+
                 Text(
                     text = item.city,
                     color = tCityColor,
@@ -140,15 +95,17 @@ fun WorldClocksRow(
                     modifier = Modifier.padding(top = 6.dp)
                 )
 
-                // 6) 副標：0 小時顯示粗體「Now」，其餘一般字
-                val boldNow = deltaSec == 0
+                // ★ 副標：中間固定 "Now"，其他用外部傳進來的字串
+                val subtitle = if (idx == centerIndex) "Now"
+                else subtitles?.getOrNull(idx).orEmpty()
+
+                val boldNow = idx == centerIndex
                 Text(
                     text = subtitle,
                     style = if (boldNow)
                         MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     else
                         MaterialTheme.typography.bodyMedium,
-
                     color = tTimeColor,
                     fontSize = 10.sp,
                     maxLines = 1,
@@ -159,20 +116,53 @@ fun WorldClocksRow(
     }
 }
 
-/** 方便呼叫：預設 London / New York / Amsterdam */
+
 @Composable
-fun WorldClocksTripleDefault(
+fun WorldClocksFromSettings(
+    viewModel: ClockViewModel,
     modifier: Modifier = Modifier,
+    onClickClock: () -> Unit = {},
 ) {
+    // 取設定
+    val setting = viewModel.settingClock.collectAsStateWithLifecycle().value
+    val city1Name = setting.city1DisplayName.ifBlank { "City 1" }
+    val city2Name = setting.city2DisplayName.ifBlank { "City 2" }
+    val city1ZoneId = (setting.city1Id ?: "").ifBlank { "Asia/Taipei" }
+    val city2ZoneId = (setting.city2Id ?: "").ifBlank { "America/New_York" }
+
+    // 已在 VM 算好的副標字串（例如 "GMT+08:00 台北標準時間"）
+    val city1Tz by viewModel.city1Timezone.collectAsStateWithLifecycle("")
+    val city2Tz by viewModel.city2Timezone.collectAsStateWithLifecycle("")
+
+    WorldClocksRow(
+        cities = listOf(
+            CityClock(city1Name, city1ZoneId),                                  // 左：City 1
+            CityClock("Local", ZoneId.systemDefault().id, isCenterStyle = true), // 中：本地 Now
+            CityClock(city2Name, city2ZoneId)                                    // 右：City 2
+        ),
+        centerIndex = 1,                                                         // 中間固定 Now
+        subtitles = listOf(city1Tz, null, city2Tz),                              // 左/右用 VM 字串
+        onClickClock = onClickClock,
+        modifier = modifier
+    )
+}
+
+
+
+/** 範例：把中間那顆設成 Local（Now） */
+@Composable
+fun WorldClocksTripleDefault(modifier: Modifier = Modifier) {
     WorldClocksRow(
         modifier = modifier,
+        centerIndex = 1, // ★ 中間為基準
         cities = listOf(
-            CityClock("London", "Europe/London"),
-            CityClock("New York", "America/New_York"),
-            CityClock("Amsterdam", "Europe/Amsterdam")
+            CityClock("London",   "Europe/London"),
+            CityClock("Local",    ZoneId.systemDefault().id, isCenterStyle = true), // ★ 中間：Now
+            CityClock("Brasilia", "America/Sao_Paulo")
         )
     )
 }
+
 
 /* -------------------- Previews -------------------- */
 
