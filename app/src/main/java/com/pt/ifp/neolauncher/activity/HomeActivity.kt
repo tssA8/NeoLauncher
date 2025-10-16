@@ -54,7 +54,14 @@ import com.pt.ifp.neolauncher.clock.CityClock
 import com.pt.ifp.neolauncher.clock.settingpage.ClockSettingsScreen
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.WorldClocksRow
+import com.pt.ifp.neolauncher.clock.clocklacation.ClockLocationScreen
 import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -241,22 +248,10 @@ class HomeActivity : ComponentActivity() {
         )
         clockSettingCompose.setContent {
             MaterialTheme {
-                ClockSettingsScreen(
-                    viewModel = viewModel,
-                    onSelectTimezone = { which ->
-                        // 這裡是你點「選時區」後要做的事
-                        when (which) {
-                            CITY1 -> {
-
-                            }
-                            CITY2 -> {
-
-                            }
-                        }
-                    }
-                )
+                ClockSettingsContainer(viewModel = viewModel)
             }
         }
+
 
         noteEditorView = findViewById<ComposeView>(R.id.noteeditorcompose)
         noteEditorView.setContent {

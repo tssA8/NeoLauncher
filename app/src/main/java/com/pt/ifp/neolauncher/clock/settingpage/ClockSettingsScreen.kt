@@ -7,6 +7,7 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
@@ -59,14 +60,6 @@ fun ClockSettingsScreen(
 
     val showFloating = false
 
-    // 城市名稱雙向綁定 + 防抖
-    var city1Text by remember(setting.city1DisplayName) { mutableStateOf(TextFieldValue(setting.city1DisplayName)) }
-    var city2Text by remember(setting.city2DisplayName) { mutableStateOf(TextFieldValue(setting.city2DisplayName)) }
-    var debounceJob1 by remember { mutableStateOf<Job?>(null) }
-    var debounceJob2 by remember { mutableStateOf<Job?>(null) }
-    val scope = rememberCoroutineScope()
-    val debounceMs = 200L
-
     // 浮動/透明度本地狀態
     var localIsFloating by remember(isFloating) { mutableStateOf(isFloating) }
     var localTransparency by remember(transparency) { mutableStateOf(transparency) }
@@ -90,6 +83,9 @@ fun ClockSettingsScreen(
     // 城市時區副標
     val city1Tz by viewModel.city1Timezone.collectAsStateWithLifecycle("")
     val city2Tz by viewModel.city2Timezone.collectAsStateWithLifecycle("")
+
+    val scope = rememberCoroutineScope()
+    var debounce by remember { mutableStateOf<Job?>(null) }
 
     Box(
         modifier = modifier
@@ -242,18 +238,18 @@ fun ClockSettingsScreen(
                 // type2：City1 Name
                 TimezoneCellType2(
                     title = ctx.getString(R.string.city_display),
-                    name = city1Text.text,
+                    name  = setting.city1DisplayName,        // ★ 直接吃 VM
                     isShow = isShowCity1,
                     onNameChange = { new ->
-                        city1Text = city1Text.copy(text = new)
-                        debounceJob1?.cancel()
-                        debounceJob1 = scope.launch {
-                            delay(debounceMs)
+                        debounce?.cancel()
+                        debounce = scope.launch {
+                            delay(200)
                             viewModel.addClockSetting(city1DisplayName = new)
                         }
                     },
                     innerBackgroundRes = R.drawable.focus_frame
                 )
+
 
                 AnimatedVisibility(visible = isShowCity1) { DividerThin() }
 
@@ -271,13 +267,12 @@ fun ClockSettingsScreen(
                 // type2：City2 Name
                 TimezoneCellType2(
                     title = ctx.getString(R.string.city_display),
-                    name = city2Text.text,
+                    name  = setting.city2DisplayName,        // ★ 直接吃 VM
                     isShow = isShowCity2,
                     onNameChange = { new ->
-                        city2Text = city2Text.copy(text = new)
-                        debounceJob2?.cancel()
-                        debounceJob2 = scope.launch {
-                            delay(debounceMs)
+                        debounce?.cancel()
+                        debounce = scope.launch {
+                            delay(200)
                             viewModel.addClockSetting(city2DisplayName = new)
                         }
                     },
@@ -371,7 +366,8 @@ fun Modifier.drawBackground(@DrawableRes resId: Int?): Modifier {
 }
 
 /* ===================== Preview ===================== */
-
+// 3) Preview 也一起 OptIn（避免設計工具環境報錯）
+@OptIn(ExperimentalFoundationApi::class)
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Preview(showBackground = true, widthDp = 360, heightDp = 640, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
