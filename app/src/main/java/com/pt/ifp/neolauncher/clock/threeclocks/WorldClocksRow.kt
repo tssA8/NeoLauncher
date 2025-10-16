@@ -1,4 +1,4 @@
-package com.pt.ifp.neolauncher.clock
+package com.pt.ifp.neolauncher.clock.threeclocks
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
@@ -12,15 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -32,13 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pt.ifp.neolauncher.R
+import com.pt.ifp.neolauncher.clock.AnalogClockQ
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import java.time.Instant
+import com.pt.ifp.neolauncher.clock.twoclocks.WorldClocksTwoFromSettings
 import java.time.ZoneId
-import java.time.ZonedDateTime
-import kotlin.math.abs
 
 
 data class CityClock(
@@ -146,6 +139,34 @@ fun WorldClocksFromSettings(
         modifier = modifier
     )
 }
+
+private const val LAYOUT_TWO_CLOCKS_INDEX = 1
+@Composable
+fun WorldClocksAutoFromSettings(
+    viewModel: ClockViewModel,
+    modifier: Modifier = Modifier,
+    onClickClock: () -> Unit = {},
+) {
+    val setting = viewModel.settingClock.collectAsStateWithLifecycle().value
+    val pageIndex = setting.pageIndex
+
+    if (pageIndex == LAYOUT_TWO_CLOCKS_INDEX) {
+        // 兩顆：左 Now、右 City1
+        WorldClocksTwoFromSettings(
+            viewModel = viewModel,
+            modifier = modifier,
+            onClickClock = onClickClock
+        )
+    } else {
+        // 其他索引 → 三顆（左 City1、中 Now、右 City2）
+        WorldClocksFromSettings(
+            viewModel = viewModel,
+            modifier = modifier,
+            onClickClock = onClickClock
+        )
+    }
+}
+
 
 
 

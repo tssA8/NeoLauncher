@@ -32,16 +32,14 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.isVisible
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
-import com.pt.ifp.neolauncher.clock.CityClock
-import com.pt.ifp.neolauncher.clock.WorldClocksFromSettings
-import com.pt.ifp.neolauncher.clock.WorldClocksRow
+import com.pt.ifp.neolauncher.clock.threeclocks.WorldClocksFromSettings
 import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
+import com.pt.ifp.neolauncher.clock.threeclocks.WorldClocksAutoFromSettings
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
 import com.pt.ifp.neolauncher.note.NoteEditorDialog
@@ -219,7 +217,7 @@ class HomeActivity : ComponentActivity() {
         )
         analogClockCompose.setContent {
             MaterialTheme {
-                WorldClocksFromSettings(
+                WorldClocksAutoFromSettings(
                     viewModel = viewModel,
                     modifier = Modifier
                         .fillMaxWidth()
