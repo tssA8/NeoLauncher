@@ -90,6 +90,12 @@
         android:visibility="gone"
         android:layout_gravity="center"/>
 
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/clocksettingcompose"
+        android:layout_width="@dimen/dp_320"
+        android:layout_height="@dimen/dp_540"
+        android:layout_gravity="center"/>
+
     <!-- ✅ 新增：Compose 置底工具列 -->
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/menubarcompose"

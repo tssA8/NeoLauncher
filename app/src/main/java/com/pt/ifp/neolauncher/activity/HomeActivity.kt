@@ -19,6 +19,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -47,7 +48,11 @@ import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pt.ifp.neolauncher.clock.settingpage.CITY1
+import com.pt.ifp.neolauncher.clock.settingpage.CITY2
 import com.pt.ifp.neolauncher.clock.CityClock
+import com.pt.ifp.neolauncher.clock.settingpage.ClockSettingsScreen
+import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.WorldClocksRow
 import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
 
@@ -78,6 +83,10 @@ class HomeActivity : ComponentActivity() {
     private lateinit var recommendRowComposeView: ComposeView
 
     private lateinit var analogClockCompose: ComposeView
+
+    private lateinit var clockSettingCompose: ComposeView
+
+    private val viewModel: ClockViewModel by viewModels()
 
     private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
 
@@ -226,6 +235,28 @@ class HomeActivity : ComponentActivity() {
             }
         }
 
+        clockSettingCompose = findViewById(R.id.clocksettingcompose)
+        clockSettingCompose.setViewCompositionStrategy(
+            ViewCompositionStrategy.DisposeOnDetachedFromWindow
+        )
+        clockSettingCompose.setContent {
+            MaterialTheme {
+                ClockSettingsScreen(
+                    viewModel = viewModel,
+                    onSelectTimezone = { which ->
+                        // 這裡是你點「選時區」後要做的事
+                        when (which) {
+                            CITY1 -> {
+
+                            }
+                            CITY2 -> {
+
+                            }
+                        }
+                    }
+                )
+            }
+        }
 
         noteEditorView = findViewById<ComposeView>(R.id.noteeditorcompose)
         noteEditorView.setContent {

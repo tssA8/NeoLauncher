@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="@dimen/theme_input_corner_radius" />
+    <stroke
+        android:width="@dimen/theme_focused_frame_stroke"
+        android:color="@color/theme_focused_frame" />
+</shape>

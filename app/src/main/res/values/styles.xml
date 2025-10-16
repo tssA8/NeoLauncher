@@ -124,4 +124,14 @@
 
 
 
+	<style name="uni_style_switch">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">@dimen/theme_switch_thumb_width_height</item>
+		<item name="android:layout_marginStart">@dimen/meeting_switch_marginStart</item>
+		<item name="android:gravity">center</item>
+		<item name="android:showText">false</item>
+		<item name="android:thumb">@drawable/switch_custom_thumb_selector</item>
+		<item name="android:track">@drawable/switch_custom_track_selector</item>
+	</style>
+
 </resources>

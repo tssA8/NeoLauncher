@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="previewImages">
+        <item>@drawable/world_clock_type1</item>
+<!--        <item>@drawable/world_clock_analog_1</item>-->
+        <item>@drawable/world_clock_type2</item>
+        <item>@drawable/world_clock_type3</item>
+    </array>
+    <array name="previewImages_floating">
+        <item>@drawable/world_clock_type1</item>
+    </array>
+</resources>
