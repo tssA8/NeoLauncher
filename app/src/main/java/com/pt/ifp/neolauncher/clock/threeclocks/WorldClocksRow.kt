@@ -37,6 +37,9 @@ import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.twoclocks.WorldClocksTwoFromSettings
 import java.time.ZoneId
 import java.util.TimeZone
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.ui.platform.LocalContext
+import com.pt.ifp.neolauncher.clock.settingpage.SettingsManager
 
 
 data class CityClock(
@@ -128,31 +131,41 @@ fun WorldClocksRow(
 }
 
 
+
 @Composable
 fun WorldClocksFromSettings(
     viewModel: ClockViewModel,
     modifier: Modifier = Modifier,
     onClickClock: () -> Unit = {},
 ) {
+    val ctx = LocalContext.current
+
     // 取設定
     val setting = viewModel.settingClock.collectAsStateWithLifecycle().value
-    val city1Name = setting.city1DisplayName.ifBlank { "City 1" }
-    val city2Name = setting.city2DisplayName.ifBlank { "City 2" }
+    val city1Name   = setting.city1DisplayName.ifBlank { "City 1" }
+    val city2Name   = setting.city2DisplayName.ifBlank { "City 2" }
     val city1ZoneId = (setting.city1Id ?: "").ifBlank { "Asia/Taipei" }
     val city2ZoneId = (setting.city2Id ?: "").ifBlank { "America/New_York" }
 
-    // 已在 VM 算好的副標字串（例如 "GMT+08:00 台北標準時間"）
     val city1Tz by viewModel.city1Timezone.collectAsStateWithLifecycle("")
     val city2Tz by viewModel.city2Timezone.collectAsStateWithLifecycle("")
 
+    // ★ 本地時區：用 SettingsManager 的 label
+    val localTzId = TimeZone.getDefault().id
+    val localCityName = SettingsManager
+        .getInstance(ctx)
+        .getTimeZoneLabel(localTzId)
+        ?.takeIf { it.isNotBlank() }
+        ?: localTzId.substringAfterLast('/').replace('_', ' ') // fallback
+
     WorldClocksRow(
         cities = listOf(
-            CityClock(city1Name, city1ZoneId),                                  // 左：City 1
-            CityClock("Local", ZoneId.systemDefault().id, isCenterStyle = true), // 中：本地 Now
-            CityClock(city2Name, city2ZoneId)                                    // 右：City 2
+            CityClock(city1Name, zoneId = city1ZoneId),
+            CityClock(localCityName, zoneId = localTzId, isCenterStyle = true), // 中：本地 Now（顯示 SettingsManager 的 label）
+            CityClock(city2Name, zoneId = city2ZoneId)
         ),
-        centerIndex = 1,                                                         // 中間固定 Now
-        subtitles = listOf(city1Tz, null, city2Tz),                              // 左/右用 VM 字串
+        centerIndex = 1,
+        subtitles = listOf(city1Tz, null, city2Tz),
         onClickClock = onClickClock,
         modifier = modifier
     )
