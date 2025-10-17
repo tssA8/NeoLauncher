@@ -1,6 +1,7 @@
 package com.pt.ifp.neolauncher.clock.threeclocks
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,9 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pt.ifp.neolauncher.R
 import com.pt.ifp.neolauncher.clock.AnalogClockQ
+import com.pt.ifp.neolauncher.clock.digitalclock.DigitalClockWidget
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.twoclocks.WorldClocksTwoFromSettings
 import java.time.ZoneId
+import java.util.TimeZone
 
 
 data class CityClock(
@@ -140,7 +143,9 @@ fun WorldClocksFromSettings(
     )
 }
 
-private const val LAYOUT_TWO_CLOCKS_INDEX = 1
+const val LAYOUT_THREE_CLOCKS_INDEX  = 2  // 左 City1 / 中 Now / 右 City2 [2clocks]
+const val LAYOUT_DIGITAL_CLOCK_INDEX = 0  // 數位時鐘（Local）
+const val LAYOUT_TWO_CLOCKS_INDEX    = 1  // 左 Now / 右 City1 [3clocks]
 @Composable
 fun WorldClocksAutoFromSettings(
     viewModel: ClockViewModel,
@@ -148,25 +153,46 @@ fun WorldClocksAutoFromSettings(
     onClickClock: () -> Unit = {},
 ) {
     val setting = viewModel.settingClock.collectAsStateWithLifecycle().value
-    val pageIndex = setting.pageIndex
+    val pageIndex = setting.pageIndex.coerceAtLeast(0)
 
-    if (pageIndex == LAYOUT_TWO_CLOCKS_INDEX) {
+    when (pageIndex) {
         // 兩顆：左 Now、右 City1
-        WorldClocksTwoFromSettings(
-            viewModel = viewModel,
-            modifier = modifier,
-            onClickClock = onClickClock
-        )
-    } else {
-        // 其他索引 → 三顆（左 City1、中 Now、右 City2）
-        WorldClocksFromSettings(
-            viewModel = viewModel,
-            modifier = modifier,
-            onClickClock = onClickClock
-        )
+        LAYOUT_TWO_CLOCKS_INDEX -> {
+            WorldClocksTwoFromSettings(
+                viewModel = viewModel,
+                modifier = modifier,
+                onClickClock = onClickClock
+            )
+        }
+
+        LAYOUT_THREE_CLOCKS_INDEX -> {
+            WorldClocksFromSettings(
+                viewModel = viewModel,
+                modifier = modifier,
+                onClickClock = onClickClock
+            )
+        }
+        // 數位：顯示 Local（或你要的 zone）
+        LAYOUT_DIGITAL_CLOCK_INDEX -> {
+            // 你先前的 DigitalClockWidget：顯示 HH:mm 與日期/城市
+            val localCity = java.util.TimeZone.getDefault()
+                .id.substringAfterLast('/').replace('_', ' ')
+            DigitalClockWidget(
+                modifier = modifier,
+                cityLabel = localCity,
+                zoneId = java.time.ZoneId.systemDefault().id,
+                onClickClock = onClickClock
+            )
+        }
+        else -> {
+            WorldClocksFromSettings(
+                viewModel = viewModel,
+                modifier = modifier,
+                onClickClock = onClickClock
+            )
+        }
     }
 }
-
 
 
 
