@@ -73,6 +73,7 @@ fun ClockSettingsScreen(
         pageCount = { previews.size.coerceAtLeast(1) }
     )
     LaunchedEffect(pagerState.currentPage) {
+        android.util.Log.d("ClockPager", "currentPage = ${pagerState.currentPage}")
         viewModel.addClockSetting(pageIndex = pagerState.currentPage)
     }
 
