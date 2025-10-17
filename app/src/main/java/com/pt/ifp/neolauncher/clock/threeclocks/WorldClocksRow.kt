@@ -3,6 +3,7 @@ package com.pt.ifp.neolauncher.clock.threeclocks
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,12 +54,21 @@ fun WorldClocksRow(
     horizontalPadding: Dp = 1.dp,
     verticalSpacing: Dp = 8.dp,
     centerIndex: Int = 1,                    // 中間固定為 Local/Now
-    subtitles: List<String?>? = null,        // ★ 新增：每顆時鐘的副標（外部傳入）
-    onClickClock: () -> Unit = {}
+    subtitles: List<String?>? = null,        // 每顆時鐘的副標（外部傳入）
+    onClickClock: () -> Unit = {},
+    ripple: Boolean = false                  // 需要水波效果就設 true
 ) {
+    // 避免外部傳錯 index
+    val safeCenter = centerIndex.coerceIn(0, (cities.size - 1).coerceAtLeast(0))
+
     val colorNormal  = colorResource(R.color.recommend_row_normal_color)
     val tCityColor by animateColorAsState(colorNormal)
     val tTimeColor by animateColorAsState(colorResource(R.color.bq_grey_4))
+
+    // 小工具：取得某顆的副標
+    fun subtitleFor(idx: Int): String {
+        return if (idx == safeCenter) "Now" else subtitles?.getOrNull(idx).orEmpty()
+    }
 
     Row(
         modifier = modifier
@@ -72,14 +83,20 @@ fun WorldClocksRow(
                 modifier = Modifier
                     .weight(1f)
                     .padding(vertical = verticalSpacing)
-                    .clickable(interactionSource = interaction, indication = null, onClick = onClickClock),
+                    .clickable(
+                        interactionSource = interaction,
+                        indication = if (ripple) LocalIndication.current else null,
+                        onClick = onClickClock
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Box(Modifier.size(clockSize)) {
                     AnalogClockQ(
                         modifier = Modifier.fillMaxSize(),
-                        isCenter = (idx == centerIndex) || item.isCenterStyle,
-                        timeZoneId = item.zoneId
+                        isCenter = (idx == safeCenter) || item.isCenterStyle,
+                        timeZoneId = item.zoneId,
+                        // contentDescription 若需要可傳入，這裡簡單示例
+                        // contentDescription = "${item.city} clock"
                     )
                 }
 
@@ -91,14 +108,12 @@ fun WorldClocksRow(
                     modifier = Modifier.padding(top = 6.dp)
                 )
 
-                // ★ 副標：中間固定 "Now"，其他用外部傳進來的字串
-                val subtitle = if (idx == centerIndex) "Now"
-                else subtitles?.getOrNull(idx).orEmpty()
+                val subtitle = subtitleFor(idx)
+                val isNow = idx == safeCenter
 
-                val boldNow = idx == centerIndex
                 Text(
                     text = subtitle,
-                    style = if (boldNow)
+                    style = if (isNow)
                         MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                     else
                         MaterialTheme.typography.bodyMedium,
