@@ -155,23 +155,23 @@ class HomeActivity : ComponentActivity() {
         }
 
 
-        googleSearchView = findViewById<ComposeView>(R.id.googlesearchcompose)
-        googleSearchView.setViewCompositionStrategy(
-            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-        )
-        googleSearchView.setContent {
+//        googleSearchView = findViewById<ComposeView>(R.id.googlesearchcompose)
+//        googleSearchView.setViewCompositionStrategy(
+//            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
+//        )
+//        googleSearchView.setContent {
+////            MaterialTheme {
+////                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
+////            }
+//
 //            MaterialTheme {
-//                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
+//                GoogleSearchBarWithHistory(
+//                    showHistory = showHistoryState.value,
+//                    onDismissHistory = { showHistoryState.value = false },
+//                    onShowHistory = { showHistoryState.value = true }
+//                )
 //            }
-
-            MaterialTheme {
-                GoogleSearchBarWithHistory(
-                    showHistory = showHistoryState.value,
-                    onDismissHistory = { showHistoryState.value = false },
-                    onShowHistory = { showHistoryState.value = true }
-                )
-            }
-        }
+//        }
 
         noteComposeView = findViewById<ComposeView>(R.id.notecompose)
         noteComposeView.setViewCompositionStrategy(
@@ -251,6 +251,7 @@ class HomeActivity : ComponentActivity() {
         pagerhostCompose = findViewById(R.id.pagerhoster)
         ComposeHostHelpers.setPagerHostContent(
             pagerhostCompose,
+            showHistoryState = showHistoryState,
             onOpenEditor = { noteEditorView.visibility = View.VISIBLE } // ← 直接控制 Activity 的 overlay
         )
 
@@ -511,7 +512,7 @@ class HomeActivity : ComponentActivity() {
     fun showAllApps() {
 //        recommendRow?.visibility = View.GONE
         recommendRowComposeView?.visibility = View.GONE
-        googleSearchView?.visibility = View.GONE
+//        googleSearchView?.visibility = View.GONE
         if (isSearchVisible) return
 
         searchBarComponent.visibility = View.VISIBLE
@@ -541,7 +542,7 @@ class HomeActivity : ComponentActivity() {
     private fun hideAllApps() {
 //        recommendRow?.visibility = View.VISIBLE
         recommendRowComposeView?.visibility = View.VISIBLE
-        googleSearchView?.visibility = View.VISIBLE
+//        googleSearchView?.visibility = View.VISIBLE
         if (isSearchVisible) {
             searchBarComponent.visibility = View.GONE
             searchInput.visibility = View.GONE
