@@ -10,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,16 +30,16 @@ import com.pt.ifp.neolauncher.searchbarcomponentView.GoogleSearchBarWithHistory
 // PagerWithSearchDemo.kt
 @Composable
 fun PagerWithSearchDemo(
-    onOpenEditor: () -> Unit = {}   // ← 新增參數
+    showHistoryState: MutableState<Boolean>,   // ⬅️ 從外部帶進來
+    onOpenEditor: () -> Unit                   // 第二頁 NoteWidget 要開編輯器的 callback
 ) {
-    var showHistory by rememberSaveable { mutableStateOf(false) }
 
     val pages = listOf<@Composable () -> Unit>(
         {
             GoogleSearchBarWithHistory(
-                showHistory = showHistory,
-                onDismissHistory = { showHistory = false },
-                onShowHistory = { showHistory = true },
+                showHistory = showHistoryState.value,
+                onDismissHistory = { showHistoryState.value = false },
+                onShowHistory = { showHistoryState.value = true },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -82,9 +83,13 @@ fun PagerWithSearchDemo(
 @Preview(showBackground = true, widthDp = 360, heightDp = 260)
 @Composable
 private fun Preview_PagerWithSearchDemo() {
+    val showHistory = rememberSaveable { mutableStateOf(true) } // 或 false
     MaterialTheme {
         Surface {
-            PagerWithSearchDemo()
+            PagerWithSearchDemo(
+                showHistoryState = showHistory,
+                onOpenEditor = {} // Preview 不需要真的開視窗
+            )
         }
     }
 }
