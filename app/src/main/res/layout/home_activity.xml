@@ -74,6 +74,7 @@
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_gravity="top|center_horizontal"
+        android:visibility="gone"
         android:layout_marginTop="100dp"/>
 
 
@@ -81,6 +82,7 @@
         android:id="@+id/notecompose"
         android:layout_width="250dp"
         android:layout_height="200dp"
+        android:visibility="gone"
         android:layout_gravity="right|center_vertical"/>
 
     <androidx.compose.ui.platform.ComposeView
@@ -89,6 +91,13 @@
         android:layout_height="526dp"
         android:visibility="gone"
         android:layout_gravity="center"/>
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/pagerhoster"
+        android:layout_width="416dp"
+        android:layout_height="94dp"
+        android:layout_marginTop="100dp"
+        android:layout_gravity="right|top"/>
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/clocksettingcompose"

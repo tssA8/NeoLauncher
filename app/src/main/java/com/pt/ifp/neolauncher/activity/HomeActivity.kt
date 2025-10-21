@@ -41,6 +41,7 @@ import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.threeclocks.WorldClocksAutoFromSettings
 import com.pt.ifp.neolauncher.graphics.ToolbarBackground
+import com.pt.ifp.neolauncher.helper.ComposeHostHelpers
 import com.pt.ifp.neolauncher.menubar.CanvasMenuBarCompose
 import com.pt.ifp.neolauncher.note.NoteEditorDialog
 import com.pt.ifp.neolauncher.note.NoteSharedViewModel
@@ -84,6 +85,8 @@ class HomeActivity : ComponentActivity() {
     private lateinit var analogClockCompose: ComposeView
 
     private lateinit var clockSettingCompose: ComposeView
+
+    private lateinit var pagerhostCompose: ComposeView
 
     private val viewModel: ClockViewModel by viewModels()
 
@@ -244,6 +247,12 @@ class HomeActivity : ComponentActivity() {
                 )
             }
         }
+
+        pagerhostCompose = findViewById(R.id.pagerhoster)
+        ComposeHostHelpers.setPagerHostContent(
+            pagerhostCompose,
+            onOpenEditor = { noteEditorView.visibility = View.VISIBLE } // ← 直接控制 Activity 的 overlay
+        )
 
 
         noteEditorView = findViewById<ComposeView>(R.id.noteeditorcompose)
