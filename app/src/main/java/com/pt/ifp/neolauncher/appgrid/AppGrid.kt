@@ -74,6 +74,21 @@ private fun rememberInstalledApps(): List<AppInfo> {
     return remember(ctx) { loadAllApps(ctx) }
 }
 
+// 放在同一檔或單獨檔案
+private class FavoritesStore(ctx: Context) {
+    private val sp = ctx.getSharedPreferences("favorites", Context.MODE_PRIVATE)
+
+    fun get(): Set<String> {
+        val raw = sp.getStringSet("pkgs", emptySet()) ?: emptySet()
+        return HashSet(raw)
+    }
+
+    fun set(newSet: Set<String>) {
+        sp.edit().putStringSet("pkgs", HashSet(newSet)).apply()
+    }
+}
+
+
 /* ---------- Public host ---------- */
 @Composable
 fun FavoritesPickerHost(
@@ -83,9 +98,11 @@ fun FavoritesPickerHost(
 ) {
     val allApps = appsOverride ?: rememberInstalledApps()
     val ctx = LocalContext.current
+    val store = remember(ctx) { FavoritesStore(ctx) }
 
     // favorites shown on the grid
-    var favorites by rememberSaveable { mutableStateOf(setOf<String>()) }
+//    var favorites by rememberSaveable { mutableStateOf(setOf<String>()) }
+    var favorites by rememberSaveable { mutableStateOf(store.get()) }
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = modifier.background(Color(0xFF3A4064))) {
@@ -134,6 +151,7 @@ fun FavoritesPickerHost(
             onCancel = { showDialog = false },
             onDone = { newSelection ->
                 favorites = newSelection
+                store.set(newSelection)       // ✅ 寫入 SharedPreferences
                 showDialog = false
             }
         )
@@ -209,7 +227,6 @@ private fun FavoritesGrid(
     }
 }
 
-/* ---------- Dialog: ALL apps, multi-select, dark panel ---------- */
 @Composable
 private fun AllAppsPickerDialog(
     allApps: List<AppInfo>,
@@ -227,30 +244,23 @@ private fun AllAppsPickerDialog(
                     it.packageName.contains(query.text, ignoreCase = true)
         }
     }
+    val displayPkgs = remember(display) { display.map { it.packageName }.toSet() }
 
-    // palette：與內文一致
-    val panel   = Color(0xFF2F3456)
+    val panel  = Color(0xFF2F3456)
     val onPanel = Color(0xFFEFEFF5)
-    val fieldBg = Color(0xFF394068)
+    val chipBg = Color(0xFF394068)
 
     AlertDialog(
         onDismissRequest = onCancel,
         containerColor    = panel,
         titleContentColor = onPanel,
         textContentColor  = onPanel,
-        confirmButton = {
-            TextButton(onClick = { onDone(selected) }) {
-                Text("Done", color = onPanel)
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onCancel) {
-                Text("Cancel", color = onPanel)
-            }
-        },
+        confirmButton = { TextButton(onClick = { onDone(selected) }) { Text("Done", color = onPanel) } },
+        dismissButton  = { TextButton(onClick = onCancel) { Text("Cancel", color = onPanel) } },
         title = { Text("Select apps") },
         text = {
             Column {
+                // 搜尋
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
@@ -260,9 +270,9 @@ private fun AllAppsPickerDialog(
                         .fillMaxWidth()
                         .background(panel),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor   = fieldBg,
-                        unfocusedContainerColor = fieldBg,
-                        disabledContainerColor  = fieldBg,
+                        focusedContainerColor   = chipBg,
+                        unfocusedContainerColor = chipBg,
+                        disabledContainerColor  = chipBg,
                         cursorColor             = onPanel,
                         focusedIndicatorColor   = onPanel.copy(alpha = 0.75f),
                         unfocusedIndicatorColor = onPanel.copy(alpha = 0.35f),
@@ -273,6 +283,24 @@ private fun AllAppsPickerDialog(
 
                 Spacer(Modifier.height(8.dp))
 
+                // ⬇️ 新增：Select All / Unselect All（作用於目前顯示清單）
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(
+                        onClick = { selected = selected + displayPkgs }
+                    ) { Text("Select All", color = onPanel) }
+
+                    TextButton(
+                        onClick = { selected = selected - displayPkgs }
+                    ) { Text("Unselect All", color = onPanel) }
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                // 清單
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(96.dp),
                     modifier = Modifier
@@ -301,6 +329,7 @@ private fun AllAppsPickerDialog(
         }
     )
 }
+
 
 /* ---------- Selectable tile used inside dialog ---------- */
 @Composable
