@@ -27,5 +27,5 @@ object ComposeHostHelpers {
             }
         }
     }
-
 }
+
