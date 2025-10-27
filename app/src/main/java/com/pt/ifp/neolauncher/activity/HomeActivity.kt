@@ -1,5 +1,7 @@
 package com.pt.ifp.neolauncher.activity
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -48,13 +50,14 @@ import com.pt.ifp.neolauncher.note.NoteSharedViewModel
 import com.pt.ifp.neolauncher.note.NoteWidget
 import com.pt.ifp.neolauncher.preference.Preferences
 import com.pt.ifp.neolauncher.recommend.RecommendRowCompose
-import com.pt.ifp.neolauncher.searchbarcomponentView.GoogleSearchBarWithHistory
 import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent
 import com.pt.ifp.neolauncher.searchbarcomponentView.SearchBarComponent.OnSearchBarClickListener
 import com.pt.ifp.neolauncher.view.SoftKeyboard
 import com.pt.ifp.neolauncher.view.SystemBars
 import com.pt.ifp.neolauncher.widget.AppPieView
 import com.pt.ifp.neolauncher.widget.AppPieView.ListListener
+import com.pt.ifp.neolauncher.widgetbox.AppWidgetBinder
+import com.pt.ifp.neolauncher.widgetbox.RebindingAppWidgetHost
 
 class HomeActivity : ComponentActivity() {
     private lateinit var prefs: Preferences
@@ -90,8 +93,18 @@ class HomeActivity : ComponentActivity() {
 
     private val viewModel: ClockViewModel by viewModels()
 
-    private val showHistoryState = mutableStateOf(false) // 👈 Activity 層級持有
+    private val showHistoryState = mutableStateOf(false)
 
+    private val noteSharedViewModel: NoteSharedViewModel by viewModels()
+
+    private lateinit var mAppWidgetHost: RebindingAppWidgetHost
+
+    private var searchWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+
+    private val SEARCH_PROVIDER = ComponentName(
+        "com.google.android.googlequicksearchbox",
+        "com.google.android.googlequicksearchbox.SearchWidgetProvider"
+    )
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -317,7 +330,56 @@ class HomeActivity : ComponentActivity() {
 
         immersiveMode = prefs.immersiveMode
         SystemBars.setTransparentSystemBars(window, immersiveMode)
+
+
+        run {
+            val HOST_ID = 0x6E30
+            mAppWidgetHost = RebindingAppWidgetHost(this, HOST_ID)
+
+            val manager = AppWidgetManager.getInstance(this)
+
+            val ensured = AppWidgetBinder.ensureBoundOrRequest(
+                this,
+                mAppWidgetHost,
+                manager,
+                SEARCH_PROVIDER.flattenToString(),
+                null
+            )
+            searchWidgetId = AppWidgetBinder.getSavedBoundId(
+                this,
+                SEARCH_PROVIDER.flattenToString()
+            )
+            mountPagerWithId(searchWidgetId)
+
+            if (ensured != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                searchWidgetId = ensured
+                mountPagerWithId(searchWidgetId)
+            }
+
+        }
+
+
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppWidgetBinder.REQ_BIND_APPWIDGET) {
+            val id = data?.getIntExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID
+            ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
+
+            if (id != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                AppWidgetBinder.saveId(this, SEARCH_PROVIDER.flattenToString(), id)
+                AppWidgetBinder.clearPendingId(this, SEARCH_PROVIDER.flattenToString())
+                searchWidgetId = id
+                mountPagerWithId(searchWidgetId)
+            } else {
+                Log.w(TAG, "Bind canceled")
+            }
+        }
+    }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean { // ✅ 改非空
         menuInflater.inflate(R.menu.home, menu)
@@ -360,6 +422,7 @@ class HomeActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
+        mAppWidgetHost.startListening()
         requestedOrientation = prefs.orientation
     }
 
@@ -406,6 +469,7 @@ class HomeActivity : ComponentActivity() {
 
     override fun onStop() {
         pieView.setHotseatDropTarget(null, null)
+        mAppWidgetHost.stopListening()
         super.onStop()
     }
 
@@ -599,6 +663,26 @@ class HomeActivity : ComponentActivity() {
             return false
         }
     }
+
+
+    private fun mountPagerWithId(id: Int) {
+        Log.d(TAG, "mountPagerWithId: $id")
+        val manager = AppWidgetManager.getInstance(this)
+
+        // 這個方法把 host/manager/id 丟進 Compose
+        ComposeHostHelpers.setPagerHostContent(
+            pagerhostCompose,
+            noteSharedViewModel,
+            /* initialShowHistory = */ true,
+            /* onOpenEditor = */ Runnable {
+                noteEditorView.visibility = View.VISIBLE
+            },
+            mAppWidgetHost,
+            manager,
+            id // 可能是 INVALID；SearchWidgetSlot 會顯示占位並在拿到新 id 後重新 mount
+        )
+    }
+
 
     companion object {
         private const val TAG = "HomeActivity"
