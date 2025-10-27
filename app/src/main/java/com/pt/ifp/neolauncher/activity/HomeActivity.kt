@@ -38,7 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pt.ifp.neolauncher.DeviceProfile
 import com.pt.ifp.neolauncher.R
 import com.pt.ifp.neolauncher.app.NeoLauncherApp
-import com.pt.ifp.neolauncher.clock.threeclocks.WorldClocksFromSettings
 import com.pt.ifp.neolauncher.clock.nav.ClockSettingsContainer
 import com.pt.ifp.neolauncher.clock.settingpage.ClockViewModel
 import com.pt.ifp.neolauncher.clock.threeclocks.WorldClocksAutoFromSettings
@@ -167,42 +166,22 @@ class HomeActivity : ComponentActivity() {
             }
         }
 
-
-//        googleSearchView = findViewById<ComposeView>(R.id.googlesearchcompose)
-//        googleSearchView.setViewCompositionStrategy(
-//            ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-//        )
-//        googleSearchView.setContent {
-////            MaterialTheme {
-////                GoogleSearchBar()  // 這就是我們剛剛寫的客製化 SearchBar
-////            }
-//
-//            MaterialTheme {
-//                GoogleSearchBarWithHistory(
-//                    showHistory = showHistoryState.value,
-//                    onDismissHistory = { showHistoryState.value = false },
-//                    onShowHistory = { showHistoryState.value = true }
-//                )
-//            }
-//        }
-
         noteComposeView = findViewById<ComposeView>(R.id.notecompose)
         noteComposeView.setViewCompositionStrategy(
             ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
         )
         noteComposeView.setContent {
             // 取得同一個 Activity 範圍的 ViewModel
-            val vm: NoteSharedViewModel = viewModel()
 
             // 如果需要用資源的預設字體大小，可在初次時寫回 VM（只做一次）
             val defaultSizeSp = dimensionResource(id = R.dimen.note_text_size).value
             LaunchedEffect(Unit) {
-                if (vm.sizeSp <= 0f) vm.update(sizeSp = defaultSizeSp)
+                if (noteSharedViewModel.sizeSp <= 0f) noteSharedViewModel.update(sizeSp = defaultSizeSp)
             }
 
             NoteWidget(
-                text = vm.text,
-                fontSizeSp = vm.sizeSp,
+                text = noteSharedViewModel.text,
+                fontSizeSp = noteSharedViewModel.sizeSp,
                 onClick = { noteEditorView.visibility = View.VISIBLE } // 打開編輯器 overlay
             )
         }
@@ -262,12 +241,6 @@ class HomeActivity : ComponentActivity() {
         }
 
         pagerhostCompose = findViewById(R.id.pagerhoster)
-        ComposeHostHelpers.setPagerHostContent(
-            pagerhostCompose,
-            showHistoryState = showHistoryState,
-            onOpenEditor = { noteEditorView.visibility = View.VISIBLE } // ← 直接控制 Activity 的 overlay
-        )
-
 
         noteEditorView = findViewById<ComposeView>(R.id.noteeditorcompose)
         noteEditorView.setContent {
